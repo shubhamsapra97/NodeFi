@@ -1,0 +1,112 @@
+#nav-right{
+    font-size: 25px;
+    padding-right: 12vw;
+    margin-top: 2vh;
+}
+
+.faFonts{
+    font-size: 25px;
+}
+
+#nav-left{
+    font-size: 25px;
+    padding-left: 13vw;
+    margin-top: 1vh;
+}
+
+.user-nav{
+    padding-right: 2vw;
+}
+
+.submitForm{
+  padding-left: 17vw;
+  padding-top: 1vh;
+}
+
+#posts{
+    width: 45vw;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 1;
+    box-shadow: 1px 1px 1px #888888;
+}
+
+#profilePic{
+    width: 40px;
+    height: 40px;
+/*    padding: 20px 10px 20px 20px;*/
+    
+}
+
+#postOptions{
+    font-size: 25px;
+}
+
+#postLike,#postComment{
+    padding-left: 10px;
+}
+
+#posts-header{
+    display: flex;
+}
+
+#profilePic{
+    margin-left: 10px;
+    font-weight: 550;
+    margin-top: 5px;
+}
+
+#postHeading{
+    padding-left: 10px;
+    font-weight: 550;
+    font-size: 13px;
+    list-style-type: none;
+    margin-top: 7px;
+}
+
+#postLikesNum{
+    padding-left: 10px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+hr{
+    margin: 8px 15px 8px 15px;
+}
+
+#UserName{
+    font-weight: 600;
+    padding-left: 8px;
+    padding-top: 5px;
+}
+
+#statusContent{
+    padding-left: 10px;
+}
+
+#postTime{
+    font-size: 10px;
+    color: grey;
+    padding-left: 8px;
+    padding-top: 5px;
+}
+
+#postStatus{
+    padding-top: 1px;
+}
+
+@media only screen and (max-width: 1100px)  and (min-width: 768px)  {
+
+    #nav-right{
+        padding: 0;
+        padding-right: 3vw;
+    }
+    #nav-left{
+        padding: 0;
+        padding-left: 3vw;
+    }
+    .submitForm{
+      padding-left: 23vw;
+    }
+
+}
