@@ -11,17 +11,16 @@ socket.on('disconnect',function(){
 
 if($("body").data("title") === "index"){
     
-    //Basic Functionality
-    $("#SignInButton").click(function(){
-       document.location.replace('/signIn.html'); 
-    });
-
-    $("#SignUpButton").click(function(){
-       document.location.replace('/signUp.html');
-    });
-    
     socket.on('onSignUp' , function(user){
         console.log('user');
+    });
+    
+    $("#SignInButton").click(function(){
+       window.location = 'signIn.html'; 
+    });
+    
+    $("#SignUpButton").click(function(){
+       window.location = 'signUp.html'; 
     });
     
 }
@@ -34,19 +33,24 @@ if($("body").data("title") === "signInPage"){
 
 if($("body").data("title") === "signUpPage"){
 
-    $('#SignUpButton').click(function(ev) {
-        socket.emit('onSignUp',{
-            email: $('[name=email]').val(),
-            fullname: $('[name=fullname]').val(),
-            username: $('[name=username]').val(),
-            password: $('[name=password]').val()
-        });
-    });
+//    $('#SignUpButton').click(function(ev) {
+//        socket.emit('onSignUp',{
+//            email: $('[name=email]').val(),
+//            fullname: $('[name=fullname]').val(),
+//            username: $('[name=username]').val(),
+//            password: $('[name=password]').val()
+//        });
+//    });
     
-    socket.on('redirect',function(user){
-        window.location = 'mainPage.html';
-    });
-    
+//    socket.on('redirect',function(user){
+//        window.location = 'views/mainPage.ejs';
+//    });
+//    
+//    $("#SignUpButton").click(function(){
+//        alert("hello");
+//       window.location = 'mainPage'; 
+//    });
+//    
 }
 
 socket.on('SignUpInfo',function(user){
