@@ -54,7 +54,10 @@
                 </button>
               </div>
               <div class="modal-body">
-                
+                  <form method="post" action="/image">
+                      <input type="file" value="choose file" name="postImage" />
+                      <input type="submit" value="submit" name="submit" />
+                  </form>      
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

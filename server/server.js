@@ -22,6 +22,7 @@ const publicPath = path.join(__dirname,'../public');
 //app.set('view engine', 'html');
 
 var {Users} = require('./models/user');
+var {Images} = require('./models/images');
 //app.set('../',__dirname+'/views');
 app.use(express.static(publicPath));
 //Parse JSON data
@@ -67,6 +68,10 @@ io.on('connection',(socket)=>{
            res.header('x-auth',user.tokens[0].token);
            res.render('mainPage.hbs');
        }).catch((err)=>res.status(404).send(err));
+    });
+    
+    app.post('/image',(req,res)=>{
+        console.log("Image Uploaded Successfully");
     });
         
 });
