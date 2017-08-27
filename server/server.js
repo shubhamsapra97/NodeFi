@@ -70,16 +70,16 @@ io.on('connection',(socket)=>{
        }).catch((err)=>res.status(404).send(err));
     });
     
-//    socket.on('onPost',(user)=>{
-//       var image = new Images({
-//          email: user.email,
-//          username: user.username,
-//          url: user.imageUrl
-//       });
-//       image.save().then((image)=>{
-//           console.log("Image Uploaded to DB by `${image.email}` ");
-//       });       
-//    });
+    socket.on('onPost',(user)=>{
+       var image = new Images({
+          email: user.email,
+          username: user.username,
+          url: user.imageUrl
+       });
+       image.save().then((image)=>{
+           console.log("Image Uploaded to DB by `${image.email}` ");
+       });       
+    });
         
 });
 

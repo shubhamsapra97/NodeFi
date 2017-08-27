@@ -78,11 +78,11 @@ if($("body").data("title") === "mainPage"){
         }).then(function(res){
            console.log(res);
            preview.src = res.data.secure_url;
-//           socket.emit('onPost',{
-//               email: document.getElementById("userEmail").innerText,
-//               username: document.getElementById("userName").innerText,
-//               imageUrl: res.data.secure_url 
-//           });
+           socket.emit('onPost',{
+               email: document.getElementById("userEmail").innerText,
+               username: document.getElementById("userName").innerText,
+               imageUrl: res.data.secure_url 
+           });
         }).catch(function(err){
             console.log(err);
         });
