@@ -25,8 +25,6 @@ if($("body").data("title") === "index"){
     
 }
 
-
-
 if($("body").data("title") === "signInPage"){
             
 }
@@ -58,10 +56,37 @@ socket.on('SignUpInfo',function(user){
 });
 
 if($("body").data("title") === "mainPage"){
+    var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload';
+    var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
     
-    $("#PostInput").click(function(){
-         
-    });
+    var fileUpload = document.getElementById('fileUpload');
+    var preview = document.getElementById('preview');
     
+    fileUpload.addEventListener('change',function(e){
+        var file = event.target.files[0];
+        var formData = new FormData();
+        formData.append('file',file);
+        formData.append('upload_preset',CLOUDINARY_UPLOAD_PRESET);
+        
+        axios({
+           url: CLOUDINARY_URL,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            data: formData
+        }).then(function(res){
+           console.log(res);
+           preview.src = res.data.secure_url;
+//           socket.emit('onPost',{
+//               email: document.getElementById("userEmail").innerText,
+//               username: document.getElementById("userName").innerText,
+//               imageUrl: res.data.secure_url 
+//           });
+        }).catch(function(err){
+            console.log(err);
+        });
+    
+    }); 
 }
 

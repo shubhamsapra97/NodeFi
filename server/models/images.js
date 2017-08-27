@@ -12,10 +12,9 @@ var UserSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
-  image:{
-    name:String,
-    data: Buffer,
-    contentType: String
+  url:{
+      type: String,
+      required: true
   }  
 });
 
