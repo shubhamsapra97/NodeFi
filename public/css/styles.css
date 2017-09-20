@@ -23,7 +23,7 @@
   padding-top: 1vh;
 }
 
-#posts{
+.posts{
     width: 45vw;
     margin-left: auto;
     margin-right: auto;
@@ -31,40 +31,39 @@
     box-shadow: 1px 1px 1px #888888;
 }
 
-#profilePic{
+.profilePic{
     width: 40px;
     height: 40px;
 /*    padding: 20px 10px 20px 20px;*/
     
 }
 
-#postOptions{
+.postOptions{
     font-size: 25px;
 }
 
-#postLike,#postComment{
+.postLike,.postComment{
     padding-left: 10px;
 }
 
-#posts-header{
+.posts-header{
     display: flex;
 }
 
-#profilePic{
+.profilePic{
     margin-left: 10px;
     font-weight: 550;
     margin-top: 5px;
 }
 
-#postHeading{
-    padding-left: 10px;
-    font-weight: 550;
+.postHeading{
+    font-weight: bold;
     font-size: 13px;
     list-style-type: none;
     margin-top: 7px;
 }
 
-#postLikesNum{
+.postLikesNum{
     padding-left: 10px;
     font-weight: 600;
     font-size: 13px;
@@ -74,24 +73,24 @@ hr{
     margin: 8px 15px 8px 15px;
 }
 
-#UserName{
+.UserName{
     font-weight: 600;
     padding-left: 8px;
     padding-top: 5px;
 }
 
-#statusContent{
+.statusContent{
     padding-left: 10px;
 }
 
-#postTime{
+.postTime{
     font-size: 10px;
     color: grey;
     padding-left: 8px;
     padding-top: 5px;
 }
 
-#postStatus{
+.postStatus{
     padding-top: 1px;
 }
 

@@ -8,6 +8,8 @@ const mongoose = require('mongoose');
 const hbs = require('hbs');
 const fs = require('fs');
 const cloudinary = require('cloudinary');
+var engines = require('consolidate');
+var url = require('url');
 
 mongoose.Promise = global.Promise;    //Telling mongoose which promise library to use;
 mongoose.connect('mongodb://localhost:27017/FakeInsta');
@@ -16,12 +18,14 @@ const port = process.env.PORT || 3000;
 var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
-app.set('view engine', 'hbs');
+//app.set('view engine', 'hbs');
 const publicPath = path.join(__dirname,'../public');
 //app.set('view engine', 'ejs');
 //app.engine('html', require('ejs').renderFile);
-//app.set('views', __dirname + '../views');
+app.set('views', publicPath);
 //app.set('view engine', 'html');
+app.engine('html', engines.mustache);
+app.set('view engine', 'html');
 
 var {Users} = require('./models/user');
 var {Images} = require('./models/images');
@@ -33,6 +37,7 @@ cloudinary.config({
 });
 
 //app.set('../',__dirname+'/views');
+//app.use("/public", express.static(publicPath));
 app.use(express.static(publicPath));
 //Parse JSON data
 app.use(bodyParser.urlencoded({
@@ -58,18 +63,30 @@ io.on('connection',(socket)=>{
         }).catch((e)=>{
             res.status(400).send(e);
         });
-        res.render('mainPage.hbs',user);
+        res.redirect('mainPage.html');
     });
-    
-    app.post('/signIn',(req,res)=>{
+    var Usery = {};
+    app.post('/mainPage',(req,res)=>{
        var body = _.pick(req.body,['email','password']);
        
        Users.findByCredentials(body.email,body.password).then((user)=>{
+//           Usery = JSON.parse(JSON.stringify(user));
            res.header('x-auth',user.tokens[0].token);
-           res.render('mainPage.hbs',user);
-       }).catch((err)=>res.status(404).send(err));
+
+           Usery = user;
+               res.redirect(url.format({
+                  pathname:"mainPage.html",
+                  query: {
+                     "email": user.email,
+                     "username": user.username,
+                     "fullname": user.fullname,
+                   }
+               }));
+           
+       });
+      
     });
-    
+
     socket.on('onPost',(user)=>{
        var image = new Images({
           email: user.email,
@@ -77,26 +94,17 @@ io.on('connection',(socket)=>{
           url: user.imageUrl
        });
        image.save().then((image)=>{
-           console.log("Image Uploaded to DB by `${image.email}` ");
+           console.log(`Image Uploaded to DB by ${image.username}`);
        });       
     });
-        
+    
+    function redirectMain(res,user){
+        return new Promise(function(resolve,reject){
+               res.redirect('mainPage.html');
+               resolve(user);          
+        });
+    }
 });
-
-app.get('/',(req,res)=>{
-    res.render('index');
-});
-
-//var user = new Users(body);
-//        user.save().then(()=>{         
-//            return user.generateAuthToken();
-//        }).then((token)=>{
-//            socket.emit('onSignUp' , body);
-//            res.header('x-auth',token).send(user);
-//            res.redirect('/mainPage.html');   
-//        }).catch((e)=>{
-//            res.status(400).send(e);
-//        });
 
 server.listen(port,()=>{
    console.log(`Server is up on port ${port}`); 
