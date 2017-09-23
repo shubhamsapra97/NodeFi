@@ -72,37 +72,11 @@
         </div>
         
         <div id="allPosts">
-<!--
-        <div class="posts">
-            <div class="posts-header">
-                <img src="images/shub.jpg" class="profilePic" class="img-circle">
-                <ul class="postHeading">
-                    <li> <span id='postHeading'>ScienceAlert</span></li>
-                    <li> <span id='UserLoc'>Panchkula, India</span></li>
-                </ul>
-            </div>
-            <div class="post">
-                <img src="https://res.cloudinary.com/https-blog-5946b-firebaseapp-com/image/upload/v1504255186/e4zuzyatmffxoj3s3emp.jpg" class="img-responsive" id="postImage">
-            </div>
-            <div class="postOptions">
-                <i class="fa fa-heart-o postLike" aria-hidden="true"></i>
-                <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
-            </div>
-            <div class="postLikesNum">
-                <span>23 </span>Likes
-            </div>
-            <div class="postStatus">
-                <span class="UserName">ScienceAlert</span><span class="statusContent">Hello there!!</span>
-            </div>
-            <div class="postTime">
-                <span>4 HOURS AGO</span>
-            </div>
 
         </div>
--->
-        </div>
+        
         <script id="post-template" type="text/x-handlebars-template">
-                <div class="posts" name={{count}}>
+                <div class="posts">
                     <div class="posts-header">
                         <img src="images/shub.jpg" class="profilePic img-circle">
                         <ul class="postHeading">
@@ -114,14 +88,14 @@
                         <img src="{{url}}" class="img-responsive postImage">
                     </div>
                     <div class="postOptions">
-                        <i class="fa fa-heart-o postLike" aria-hidden="true"></i>
+                        <i class="fa fa-heart-o postLike" aria-hidden="true" id="{{url}}" title="{{user}}"></i>
                         <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
                     </div>
                     <div class="postLikesNum">
                         <span>23 </span>Likes
                     </div>
                     <div class="postStatus">
-                        <span class="UserName">ScienceAlert</span><span class="statusContent">Hello there!!</span>
+                        <span class="UserName">{{user}}</span><span class="statusContent">Hello there!!</span>
                     </div>
                     <div class="postTime">
                         <span>{{time}}</span>

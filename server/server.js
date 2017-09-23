@@ -53,6 +53,7 @@ io.on('connection',(socket)=>{
        console.log('User was disconnected'); 
     });
     
+    //SignUp Route
     app.post('/signUp',(req,res)=>{
         var body = _.pick(req.body,['email','fullname','username','password']);
         var user = new Users(body);
@@ -65,10 +66,10 @@ io.on('connection',(socket)=>{
         });
         res.redirect('mainPage.html');
     });
-    var Usery = {};
+    
+    //MainPage Route
     app.post('/mainPage',(req,res)=>{
-       var body = _.pick(req.body,['email','password']);
-       
+       var body = _.pick(req.body,['email','password']);       
        Users.findByCredentials(body.email,body.password).then((user)=>{
 //           Usery = JSON.parse(JSON.stringify(user));
            res.header('x-auth',user.tokens[0].token);
@@ -86,24 +87,59 @@ io.on('connection',(socket)=>{
        });
       
     });
-
+    
+    //Saving new image to db
     socket.on('onPost',(user)=>{
        var image = new Images({
           email: user.email,
           username: user.username,
-          url: user.imageUrl
+          url: user.imageUrl,
+          time: user.time,
+          like: 0
        });
        image.save().then((image)=>{
            console.log(`Image Uploaded to DB by ${image.username}`);
        });       
     });
     
-    function redirectMain(res,user){
-        return new Promise(function(resolve,reject){
-               res.redirect('mainPage.html');
-               resolve(user);          
+    //Like Functionality
+    socket.on('Like',(info)=>{
+        Images.findOneAndUpdate({
+            username :info.name,
+            url: info.url
+        }, {
+            $inc : {
+                'like' : 1
+            }
+        },function(err,data){
+            if(err){
+                console.log(err);
+            }
+            else{
+                console.log(data);
+            }
         });
-    }
+    });
+    
+    //Dislike Functionality
+    socket.on('Dislike',(info)=>{
+        Images.findOneAndUpdate({
+            username :info.name,
+            url: info.url
+        }, {
+            $inc : {
+                'like' : -1
+            }
+        },function(err,data){
+            if(err){
+                console.log(err);
+            }
+            else{
+                console.log(data);
+            }
+        });
+    });    
+    
 });
 
 server.listen(port,()=>{

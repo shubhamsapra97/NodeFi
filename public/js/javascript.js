@@ -8,7 +8,7 @@ socket.on('disconnect',function(){
    console.log('Disconnected from server'); 
 });
    
-
+//index.html Js
 if($("body").data("title") === "index"){
     
     socket.on('onSignUp' , function(user){
@@ -24,49 +24,20 @@ if($("body").data("title") === "index"){
     });    
 }
 
+//SignIn Page Js
 if($("body").data("title") === "signInPage"){
             
 }
 
+//signUpPage Js
 if($("body").data("title") === "signUpPage"){
     
 }
 
-//    $('#SignUpButton').click(function(ev) {
-//        socket.emit('onSignUp',{
-//            email: $('[name=email]').val(),
-//            fullname: $('[name=fullname]').val(),
-//            username: $('[name=username]').val(),
-//            password: $('[name=password]').val()
-//        });
-//    });
-    
-//    socket.on('redirect',function(user){
-//        window.location = 'views/mainPage.ejs';
-//    });
-//    
-//    $("#SignUpButton").click(function(){
-//        alert("hello");
-//       window.location = 'mainPage'; 
-//    });
-//    
-
-
-socket.on('SignUpInfo',function(user){
-    console.log(user);
-});
-
+//mainPage Js
 if($("body").data("title") === "mainPage"){
-    var count;
+    //fetching info from search url
     var params = $.deparam(window.location.search);
-    
-    socket.emit('fetchInfo',function(){
-       i:1
-    });
-    
-    socket.on('initialInfo',function(info){
-        count = info.count;
-    });
     
     var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload';
     var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
@@ -79,6 +50,7 @@ if($("body").data("title") === "mainPage"){
         formData.append('file',file);
         formData.append('upload_preset',CLOUDINARY_UPLOAD_PRESET);
         
+        //Linking with Cloud
         axios({
            url: CLOUDINARY_URL,
             method: 'POST',
@@ -87,7 +59,9 @@ if($("body").data("title") === "mainPage"){
             },
             data: formData
         }).then(function(res){
+           //moment to fetch the time-date     
            var time = moment(moment().valueOf()).format('h:mm a  MM-DD-YYYY');
+           //Mustache Templating    
            var template = document.getElementById("post-template").innerHTML;
            var html = Mustache.render(template,{
                user: params.username,
@@ -95,7 +69,9 @@ if($("body").data("title") === "mainPage"){
                time: time
            });
            document.getElementById("allPosts").innerHTML += html;
-        
+ 
+// Handlebars Templating
+            
 //            var source = $("#post-template").html();
 //            var template = Handlebars.compile(source);
 //            var context = {
@@ -104,16 +80,46 @@ if($("body").data("title") === "mainPage"){
 //            };
 //            var el_html = ;
 //            $("#allPosts").append(template(context));
-            
+           
+           // Sending data to server on image upload
            socket.emit('onPost',{
                email:params.email,
                username:params.username,
-               imageUrl:res.data.secure_url 
+               imageUrl:res.data.secure_url,
+               time: time
            });
+            
         }).catch(function(err){
             console.log(err);
         });
     
     });
+    
+    //Like and Dislike Button Functionality
+    function hasClass(elem, className) {
+        return elem.className.split(' ').indexOf(className) > -1;
+    }
+    document.addEventListener('click', function (e) {
+        if (hasClass(e.target, 'postLike')) {
+            if($(e.target).hasClass('fa-heart')) {  
+                $(e.target).removeClass('fa-heart').addClass('fa-heart-o').css({"color": ""});
+                socket.emit('Dislike',{
+                   name: e.target.title,
+                   url: e.target.id
+                });
+            }
+            else{
+                $(e.target).css({"color": "red"}).removeClass('fa-heart-o').addClass('fa-heart');
+                socket.emit('Like',{
+                   name: e.target.title,
+                   url: e.target.id
+                });
+            }
+        } else if (hasClass(e.target, 'postComment')) {
+            alert('test');
+        }
+
+    }, false);
+    
 }
 
