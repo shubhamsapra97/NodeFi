@@ -20,7 +20,7 @@
               </button>
                 <div id="nav-left">
                     <i class=" navbar-brand fa fa-instagram" aria-hidden="true"></i>
-                    <a class="navbar-brand" href="#">| Instagram</a>
+                    <a class="navbar-brand" href="#">| FakeInsta</a>
                 </div>    
             </div>
 
@@ -48,7 +48,7 @@
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Post</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Post</h5> 
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -60,6 +60,7 @@
                       <span id="userName">{{username}}</span>
                   </div>
 -->
+                      <span>STATUS<input id="statusText" type="text" /></span> 
                       <input id="fileUpload" type="file" value="choose file" name="postImage" />
                         
               </div>
@@ -80,7 +81,7 @@
                     <div class="posts-header">
                         <img src="images/shub.jpg" class="profilePic img-circle">
                         <ul class="postHeading">
-                            <li><span class='postHeading'>{{user}}</span></li>
+                            <li><span>{{user}}</span></li>
                             <li><span class='UserLoc'>Panchkula, India</span></li>
                         </ul>
                     </div>
@@ -95,7 +96,7 @@
                         <span>{{like}} </span>
                     </div>
                     <div class="postStatus">
-                        <span class="UserName">{{user}}</span><span class="statusContent">Hello there!!</span>
+                        <span class="UserName">{{user}}</span><span class="statusContent">{{status}}</span>
                     </div>
                     <div class="postTime">
                         <span>{{time}}</span>

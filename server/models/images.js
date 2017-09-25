@@ -23,7 +23,11 @@ var UserSchema = new mongoose.Schema({
   like:{
     type: Number,
     required: true
-  }
+  },
+  status:{
+      type: String,
+      required: false
+  }     
 });
 
 UserSchema.statics.findByCredentials = function(username,time){

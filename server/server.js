@@ -98,7 +98,8 @@ io.on('connection',(socket)=>{
           username: user.username,
           url: user.imageUrl,
           time: user.time,
-          like: 0
+          like: 0,
+          status: user.status   
        });
        image.save().then((image)=>{
            console.log(`Image Uploaded to DB by ${image.username}`);

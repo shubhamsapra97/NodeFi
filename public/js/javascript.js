@@ -51,18 +51,23 @@ if($("body").data("title") === "mainPage"){
     socket.on('allImages',function(images){
         for(var i=0;i<images.length;i++){
            like = images[i].like + " Likes";
+           if(images[i].status === ''){ 
+               $(".postStatus").css('display','none');
+           }     
            var template = document.getElementById("post-template").innerHTML;
            var html = Mustache.render(template,{
                user: images[i].username,
                url: images[i].url,
                time: images[i].time,
-               like: like
+               like: like,
+               status: images[i].status
            });
            document.getElementById("allPosts").innerHTML += html;
         }
     });
-    
+    var status;
     fileUpload.addEventListener('change',function(e){
+        status = $("#statusText").val(); 
         var file = event.target.files[0];
         var formData = new FormData();
         formData.append('file',file);
@@ -86,7 +91,8 @@ if($("body").data("title") === "mainPage"){
                user: params.username,
                url: res.data.secure_url,
                time: time,
-               like: likes
+               like: likes,
+               status: status
            });
            document.getElementById("allPosts").innerHTML += html;
  
@@ -101,12 +107,13 @@ if($("body").data("title") === "mainPage"){
 //            var el_html = ;
 //            $("#allPosts").append(template(context));
            
-           // Sending data to server on image upload
+           // Sending data to server on image upload   
            socket.emit('onPost',{
                email:params.email,
                username:params.username,
                imageUrl:res.data.secure_url,
-               time: time
+               time: time,
+               status: status
            });
             
         }).catch(function(err){
@@ -116,12 +123,13 @@ if($("body").data("title") === "mainPage"){
     });
     
     //Like and Dislike Button Functionality
+    var c;
     function hasClass(elem, className) {
         return elem.className.split(' ').indexOf(className) > -1;
     }
     document.addEventListener('click', function (e) {
         if (hasClass(e.target, 'postLike')) {
-            var c = $(e.target).parent().next().text();
+            c = $(e.target).parent().next().text();
             if($(e.target).hasClass('fa-heart')) {  
                 $(e.target).removeClass('fa-heart').addClass('fa-heart-o').css({"color": ""});
                 $(e.target).parent().next().text(parseInt(c) - 1 + " Likes");
