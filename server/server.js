@@ -58,13 +58,17 @@ io.on('connection',(socket)=>{
         var body = _.pick(req.body,['email','fullname','username','password']);
         var user = new Users(body);
         user.save().then(()=>{
-            return user.generateAuthToken();
-        }).then((token)=>{
-            res.header('x-auth',token); 
+            res.redirect(url.format({
+                  pathname:"mainPage.html",
+                  query: {
+                     "email": body.email,
+                     "username": body.username,
+                     "fullname": body.fullname
+                   }
+            }));
         }).catch((e)=>{
             res.status(400).send(e);
         });
-        res.redirect('mainPage.html');
     });
     
     //MainPage Route
@@ -73,14 +77,13 @@ io.on('connection',(socket)=>{
        Users.findByCredentials(body.email,body.password).then((user)=>{
 //           Usery = JSON.parse(JSON.stringify(user));
            res.header('x-auth',user.tokens[0].token);
-
-           Usery = user;
+           
                res.redirect(url.format({
                   pathname:"mainPage.html",
                   query: {
                      "email": user.email,
                      "username": user.username,
-                     "fullname": user.fullname,
+                     "fullname": user.fullname
                    }
                }));
            
@@ -111,13 +114,6 @@ io.on('connection',(socket)=>{
             $inc : {
                 'like' : 1
             }
-        },function(err,data){
-            if(err){
-                console.log(err);
-            }
-            else{
-                console.log(data);
-            }
         });
     });
     
@@ -130,15 +126,18 @@ io.on('connection',(socket)=>{
             $inc : {
                 'like' : -1
             }
-        },function(err,data){
-            if(err){
-                console.log(err);
-            }
-            else{
-                console.log(data);
-            }
         });
-    });    
+    });
+    
+    socket.on('pageLoad',(info)=>{
+        Images.find({}, function(err, docs) {
+            if (!err){ 
+                socket.emit('allImages', docs);
+            } else {
+                throw err;
+            }
+        });         
+    });
     
 });
 

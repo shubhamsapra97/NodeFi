@@ -44,6 +44,24 @@ if($("body").data("title") === "mainPage"){
     
     var fileUpload = document.getElementById('fileUpload');
     
+      $(function(){
+            socket.emit('pageLoad',{});
+      });
+    var like;
+    socket.on('allImages',function(images){
+        for(var i=0;i<images.length;i++){
+           like = images[i].like + " Likes";
+           var template = document.getElementById("post-template").innerHTML;
+           var html = Mustache.render(template,{
+               user: images[i].username,
+               url: images[i].url,
+               time: images[i].time,
+               like: like
+           });
+           document.getElementById("allPosts").innerHTML += html;
+        }
+    });
+    
     fileUpload.addEventListener('change',function(e){
         var file = event.target.files[0];
         var formData = new FormData();
@@ -61,12 +79,14 @@ if($("body").data("title") === "mainPage"){
         }).then(function(res){
            //moment to fetch the time-date     
            var time = moment(moment().valueOf()).format('h:mm a  MM-DD-YYYY');
+           var likes = 0+" Likes";
            //Mustache Templating    
            var template = document.getElementById("post-template").innerHTML;
            var html = Mustache.render(template,{
                user: params.username,
                url: res.data.secure_url,
-               time: time
+               time: time,
+               like: likes
            });
            document.getElementById("allPosts").innerHTML += html;
  
@@ -101,8 +121,10 @@ if($("body").data("title") === "mainPage"){
     }
     document.addEventListener('click', function (e) {
         if (hasClass(e.target, 'postLike')) {
+            var c = $(e.target).parent().next().text();
             if($(e.target).hasClass('fa-heart')) {  
                 $(e.target).removeClass('fa-heart').addClass('fa-heart-o').css({"color": ""});
+                $(e.target).parent().next().text(parseInt(c) - 1 + " Likes");
                 socket.emit('Dislike',{
                    name: e.target.title,
                    url: e.target.id
@@ -110,6 +132,7 @@ if($("body").data("title") === "mainPage"){
             }
             else{
                 $(e.target).css({"color": "red"}).removeClass('fa-heart-o').addClass('fa-heart');
+                $(e.target).parent().next().text(parseInt(c) + 1 + " Likes");
                 socket.emit('Like',{
                    name: e.target.title,
                    url: e.target.id
