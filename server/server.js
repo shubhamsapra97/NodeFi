@@ -77,7 +77,7 @@ io.on('connection',(socket)=>{
        Users.findByCredentials(body.email,body.password).then((user)=>{
 //           Usery = JSON.parse(JSON.stringify(user));
            res.header('x-auth',user.tokens[0].token);
-           
+               //redirecting along with some currenltly logged in user info
                res.redirect(url.format({
                   pathname:"mainPage.html",   
                   query: {
@@ -90,7 +90,7 @@ io.on('connection',(socket)=>{
        });
       
     });
-    
+    //On ProfileButton Click
     app.post('/profile',(req,res)=>{
         var body = _.pick(req.body,['email','username','fullname']);
         console.log(body);
@@ -102,6 +102,29 @@ io.on('connection',(socket)=>{
              "fullname": body.fullname
            }
         }));
+        console.log("Done");
+    });
+    //Profile Update Route
+    app.post('/update',(req,res)=>{
+        var body = _.pick(req.body,['email','username','fullname','website','location','url']);
+        Users.findOneAndUpdate(
+        { 
+            email :body.email 
+        },
+        { 
+            $set:
+            { 
+                username: body.username,
+                fullname: body.fullname,
+                website: body.website,
+                location: body.location,
+                url: body.url
+            }
+        },
+        function(err, user) {
+            console.log('Profile Updated');
+        });
+        res.redirect('/mainPage.html');
     });
     
     //Saving new image to db
@@ -142,7 +165,7 @@ io.on('connection',(socket)=>{
             }
         });
     });
-    
+    //Fetching all the images from DB
     socket.on('pageLoad',(info)=>{
         Images.find({}, function(err, docs) {
             if (!err){ 
@@ -154,7 +177,7 @@ io.on('connection',(socket)=>{
     });
     
 });
-
+//Server Started
 server.listen(port,()=>{
    console.log(`Server is up on port ${port}`); 
 });

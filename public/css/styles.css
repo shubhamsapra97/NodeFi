@@ -95,6 +95,17 @@ hr{
     padding-top: 1px;
 }
 
+#profilePic{
+    margin-left: 42vw;
+    width: 150px;
+    height: 150px;
+    border-radius: 30px;
+}
+
+#fileUpload{
+    margin-left: 42vw;
+}
+
 @media only screen and (max-width: 1100px)  and (min-width: 768px)  {
 
     #nav-right{

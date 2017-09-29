@@ -31,6 +31,18 @@ var UserSchema = new mongoose.Schema({
     required: true,
     minlength: 1
   },
+  website: {
+      type: String,
+      required: false
+  },
+  location: {
+    type: String,
+    required: false   
+  },  
+  url: {
+    type: String,
+    required: false   
+  },    
   tokens: [{
     access: {
       type: String,

@@ -35,12 +35,11 @@ if($("body").data("title") === "signUpPage"){
 }
 
 //mainPage Js
+var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload';
+var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
 if($("body").data("title") === "mainPage"){
     //fetching info from search url
     var params = $.deparam(window.location.search);
-    
-    var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload';
-    var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
     
     var fileUpload = document.getElementById('fileUpload');
     
@@ -174,5 +173,31 @@ if($("body").data("title") === "profilePage"){
     var params = $.deparam(window.location.search);
     document.getElementById('email').value = params.email;
     document.getElementById('username').value = params.username;
-    document.getElementById('fullname').value = params.fullname;    
+    document.getElementById('fullname').value = params.fullname;
+    var website1 = document.getElementById('website');
+    var location1 = document.getElementById('location');
+
+    var fileUpload = document.getElementById('fileUpload');
+    fileUpload.addEventListener('change',function(e){
+        
+        var file = event.target.files[0];
+        var formData = new FormData();
+        formData.append('file',file);
+        formData.append('upload_preset',CLOUDINARY_UPLOAD_PRESET);
+        
+        //Linking with Cloud
+        axios({
+           url: CLOUDINARY_URL,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            data: formData
+        }).then(function(res){
+           document.getElementById("profilePic").src = res.data.secure_url;
+           document.getElementById("url").value = res.data.secure_url;    
+        });
+        
+    });
+      
 }
