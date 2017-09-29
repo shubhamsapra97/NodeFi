@@ -31,7 +31,7 @@ if($("body").data("title") === "signInPage"){
 
 //signUpPage Js
 if($("body").data("title") === "signUpPage"){
-    
+
 }
 
 //mainPage Js
@@ -152,5 +152,27 @@ if($("body").data("title") === "mainPage"){
 
     }, false);
     
+    $(".updateProfile").click(function(){
+        $.ajax({
+           url : '/profile',
+           type : 'POST',
+           data : {
+             username: params.username,
+             fullname: params.fullname,
+             email: params.email   
+           },
+           success : function(data){
+              window.location.replace(data);   
+           }
+        });
+        
+    });
+    
 }
 
+if($("body").data("title") === "profilePage"){
+    var params = $.deparam(window.location.search);
+    document.getElementById('email').value = params.email;
+    document.getElementById('username').value = params.username;
+    document.getElementById('fullname').value = params.fullname;    
+}

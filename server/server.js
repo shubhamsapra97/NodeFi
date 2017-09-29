@@ -79,7 +79,7 @@ io.on('connection',(socket)=>{
            res.header('x-auth',user.tokens[0].token);
            
                res.redirect(url.format({
-                  pathname:"mainPage.html",
+                  pathname:"mainPage.html",   
                   query: {
                      "email": user.email,
                      "username": user.username,
@@ -89,6 +89,19 @@ io.on('connection',(socket)=>{
            
        });
       
+    });
+    
+    app.post('/profile',(req,res)=>{
+        var body = _.pick(req.body,['email','username','fullname']);
+        console.log(body);
+        res.send(url.format({
+          pathname:"profile.html",   
+          query: {
+             "email": body.email,
+             "username": body.username,
+             "fullname": body.fullname
+           }
+        }));
     });
     
     //Saving new image to db
