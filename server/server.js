@@ -1,3 +1,4 @@
+// Importing the libraries
 const path = require('path');
 const express = require('express');
 const socketIO = require('socket.io');
@@ -30,6 +31,7 @@ app.set('view engine', 'html');
 var {Users} = require('./models/user');
 var {Images} = require('./models/images');
 
+//Cloud Configured
 cloudinary.config({ 
   cloud_name: 'https-blog-5946b-firebaseapp-com', 
   api_key: '456286155712342', 
@@ -45,17 +47,19 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+//User Connected
 io.on('connection',(socket)=>{
     
     console.log('New user connected');
     
+    //User  Disconnected
     socket.on('disconnect',()=>{
        console.log('User was disconnected'); 
     });
     
     //SignUp Route
     app.post('/signUp',(req,res)=>{
-        var body = _.pick(req.body,['email','fullname','username','password']);
+        var body = _.pick(req.body,['email','location','username','password']);
         var user = new Users(body);
         user.save().then(()=>{
             res.redirect(url.format({
@@ -63,7 +67,7 @@ io.on('connection',(socket)=>{
                   query: {
                      "email": body.email,
                      "username": body.username,
-                     "fullname": body.fullname
+                     "location": body.location
                    }
             }));
         }).catch((e)=>{
@@ -83,7 +87,7 @@ io.on('connection',(socket)=>{
                   query: {
                      "email": user.email,
                      "username": user.username,
-                     "fullname": user.fullname
+                     "location": user.location
                    }
                }));
            
@@ -92,18 +96,15 @@ io.on('connection',(socket)=>{
     });
     //On ProfileButton Click
     app.post('/profile',(req,res)=>{
-        var body = _.pick(req.body,['email','username','fullname']);
-        console.log(body);
+        var body = _.pick(req.body,['email']);
         res.send(url.format({
           pathname:"profile.html",   
           query: {
-             "email": body.email,
-             "username": body.username,
-             "fullname": body.fullname
+             "email": body.email
            }
         }));
-        console.log("Done");
     });
+    
     //Profile Update Route
     app.post('/update',(req,res)=>{
         var body = _.pick(req.body,['email','username','fullname','website','location','url']);
@@ -123,8 +124,13 @@ io.on('connection',(socket)=>{
         },
         function(err, user) {
             console.log('Profile Updated');
+            res.redirect(url.format({
+                pathname:"mainPage.html",   
+                query: {
+                    "email": user.email
+                }
+            }));
         });
-        res.redirect('/mainPage.html');
     });
     
     //Saving new image to db
@@ -135,7 +141,8 @@ io.on('connection',(socket)=>{
           url: user.imageUrl,
           time: user.time,
           like: 0,
-          status: user.status   
+          status: user.status,
+          location: user.location   
        });
        image.save().then((image)=>{
            console.log(`Image Uploaded to DB by ${image.username}`);
@@ -151,6 +158,8 @@ io.on('connection',(socket)=>{
             $inc : {
                 'like' : 1
             }
+        }).then((image)=>{
+    
         });
     });
     
@@ -163,8 +172,11 @@ io.on('connection',(socket)=>{
             $inc : {
                 'like' : -1
             }
+        }).then((image)=>{
+            console.log(image);
         });
     });
+    
     //Fetching all the images from DB
     socket.on('pageLoad',(info)=>{
         Images.find({}, function(err, docs) {
@@ -174,6 +186,24 @@ io.on('connection',(socket)=>{
                 throw err;
             }
         });         
+    });
+    
+    // Event received as soon as mainPage loads 
+    socket.on('userInfo',(info)=>{
+        console.log(info);
+        Users.findByEmail(info.email).then((user)=>{
+            console.log(user);
+            socket.emit('UserInfo', user);
+        });
+    });
+    
+    // sending user info on profile page load
+    socket.on('profileuserInfo',(info)=>{
+        console.log(info);
+        Users.findByEmail(info.email).then((user)=>{
+            console.log(user);
+            socket.emit('profileUserInfo', user);
+        });
     });
     
 });

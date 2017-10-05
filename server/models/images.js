@@ -27,7 +27,11 @@ var UserSchema = new mongoose.Schema({
   status:{
       type: String,
       required: false
-  }     
+  },
+  location: {
+      type: String,
+      required: false
+  }    
 });
 
 UserSchema.statics.findByCredentials = function(username,time){

@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
+
 var UserSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -28,7 +29,7 @@ var UserSchema = new mongoose.Schema({
   },
   fullname: {
     type: String,
-    required: true,
+    required: false,
     minlength: 1
   },
   website: {
@@ -37,7 +38,7 @@ var UserSchema = new mongoose.Schema({
   },
   location: {
     type: String,
-    required: false   
+    required: true   
   },  
   url: {
     type: String,
@@ -59,7 +60,7 @@ UserSchema.methods.toJSON = function(){
     var user = this;
     var userObject = user.toObject();
     
-    return _.pick(userObject,['email','username','fullname']);
+    return _.pick(userObject,['email','username','fullname','website','location','url']);
 }
 
 UserSchema.methods.generateAuthToken = function(){
@@ -95,6 +96,21 @@ UserSchema.statics.findByCredentials = function(email,password){
 
       });
     });
+
+  });
+};
+
+UserSchema.statics.findByEmail = function(email){
+  var User = this;
+
+  return Users.findOne({email}).then((user)=>{
+
+    if(!user){
+      return Promise.reject();
+    }
+    else{
+      return Promise.resolve(user);    
+    }
 
   });
 };

@@ -11,17 +11,14 @@ socket.on('disconnect',function(){
 //index.html Js
 if($("body").data("title") === "index"){
     
-    socket.on('onSignUp' , function(user){
-        console.log('user');
-    });
-    
     $("#SignInButton").click(function(){
        window.location = 'signIn.html'; 
     });
     
     $("#SignUpButton").click(function(){
        window.location = 'signUp.html'; 
-    });    
+    });   
+    
 }
 
 //SignIn Page Js
@@ -43,9 +40,14 @@ if($("body").data("title") === "mainPage"){
     
     var fileUpload = document.getElementById('fileUpload');
     
-      $(function(){
-            socket.emit('pageLoad',{});
-      });
+    //Fetches user info and all posts as soon as page loads
+    $(function(){
+        socket.emit('pageLoad',{});
+        socket.emit('userInfo',{
+            email: params.email
+        });
+     });
+    
     var like;
     socket.on('allImages',function(images){
         for(var i=0;i<images.length;i++){
@@ -59,12 +61,22 @@ if($("body").data("title") === "mainPage"){
                url: images[i].url,
                time: images[i].time,
                like: like,
-               status: images[i].status
+               status: images[i].status,
+               location: images[i].location
            });
            document.getElementById("allPosts").innerHTML += html;
         }
     });
+    
+    var currentUser = {};
+    //current user info received
+    socket.on('UserInfo',function(user){
+         currentUser = Object.assign({}, user); 
+//         console.log(currentUser);
+    });
+    
     var status;
+    //Post Upload button click 
     fileUpload.addEventListener('change',function(e){
         status = $("#statusText").val(); 
         var file = event.target.files[0];
@@ -87,11 +99,12 @@ if($("body").data("title") === "mainPage"){
            //Mustache Templating    
            var template = document.getElementById("post-template").innerHTML;
            var html = Mustache.render(template,{
-               user: params.username,
+               user: currentUser.username,
                url: res.data.secure_url,
                time: time,
                like: likes,
-               status: status
+               status: status,
+               location: currentUser.location
            });
            document.getElementById("allPosts").innerHTML += html;
  
@@ -108,11 +121,12 @@ if($("body").data("title") === "mainPage"){
            
            // Sending data to server on image upload   
            socket.emit('onPost',{
-               email:params.email,
-               username:params.username,
+               email:currentUser.email,
+               username:currentUser.username,
                imageUrl:res.data.secure_url,
                time: time,
-               status: status
+               status: status,
+               location: currentUser.location
            });
             
         }).catch(function(err){
@@ -151,14 +165,18 @@ if($("body").data("title") === "mainPage"){
 
     }, false);
     
+    // Ajax request to redirect from main page to profile page along with user info
     $(".updateProfile").click(function(){
         $.ajax({
            url : '/profile',
            type : 'POST',
            data : {
-             username: params.username,
-             fullname: params.fullname,
-             email: params.email   
+             username: currentUser.username,
+             location: currentUser.location,
+             email: currentUser.email,
+             fullname: currentUser.fullname,
+             website: currentUser.website,
+             url: currentUser.url   
            },
            success : function(data){
               window.location.replace(data);   
@@ -171,12 +189,33 @@ if($("body").data("title") === "mainPage"){
 
 if($("body").data("title") === "profilePage"){
     var params = $.deparam(window.location.search);
-    document.getElementById('email').value = params.email;
-    document.getElementById('username').value = params.username;
-    document.getElementById('fullname').value = params.fullname;
-    var website1 = document.getElementById('website');
-    var location1 = document.getElementById('location');
-
+    
+    //Fetches all user info as soon as page loads
+    $(function(){
+        socket.emit('profileuserInfo',{
+            email: params.email
+        });
+    });
+    
+    //Fetching profile user info
+    socket.on('profileUserInfo',function(user){
+        // Autofilling Info already provided by user
+        document.getElementById('email').value = user.email;
+        document.getElementById('username').value = user.username;
+        document.getElementById('location').value = user.location; 
+        if(user.website){
+            document.getElementById('website').value = user.website;
+        }
+        if(user.fullname){
+            document.getElementById('fullname').value = user.fullname;
+        }
+        if(user.url){
+            document.getElementById('profilePic').src = user.url;
+            document.getElementById('url').value = user.url;
+        }
+    });
+    
+    // Uploading User Display Pic to Cloud 
     var fileUpload = document.getElementById('fileUpload');
     fileUpload.addEventListener('change',function(e){
         
