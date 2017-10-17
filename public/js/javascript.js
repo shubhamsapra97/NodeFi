@@ -50,10 +50,11 @@ if($("body").data("title") === "mainPage"){
     
     var like;
     socket.on('allImages',function(images){
+        var postStatus = document.getElementsByClassName('.postStatus');
         for(var i=0;i<images.length;i++){
            like = images[i].like + " Likes";
-           if(images[i].status === ''){ 
-               $(".postStatus").css('display','none');
+           if(!images[i].status){ 
+//               console.log(postStatus);
            }     
            var template = document.getElementById("post-template").innerHTML;
            var html = Mustache.render(template,{
@@ -62,7 +63,8 @@ if($("body").data("title") === "mainPage"){
                time: images[i].time,
                like: like,
                status: images[i].status,
-               location: images[i].location
+               location: images[i].location,
+               dp: images[i].userDp
            });
            document.getElementById("allPosts").innerHTML += html;
         }
@@ -104,7 +106,8 @@ if($("body").data("title") === "mainPage"){
                time: time,
                like: likes,
                status: status,
-               location: currentUser.location
+               location: currentUser.location,
+               dp: currentUser.url
            });
            document.getElementById("allPosts").innerHTML += html;
  
@@ -126,7 +129,8 @@ if($("body").data("title") === "mainPage"){
                imageUrl:res.data.secure_url,
                time: time,
                status: status,
-               location: currentUser.location
+               location: currentUser.location,
+               url: currentUser.url
            });
             
         }).catch(function(err){
@@ -169,6 +173,25 @@ if($("body").data("title") === "mainPage"){
     $(".updateProfile").click(function(){
         $.ajax({
            url : '/profile',
+           type : 'POST',
+           data : {
+             username: currentUser.username,
+             location: currentUser.location,
+             email: currentUser.email,
+             fullname: currentUser.fullname,
+             website: currentUser.website,
+             url: currentUser.url   
+           },
+           success : function(data){
+              window.location.replace(data);   
+           }
+        });
+        
+    });
+    
+    $(".personalAcc").click(function(){
+        $.ajax({
+           url : '/userAcc',
            type : 'POST',
            data : {
              username: currentUser.username,
