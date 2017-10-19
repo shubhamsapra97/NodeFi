@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var mongooseRedisCache = require("mongoose-redis-cache");
 
 var UserSchema = new mongoose.Schema({
   email: {
@@ -31,7 +32,15 @@ var UserSchema = new mongoose.Schema({
   location: {
       type: String,
       required: false
-  }    
+  },
+  userDp: {
+      type: String,
+      required: false 
+  },
+  userLiked: [{
+      type: String,
+      required: false
+  }]    
 });
 
 UserSchema.statics.findByCredentials = function(username,time){

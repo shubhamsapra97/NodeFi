@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="css/styles.css">
     </head>
-    <body data-title='mainPage'>
+    <body data-title='userAcc'>
         <nav class="navbar navbar-default">
           <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -37,7 +37,7 @@
                   <li data-toggle="modal" data-target="#exampleModal">
                       <i id='PostInput' class="fa fa-compass user-nav" aria-hidden="true"></i>
                   </li> 
-                  <li><i class="updateProfile fa fa-heart-o user-nav profile" aria-hidden="true"></i></li>
+                  <li><i class="fa fa-heart-o user-nav profile" aria-hidden="true"></i></li>
                   <li><i class="fa fa-user-o user-nav" aria-hidden="true"></i></li>
               </ul>
             </div><!-- /.navbar-collapse -->
@@ -72,38 +72,42 @@
           </div>
         </div>
         
-<!--
-        <div id="allPosts">
-
-        </div>
--->
+        <div id="header">
         
-        <script id="post-template" type="text/x-handlebars-template">
-                <div class="posts">
-                    <div class="posts-header">
-                        <img src="{{dp}}" class="profilePic img-circle">
-                        <ul class="postHeading">
-                            <li><span>{{user}}</span></li>
-                            <li><span class='UserLoc'>{{location}}</span></li>
-                        </ul>
+        </div>
+        
+        <div id="Posts">
+            <div id="contain">
+                <div id="overlay">
+                  <div id="text">Overlay Text</div>
+                </div>
+            </div>
+        </div>
+        
+        <script id="user-template" type="text/x-handlebars-template">
+            <div class="head">
+                <div><img id="userprofilePic" src="{{dp}}" class="rounded-circle"></div>
+                <div class="userInfo">
+                    <div>
+                        <span class="Name">{{user}}</span>
+                        <input class="updateProfile" type="button" value="Edit Profile" />
                     </div>
-                    <div class="post">
-                        <img src="{{url}}" class="img-responsive postImage">
-                    </div>
-                    <div class="postOptions">
-                        <i class="fa fa-heart-o postLike" aria-hidden="true" id="{{url}}" title="{{user}}"></i>
-                        <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
-                    </div>
-                    <div class="postLikesNum">
-                        <span>{{like}} </span>
-                    </div>
-                    <div class="postStatus">
-                        <span class="UserName">{{user}}</span><span class="statusContent">{{status}}</span>
-                    </div>
-                    <div class="postTime">
-                        <span>{{time}}</span>
+                    <div class="activity">
+                        <span class="numOfposts">{{posts}} </span><span>Posts</span>
+                        <span class="info followers">88 </span><span>followers</span>
+                        <span class="info following">116 </span><span>following</span>
                     </div>
                 </div>
+            </div>
+        </script>
+        
+        <script id="post-template" type="text/x-handlebars-template">
+            <div id="overlay">
+              <div id="text">Overlay Text</div>
+            </div>
+            <div class="userPosts">
+                <img src="{{url}}" class="img-responsive OnePost">
+            </div>
         </script>
         
         <script src="/js/libs/jquery-3.1.1.min.js"></script>

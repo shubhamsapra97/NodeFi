@@ -3,6 +3,7 @@ const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
+var mongooseRedisCache = require("mongoose-redis-cache");
 
 
 var UserSchema = new mongoose.Schema({
@@ -43,6 +44,10 @@ var UserSchema = new mongoose.Schema({
   url: {
     type: String,
     required: false   
+  },
+  posts:{
+    type: Number,
+    required: false
   },    
   tokens: [{
     access: {
@@ -55,6 +60,9 @@ var UserSchema = new mongoose.Schema({
     }
   }]
 });
+
+UserSchema.set('redisCache', true);
+UserSchema.set('expires', 30);
 
 UserSchema.methods.toJSON = function(){
     var user = this;
@@ -78,7 +86,7 @@ UserSchema.methods.generateAuthToken = function(){
 UserSchema.statics.findByCredentials = function(email,password){
   var User = this;
 
-  return Users.findOne({email}).then((user)=>{
+  return Users.findOne({email}).lean().then((user)=>{
 
     if(!user){
       return Promise.reject();
@@ -103,7 +111,7 @@ UserSchema.statics.findByCredentials = function(email,password){
 UserSchema.statics.findByEmail = function(email){
   var User = this;
 
-  return Users.findOne({email}).then((user)=>{
+  return Users.findOne({email}).lean().then((user)=>{
 
     if(!user){
       return Promise.reject();
@@ -132,5 +140,11 @@ UserSchema.pre('save',function(next){
 });
 
 var Users = mongoose.model('Users' , UserSchema);
+mongooseRedisCache(mongoose, {
+  engine: 'redis',
+  port: 27017,
+  host: 'localhost'
+});
+
 
 module.exports = {Users};

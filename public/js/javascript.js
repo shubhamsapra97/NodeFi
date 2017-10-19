@@ -42,20 +42,27 @@ if($("body").data("title") === "mainPage"){
     
     //Fetches user info and all posts as soon as page loads
     $(function(){
-        socket.emit('pageLoad',{});
         socket.emit('userInfo',{
             email: params.email
         });
+        socket.emit('pageLoad',{});
      });
     
-    var like;
+    var like,index,likeIcon;
+    var currentUser = {};
+    var likesArray = new Array();
     socket.on('allImages',function(images){
         var postStatus = document.getElementsByClassName('.postStatus');
         for(var i=0;i<images.length;i++){
            like = images[i].like + " Likes";
-           if(!images[i].status){ 
-//               console.log(postStatus);
-           }     
+           likesArray = images[i].userLiked;            
+           index = likesArray.indexOf(currentUser.username);
+           if(index>-1){
+               likeIcon = 'fa-heart';
+           }
+            else{
+                likeIcon = 'fa-heart-o';
+            }   
            var template = document.getElementById("post-template").innerHTML;
            var html = Mustache.render(template,{
                user: images[i].username,
@@ -64,17 +71,51 @@ if($("body").data("title") === "mainPage"){
                like: like,
                status: images[i].status,
                location: images[i].location,
-               dp: images[i].userDp
+               dp: images[i].userDp,
+               likeIcon: likeIcon               
            });
-           document.getElementById("allPosts").innerHTML += html;
+           $("#allPosts").prepend(html);
         }
     });
     
-    var currentUser = {};
     //current user info received
     socket.on('UserInfo',function(user){
-         currentUser = Object.assign({}, user); 
-//         console.log(currentUser);
+        currentUser = Object.assign({}, user); 
+            //Like and Dislike Button Functionality
+        var c;
+        function hasClass(elem, className) {
+            return elem.className.split(' ').indexOf(className) > -1;
+        }
+
+        document.addEventListener('click', function (e) {
+            if (hasClass(e.target, 'postLike')) {
+                c = $(e.target).parent().next().text();
+                if($(e.target).hasClass('fa-heart')) {  
+                    $(e.target).removeClass('fa-heart').addClass('fa-heart-o');
+                    $(e.target).parent().next().text(parseInt(c) - 1 + " Likes");
+                    var index = likesArray.indexOf(currentUser.username);
+                    likesArray.splice(index, 1);
+                    socket.emit('Dislike',{
+                        name: e.target.title,
+                        url: e.target.id,
+                        user: currentUser.username
+                    });
+                }
+                else{
+                    $(e.target).removeClass('fa-heart-o').addClass('fa-heart');
+                    $(e.target).parent().next().text(parseInt(c) + 1 + " Likes");
+                    likesArray.push(currentUser.username);
+                    socket.emit('Like',{
+                        name: e.target.title,
+                        url: e.target.id,
+                        user: currentUser.username
+                    });
+                }
+            } else if (hasClass(e.target, 'postComment')) {
+                alert('test');
+            }
+
+        }, false);
     });
     
     var status;
@@ -107,9 +148,10 @@ if($("body").data("title") === "mainPage"){
                like: likes,
                status: status,
                location: currentUser.location,
-               dp: currentUser.url
+               dp: currentUser.url,
+               likeIcon: 'fa-heart-o'
            });
-           document.getElementById("allPosts").innerHTML += html;
+           $("#allPosts").prepend(html);
  
 // Handlebars Templating
             
@@ -137,56 +179,6 @@ if($("body").data("title") === "mainPage"){
             console.log(err);
         });
     
-    });
-    
-    //Like and Dislike Button Functionality
-    var c;
-    function hasClass(elem, className) {
-        return elem.className.split(' ').indexOf(className) > -1;
-    }
-    document.addEventListener('click', function (e) {
-        if (hasClass(e.target, 'postLike')) {
-            c = $(e.target).parent().next().text();
-            if($(e.target).hasClass('fa-heart')) {  
-                $(e.target).removeClass('fa-heart').addClass('fa-heart-o').css({"color": ""});
-                $(e.target).parent().next().text(parseInt(c) - 1 + " Likes");
-                socket.emit('Dislike',{
-                   name: e.target.title,
-                   url: e.target.id
-                });
-            }
-            else{
-                $(e.target).css({"color": "red"}).removeClass('fa-heart-o').addClass('fa-heart');
-                $(e.target).parent().next().text(parseInt(c) + 1 + " Likes");
-                socket.emit('Like',{
-                   name: e.target.title,
-                   url: e.target.id
-                });
-            }
-        } else if (hasClass(e.target, 'postComment')) {
-            alert('test');
-        }
-
-    }, false);
-    
-    // Ajax request to redirect from main page to profile page along with user info
-    $(".updateProfile").click(function(){
-        $.ajax({
-           url : '/profile',
-           type : 'POST',
-           data : {
-             username: currentUser.username,
-             location: currentUser.location,
-             email: currentUser.email,
-             fullname: currentUser.fullname,
-             website: currentUser.website,
-             url: currentUser.url   
-           },
-           success : function(data){
-              window.location.replace(data);   
-           }
-        });
-        
     });
     
     $(".personalAcc").click(function(){
@@ -262,4 +254,95 @@ if($("body").data("title") === "profilePage"){
         
     });
       
+}
+
+if($("body").data("title") === "userAcc"){
+    var params = $.deparam(window.location.search);
+    $(function(){
+        socket.emit('userInfo',{
+            email: params.email
+        });
+        socket.emit('userPosts',{
+            email: params.email
+        });
+    });
+    
+    var currentUser = {};
+    //current user info received
+    socket.on('UserInfo',function(user){
+        currentUser = Object.assign({}, user);
+        console.log(currentUser);
+        
+        var template = document.getElementById("user-template").innerHTML;
+        var html = Mustache.render(template,{
+           user: currentUser.username,
+           fullname: currentUser.fullname,    
+           location: currentUser.location,
+           dp: currentUser.url,
+           website: currentUser.website,
+           email: currentUser.email,
+           posts: currentUser.posts    
+        });
+        document.getElementById("header").innerHTML += html;
+        
+        // Ajax request to redirect from main page to profile page along with user info
+        $(".updateProfile").click(function(){
+            $.ajax({
+               url : '/profile',
+               type : 'POST',
+               data : {
+                 username: currentUser.username,    
+                 location: currentUser.location,
+                 email: currentUser.email,
+                 fullname: currentUser.fullname,
+                 website: currentUser.website,
+                 url: currentUser.url   
+               },
+               success : function(data){
+                  window.location.replace(data);   
+               }
+            });
+        });        
+        
+    });
+    
+    socket.on('userImages',function(images){
+        for(var i=0;i<images.length;i++){    
+           var template = document.getElementById("post-template").innerHTML;
+           var html = Mustache.render(template,{
+               user: images[i].username,
+               url: images[i].url,
+               time: images[i].time,
+               like: images[i].like,
+               status: images[i].status,
+               location: images[i].location,
+               dp: images[i].userDp
+           });
+           $("#Posts").prepend(html);
+        }
+    });
+ 
+//OVERLAY ON USER POSTS    
+//    function hasClass(elem, className) {
+//        return elem.className.split(' ').indexOf(className) > -1;
+//    }
+//    document.addEventListener('mouseover', function (e) {
+//        if (hasClass(e.target, 'OnePost')) {
+//               var top = document.getElementsByClassName(e.target.classList[1]);
+//                alert(top);
+//               document.getElementById("overlay").style.display = "block";
+//        } else{
+//            
+//        }
+//
+//    }, false);
+//    document.addEventListener('mouseout', function (e) {
+//        if (hasClass(e.target, 'OnePost')) {
+//               document.getElementById("overlay").style.display = "none";
+//        } else{
+//            
+//        }
+//
+//    }, false);
+    
 }

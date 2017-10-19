@@ -37,7 +37,7 @@
                   <li data-toggle="modal" data-target="#exampleModal">
                       <i id='PostInput' class="fa fa-compass user-nav" aria-hidden="true"></i>
                   </li> 
-                  <li><i class="updateProfile fa fa-heart-o user-nav profile" aria-hidden="true"></i></li>
+                  <li><i class="fa fa-heart-o user-nav profile" aria-hidden="true"></i></li>
                   <li><i class="personalAcc fa fa-user-o user-nav" aria-hidden="true"></i></li>
               </ul>
             </div><!-- /.navbar-collapse -->
@@ -89,7 +89,7 @@
                         <img src="{{url}}" class="img-responsive postImage">
                     </div>
                     <div class="postOptions">
-                        <i class="fa fa-heart-o postLike" aria-hidden="true" id="{{url}}" title="{{user}}"></i>
+                        <i class="fa {{likeIcon}} postLike" aria-hidden="true" id="{{url}}" title="{{user}}"></i>
                         <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
                     </div>
                     <div class="postLikesNum">

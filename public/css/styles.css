@@ -80,6 +80,10 @@ hr{
     padding-top: 5px;
 }
 
+.Name{
+    font-size: 3vw;
+}
+
 .statusContent{
     padding-left: 10px;
 }
@@ -91,8 +95,68 @@ hr{
     padding-top: 5px;
 }
 
+.head{
+    display: flex;
+}
+
+.info{
+    padding-left: 20px;
+    font-weight: bold;
+}
+
+.numOfposts{
+    font-weight: bold;
+}
+
+#overlay {
+    position: fixed;
+    display: none;
+    width: 24vw;
+    height: 23vw;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
+    cursor: pointer;
+}
+
+.fa-heart{
+    color: red;
+}
+
+#text{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 50px;
+    color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+}
+
+.OnePost{
+    width: 24vw;
+    height: 23vw;
+    min-width: 150px;
+    min-height: 150px;
+    padding-left: 10px;    
+    padding-bottom: 10px;
+}
+
+#Posts{
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 12vw;
+    margin-right: auto;
+    margin-top: 5vw;
+    margin-bottom: 5vh;
+}
+
 .postStatus{
     padding-top: 1px;
+}
+
+.activity{
+    margin-top: 12px;
+    font-size: 2vw;
 }
 
 #profilePic{
@@ -100,6 +164,19 @@ hr{
     width: 150px;
     height: 150px;
     border-radius: 30px;
+}
+
+#userprofilePic{
+    margin-left: 18vw;
+    margin-top: 6vh;
+    width: 15vw;
+    height: 15vw;
+    border-radius: 100px;    
+}
+
+.userInfo{
+    margin-left: 15vw;
+    margin-top: 7vh;
 }
 
 #fileUpload{
@@ -118,6 +195,67 @@ hr{
     }
     .submitForm{
       padding-left: 23vw;
+    }
+
+}
+
+@media only screen and (max-width: 550px)  and (min-width: 510px)  {
+
+    #Posts{
+        margin-left: 9vw;
+    }
+    
+    #userprofilePic{
+        width: 18vw;
+        height: 18vw;   
+    }
+    
+    .activity{
+        font-size: 3vw;
+    }
+    
+    .Name{
+        font-size: 3.5vw;
+    }
+
+}
+
+@media only screen and (max-width: 510px) and (min-width: 500px) {
+
+    #Posts{
+        margin-left: 5vw;
+    }
+    
+    #userprofilePic{
+        width: 18vw;
+        height: 18vw;   
+    }
+    
+    .activity{
+        font-size: 3.5vw;
+    }    
+
+}
+
+@media only screen and (max-width: 500px) {
+
+    #Posts{
+        margin-left: 2vw;
+        margin-right: auto;
+        margin-top: 7vw;
+    }
+    
+    #userprofilePic{
+        width: 18vw;
+        height: 18vw;   
+    }
+    
+    .activity{
+        font-size: 3.5vw;
+    }
+    
+    .Name{
+        font-size: 3.5vw;
     }
 
 }

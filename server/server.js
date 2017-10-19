@@ -61,6 +61,7 @@ io.on('connection',(socket)=>{
     app.post('/signUp',(req,res)=>{
         var body = _.pick(req.body,['email','location','username','password']);
         var user = new Users(body);
+        user.posts = 0;
         user.save().then(()=>{
             res.redirect(url.format({
                   pathname:"mainPage.html",
@@ -79,15 +80,11 @@ io.on('connection',(socket)=>{
     app.post('/mainPage',(req,res)=>{
        var body = _.pick(req.body,['email','password']);       
        Users.findByCredentials(body.email,body.password).then((user)=>{
-//           Usery = JSON.parse(JSON.stringify(user));
-           res.header('x-auth',user.tokens[0].token);
                //redirecting along with some currenltly logged in user info
                res.redirect(url.format({
                   pathname:"mainPage.html",   
                   query: {
-                     "email": user.email,
-                     "username": user.username,
-                     "location": user.location
+                     "email": user.email
                    }
                }));
            
@@ -103,6 +100,16 @@ io.on('connection',(socket)=>{
              "email": body.email
            }
         }));
+    });
+    
+    app.post('/userAcc',(req,res)=>{
+        var body = _.pick(req.body,['email']);
+        res.send(url.format({
+          pathname:"userAcc.html",   
+          query: {
+             "email": body.email
+           }
+        }));        
     });
     
     //Profile Update Route
@@ -142,11 +149,21 @@ io.on('connection',(socket)=>{
           time: user.time,
           like: 0,
           status: user.status,
-          location: user.location   
+          location: user.location,
+          userDp: user.url   
        });
        image.save().then((image)=>{
            console.log(`Image Uploaded to DB by ${image.username}`);
-       });       
+       });
+       Users.findOneAndUpdate({
+           email: user.email
+       },{
+           $inc: {
+               'posts': 1
+           }
+       }).then((image)=>{
+           
+       });    
     });
     
     //Like Functionality
@@ -157,7 +174,10 @@ io.on('connection',(socket)=>{
         }, {
             $inc : {
                 'like' : 1
-            }
+            },
+            $push : {
+                'userLiked' : info.user    
+        }
         }).then((image)=>{
     
         });
@@ -171,37 +191,48 @@ io.on('connection',(socket)=>{
         }, {
             $inc : {
                 'like' : -1
+            },
+            $pull : {
+                'userLiked' : info.user
             }
         }).then((image)=>{
-            console.log(image);
+            
         });
     });
     
     //Fetching all the images from DB
     socket.on('pageLoad',(info)=>{
-        Images.find({}, function(err, docs) {
+        Images.find({}).lean().exec(function(err, docs) {
             if (!err){ 
                 socket.emit('allImages', docs);
             } else {
                 throw err;
             }
-        });         
+        });
+    });
+    
+    socket.on('userPosts',(info)=>{
+        Images.find({
+            email: info.email
+        }).lean().exec(function(err, docs) {
+            if (!err){                 
+                socket.emit('userImages', docs);
+            } else {
+                throw err;
+            }
+        });
     });
     
     // Event received as soon as mainPage loads 
     socket.on('userInfo',(info)=>{
-        console.log(info);
         Users.findByEmail(info.email).then((user)=>{
-            console.log(user);
             socket.emit('UserInfo', user);
         });
     });
     
     // sending user info on profile page load
     socket.on('profileuserInfo',(info)=>{
-        console.log(info);
         Users.findByEmail(info.email).then((user)=>{
-            console.log(user);
             socket.emit('profileUserInfo', user);
         });
     });
