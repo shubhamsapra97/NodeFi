@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 var mongooseRedisCache = require("mongoose-redis-cache");
 
 
-var UserSchema = new mongoose.Schema({
+var UserSchema = new mongoose.Schema({  
   email: {
     type: String,
     required: true,
@@ -21,12 +21,16 @@ var UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 6
+    minlength: 6,
+    unique: true,
+    trim: true
   },
   username: {
     type: String,
     required: true,
-    minlength: 6
+    minlength: 6,
+    unique: true,
+    trim: true 
   },
   fullname: {
     type: String,
@@ -68,7 +72,7 @@ UserSchema.methods.toJSON = function(){
     var user = this;
     var userObject = user.toObject();
     
-    return _.pick(userObject,['email','username','fullname','website','location','url']);
+    return _.pick(userObject,['_id','email','username','fullname','website','location','url']);
 }
 
 UserSchema.methods.generateAuthToken = function(){
@@ -108,10 +112,10 @@ UserSchema.statics.findByCredentials = function(email,password){
   });
 };
 
-UserSchema.statics.findByEmail = function(email){
+UserSchema.statics.findByEmail = function(id){
   var User = this;
 
-  return Users.findOne({email}).lean().then((user)=>{
+  return Users.findOne({_id:id}).lean().then((user)=>{
 
     if(!user){
       return Promise.reject();

@@ -60,15 +60,16 @@ io.on('connection',(socket)=>{
     //SignUp Route
     app.post('/signUp',(req,res)=>{
         var body = _.pick(req.body,['email','location','username','password']);
+        var id = mongoose.Types.ObjectId();
         var user = new Users(body);
         user.posts = 0;
+        user._id = id;
+        id = id.toString();
         user.save().then(()=>{
             res.redirect(url.format({
                   pathname:"mainPage.html",
                   query: {
-                     "email": body.email,
-                     "username": body.username,
-                     "location": body.location
+                      id: id
                    }
             }));
         }).catch((e)=>{
@@ -80,34 +81,35 @@ io.on('connection',(socket)=>{
     app.post('/mainPage',(req,res)=>{
        var body = _.pick(req.body,['email','password']);       
        Users.findByCredentials(body.email,body.password).then((user)=>{
-               //redirecting along with some currenltly logged in user info
+            //redirecting along with some currenltly logged in user info
+             var id = (user._id).toString();
                res.redirect(url.format({
                   pathname:"mainPage.html",   
                   query: {
-                     "email": user.email
+                     "id": id
                    }
-               }));
-           
-       });
-      
+               }));           
+       });      
     });
+    
     //On ProfileButton Click
     app.post('/profile',(req,res)=>{
-        var body = _.pick(req.body,['email']);
+        var body = _.pick(req.body,['id']);
         res.send(url.format({
           pathname:"profile.html",   
           query: {
-             "email": body.email
+             "id": body.id
            }
         }));
     });
     
     app.post('/userAcc',(req,res)=>{
-        var body = _.pick(req.body,['email']);
+        var body = _.pick(req.body,['email','id']);
         res.send(url.format({
           pathname:"userAcc.html",   
           query: {
-             "email": body.email
+             "email": body.email,
+              "id": body.id
            }
         }));        
     });
@@ -129,15 +131,36 @@ io.on('connection',(socket)=>{
                 url: body.url
             }
         },
+        {
+            new :true
+        },
         function(err, user) {
+            Images.update(
+            {
+                email:user.email
+            }, 
+            {
+                userDp: user.url,
+                username: user.username,
+                location: user.location
+            },
+            {
+                multi: true
+            }, 
+            function(err,docs) {
+                
+            });
+            
             console.log('Profile Updated');
+            
             res.redirect(url.format({
                 pathname:"mainPage.html",   
                 query: {
-                    "email": user.email
+                    "id": (user._id).toString()
                 }
-            }));
+            }));      
         });
+        
     });
     
     //Saving new image to db
@@ -152,11 +175,13 @@ io.on('connection',(socket)=>{
           location: user.location,
           userDp: user.url   
        });
+           
        image.save().then((image)=>{
            console.log(`Image Uploaded to DB by ${image.username}`);
        });
+        
        Users.findOneAndUpdate({
-           email: user.email
+           _id: user.id 
        },{
            $inc: {
                'posts': 1
@@ -169,7 +194,6 @@ io.on('connection',(socket)=>{
     //Like Functionality
     socket.on('Like',(info)=>{
         Images.findOneAndUpdate({
-            username :info.name,
             url: info.url
         }, {
             $inc : {
@@ -186,7 +210,6 @@ io.on('connection',(socket)=>{
     //Dislike Functionality
     socket.on('Dislike',(info)=>{
         Images.findOneAndUpdate({
-            username :info.name,
             url: info.url
         }, {
             $inc : {
@@ -225,14 +248,14 @@ io.on('connection',(socket)=>{
     
     // Event received as soon as mainPage loads 
     socket.on('userInfo',(info)=>{
-        Users.findByEmail(info.email).then((user)=>{
+        Users.findByEmail(info.id).then((user)=>{
             socket.emit('UserInfo', user);
         });
     });
     
     // sending user info on profile page load
     socket.on('profileuserInfo',(info)=>{
-        Users.findByEmail(info.email).then((user)=>{
+        Users.findByEmail(info.id).then((user)=>{
             socket.emit('profileUserInfo', user);
         });
     });

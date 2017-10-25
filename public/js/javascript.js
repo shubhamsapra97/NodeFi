@@ -35,6 +35,13 @@ if($("body").data("title") === "signUpPage"){
 var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload';
 var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
 if($("body").data("title") === "mainPage"){
+    
+    //Prevent Page from redirecting to Login Page
+    history.pushState(null, null, $(location).attr('href'));
+    window.addEventListener('popstate', function () {
+        history.pushState(null, null, $(location).attr('href'));
+    });
+    
     //fetching info from search url
     var params = $.deparam(window.location.search);
     
@@ -43,9 +50,11 @@ if($("body").data("title") === "mainPage"){
     //Fetches user info and all posts as soon as page loads
     $(function(){
         socket.emit('userInfo',{
-            email: params.email
+            id: params.id
         });
-        socket.emit('pageLoad',{});
+        socket.emit('pageLoad',{
+            id: params.id
+        });
      });
     
     var like,index,likeIcon;
@@ -81,6 +90,7 @@ if($("body").data("title") === "mainPage"){
     //current user info received
     socket.on('UserInfo',function(user){
         currentUser = Object.assign({}, user); 
+        console.log(currentUser._id);
             //Like and Dislike Button Functionality
         var c;
         function hasClass(elem, className) {
@@ -166,6 +176,7 @@ if($("body").data("title") === "mainPage"){
            
            // Sending data to server on image upload   
            socket.emit('onPost',{
+               id: currentUser._id,
                email:currentUser.email,
                username:currentUser.username,
                imageUrl:res.data.secure_url,
@@ -186,6 +197,7 @@ if($("body").data("title") === "mainPage"){
            url : '/userAcc',
            type : 'POST',
            data : {
+             id: currentUser._id,   
              username: currentUser.username,
              location: currentUser.location,
              email: currentUser.email,
@@ -208,7 +220,7 @@ if($("body").data("title") === "profilePage"){
     //Fetches all user info as soon as page loads
     $(function(){
         socket.emit('profileuserInfo',{
-            email: params.email
+            id: params.id
         });
     });
     
@@ -260,7 +272,7 @@ if($("body").data("title") === "userAcc"){
     var params = $.deparam(window.location.search);
     $(function(){
         socket.emit('userInfo',{
-            email: params.email
+            id: params.id
         });
         socket.emit('userPosts',{
             email: params.email
@@ -291,6 +303,7 @@ if($("body").data("title") === "userAcc"){
                url : '/profile',
                type : 'POST',
                data : {
+                 id: currentUser._id,   
                  username: currentUser.username,    
                  location: currentUser.location,
                  email: currentUser.email,

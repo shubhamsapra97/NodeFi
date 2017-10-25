@@ -5,13 +5,12 @@ var UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    minlength: 1,
-    trim: true
+    minlength: 1
   },
   username: {
     type: String,
     required: true,
-    minlength: 6
+    minlength: 6  
   },
   url:{
       type: String,
