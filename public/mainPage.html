@@ -5,6 +5,7 @@
         <title>Fake</title>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css?family=PT+Serif|Roboto+Mono" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="css/styles.css">
     </head>
     <body data-title='mainPage'>
@@ -72,9 +73,11 @@
           </div>
         </div>
         
-        <div id="allPosts">
+        <div id="Container">            
+            <div id="allPosts">
 
-        </div>
+            </div>
+        </div>    
         
         <script id="post-template" type="text/x-handlebars-template">
                 <div class="posts">
@@ -101,7 +104,13 @@
                     <div class="postTime">
                         <span>{{time}}</span>
                     </div>
+                    <hr>
+                    <textarea placeholder="Add a Comment.." name={{email}} class="comment"></textarea>
                 </div>
+        </script>
+        
+        <script id="mainUser-template" type="text/x-handlebars-template">
+
         </script>
         
         <script src="/js/libs/jquery-3.1.1.min.js"></script>

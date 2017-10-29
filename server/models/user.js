@@ -49,10 +49,14 @@ var UserSchema = new mongoose.Schema({
     type: String,
     required: false   
   },
-  posts:{
+  posts: {
     type: Number,
     required: false
-  },    
+  },   
+  status: {
+    type: String,
+    required: false  
+  },  
   tokens: [{
     access: {
       type: String,
@@ -72,7 +76,7 @@ UserSchema.methods.toJSON = function(){
     var user = this;
     var userObject = user.toObject();
     
-    return _.pick(userObject,['_id','email','username','fullname','website','location','url']);
+    return _.pick(userObject,['_id','email','username','fullname','website','location','url','status']);
 }
 
 UserSchema.methods.generateAuthToken = function(){

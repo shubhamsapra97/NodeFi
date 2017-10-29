@@ -33,13 +33,6 @@
                   <input type="text" class="form-control" placeholder="Search">
                 </div>
               </form>      
-              <ul class="nav navbar-nav navbar-right" id="nav-right">
-                  <li data-toggle="modal" data-target="#exampleModal">
-                      <i id='PostInput' class="fa fa-compass user-nav" aria-hidden="true"></i>
-                  </li> 
-                  <li><i class="fa fa-heart-o user-nav profile" aria-hidden="true"></i></li>
-                  <li><i class="fa fa-user-o user-nav" aria-hidden="true"></i></li>
-              </ul>
             </div><!-- /.navbar-collapse -->
           </div><!-- /.container-fluid -->
         </nav>
@@ -73,12 +66,13 @@
         </div>
         
         <div id="header">
-        
+         
         </div>
         
         <div id="Posts">
             
         </div>
+<!--
         
         <script id="user-template" type="text/x-handlebars-template">
             <div class="head">
@@ -96,7 +90,65 @@
                 </div>
             </div>
         </script>
+-->
         
+        <script id="user-template" type="text/x-handlebars-template">
+            <div id="SidebarInfo">
+                <img class="backImage" src="images/iceland.jpg" alt='image'>
+                <img class="userDp rounded-circle" src="{{dp}}" alt="userDp">
+                <div class="below">
+                    <div class="username1"><span>{{user}}</span></div><br>
+                    <div class="status">
+                        <span id="userStatus">Hello there! How are you..</span>
+                        <i class="statusEdit fa fa-pencil" aria-hidden="true"></i>
+                        <div id="inputStatus1">
+                            <input id="inputStatus" type="text" autofocus />
+                            <div class="loader"></div>
+                        </div>    
+                    </div>
+                </div>
+                <div class="information">
+                    <div class="posty">
+                        <span class="heading1">Posts</span><br>
+                        <span class="shift">{{posts}}</span>
+                    </div>
+                    <div class="vr"></div>
+                    <div class="followers">
+                        <span class="heading1">followers</span><br>
+                        <span class="shift1">78</span>
+                    </div>
+                </div>                
+            </div>
+            
+            <div id="about">
+                <span id="heads">About</span>
+                <a class="updateProfile">Edit</a>
+                <div class="top">
+                    <div id="location">
+                        <i class="icon fa fa-calendar-o" aria-hidden="true"></i>
+                        <span class="aboutData">Went to <span class="blue">{{location}}</span></span>
+                    </div>
+                    <div id="bday">
+                        <i class="icon fa fa-birthday-cake" aria-hidden="true"></i>
+                        <span class="aboutData">Born On <span class="blue">25th Feb, 1997</span></span>
+                    </div>
+                    <div id="work">
+                        <i class="icon fa fa-briefcase" aria-hidden="true"></i>
+                        <span class="aboutData">Worked at <span class="blue">{{website}}</span></span>
+                    </div>
+                    <div id="home">
+                        <i class="icon fa fa-home" aria-hidden="true"></i>
+                        <span class="aboutData">Lives in <span class="blue">{{location}}</span></span>
+                    </div>
+                    <div id="bio">
+                        <i class="icon fa fa-user" aria-hidden="true"></i>
+                        <span class="aboutData">I am <span class="blue">Cool, Loving</span></span>
+                    </div>
+                </div>
+            </div>       
+        </script>
+        
+   
         <script id="post-template" type="text/x-handlebars-template">
             <div id="overlay">
               <div id="text">Overlay Text</div>

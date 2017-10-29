@@ -34,6 +34,7 @@ if($("body").data("title") === "signUpPage"){
 //mainPage Js
 var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload';
 var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
+
 if($("body").data("title") === "mainPage"){
     
     //Prevent Page from redirecting to Login Page
@@ -74,6 +75,7 @@ if($("body").data("title") === "mainPage"){
             }   
            var template = document.getElementById("post-template").innerHTML;
            var html = Mustache.render(template,{
+               email: images[i].email,
                user: images[i].username,
                url: images[i].url,
                time: images[i].time,
@@ -152,6 +154,7 @@ if($("body").data("title") === "mainPage"){
            //Mustache Templating    
            var template = document.getElementById("post-template").innerHTML;
            var html = Mustache.render(template,{
+               email: currentUser.email,
                user: currentUser.username,
                url: res.data.secure_url,
                time: time,
@@ -283,7 +286,6 @@ if($("body").data("title") === "userAcc"){
     //current user info received
     socket.on('UserInfo',function(user){
         currentUser = Object.assign({}, user);
-        console.log(currentUser);
         
         var template = document.getElementById("user-template").innerHTML;
         var html = Mustache.render(template,{
@@ -296,6 +298,31 @@ if($("body").data("title") === "userAcc"){
            posts: currentUser.posts    
         });
         document.getElementById("header").innerHTML += html;
+        
+    $(".statusEdit").click(function(){
+        $("#userStatus").css("display","none");
+        $(".statusEdit").css("display","none");
+        $("#inputStatus").css("display","block");
+        $("#inputStatus").on('keyup', function (e) {
+            if (e.keyCode == 13) {
+                $(".loader").css("display","block");
+                socket.emit('statusUpdate',{
+                    id: currentUser._id,
+                    status: $("#inputStatus").val() 
+                });
+            }
+        });
+    });
+    
+    socket.on('statusUpdated',function(user){
+        $("#userStatus").css("display","block");
+        $(".statusEdit").css("display","block");
+        $("#inputStatus").css("display","none");
+        $(".loader").css("display","none");
+        console.log(user);
+        $("#userStatus").text(user.status);
+        console.log('Status Updated');
+    });    
         
         // Ajax request to redirect from main page to profile page along with user info
         $(".updateProfile").click(function(){

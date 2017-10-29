@@ -64,6 +64,7 @@ io.on('connection',(socket)=>{
         var user = new Users(body);
         user.posts = 0;
         user._id = id;
+        user.status = "Hello there! How are you..";
         id = id.toString();
         user.save().then(()=>{
             res.redirect(url.format({
@@ -188,6 +189,21 @@ io.on('connection',(socket)=>{
            }
        }).then((image)=>{
            
+       });    
+    });
+    
+    socket.on('statusUpdate',(info)=>{
+       Users.findOneAndUpdate({
+           _id: info.id 
+       },{
+           $set: {
+               'status': info.status
+           }
+       },{
+           new: true
+       }).then((user)=>{
+           console.log(user);
+           socket.emit('statusUpdated',user);          
        });    
     });
     
