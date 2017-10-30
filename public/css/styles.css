@@ -37,6 +37,7 @@ hr{
     padding-left: 1vw;
     overflow: auto;
     height: 25px;
+    background-color: #f5f8fa;
 }
 
 .submitForm{
@@ -317,7 +318,7 @@ hr{
     color: blue;
 }
 
-#location,#bday,#work,#home,#bio{
+#location,#bday,#work,#home,#bio,#contact{
     padding-top: 7px;
 }
 
@@ -360,6 +361,25 @@ hr{
     display: inline;
 }
 
+#div1,#div2,#div3,#div4{
+    display: flex;
+}
+
+.form1,.form2,.form3,.form4{
+    width: 38vw;
+    margin-left: 7vw;
+}
+
+.form5{
+    width: 83vw;
+    margin-left: 7vw;
+}
+
+#updateBtn{
+    width: 150px;
+    margin-left: 42vw;
+    margin-bottom: 20px;
+}
 
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }

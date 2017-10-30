@@ -205,7 +205,7 @@ if($("body").data("title") === "mainPage"){
              location: currentUser.location,
              email: currentUser.email,
              fullname: currentUser.fullname,
-             website: currentUser.website,
+             work: currentUser.work,
              url: currentUser.url   
            },
            success : function(data){
@@ -233,8 +233,8 @@ if($("body").data("title") === "profilePage"){
         document.getElementById('email').value = user.email;
         document.getElementById('username').value = user.username;
         document.getElementById('location').value = user.location; 
-        if(user.website){
-            document.getElementById('website').value = user.website;
+        if(user.work){
+            document.getElementById('work').value = user.work;
         }
         if(user.fullname){
             document.getElementById('fullname').value = user.fullname;
@@ -242,6 +242,15 @@ if($("body").data("title") === "profilePage"){
         if(user.url){
             document.getElementById('profilePic').src = user.url;
             document.getElementById('url').value = user.url;
+        }
+        if(user.bday){
+            document.getElementById('bday').value = user.bday;
+        }
+        if(user.contact){
+            document.getElementById('mobile').value = user.contact;
+        }
+        if(user.qualities){
+            document.getElementById('qualities').value = user.qualities;
         }
     });
     
@@ -293,9 +302,13 @@ if($("body").data("title") === "userAcc"){
            fullname: currentUser.fullname,    
            location: currentUser.location,
            dp: currentUser.url,
-           website: currentUser.website,
+           work: currentUser.work,
            email: currentUser.email,
-           posts: currentUser.posts    
+           posts: currentUser.posts,
+           bday: currentUser.bday,
+           qualities: currentUser.qualities,
+           contact: currentUser.contact,
+           status: currentUser.status    
         });
         document.getElementById("header").innerHTML += html;
         
@@ -335,7 +348,7 @@ if($("body").data("title") === "userAcc"){
                  location: currentUser.location,
                  email: currentUser.email,
                  fullname: currentUser.fullname,
-                 website: currentUser.website,
+                 work: currentUser.work,
                  url: currentUser.url   
                },
                success : function(data){

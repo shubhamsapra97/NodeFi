@@ -117,7 +117,7 @@ io.on('connection',(socket)=>{
     
     //Profile Update Route
     app.post('/update',(req,res)=>{
-        var body = _.pick(req.body,['email','username','fullname','website','location','url']);
+        var body = _.pick(req.body,['email','username','fullname','work','location','url','mobile','qualities','bday']);
         Users.findOneAndUpdate(
         { 
             email :body.email 
@@ -127,9 +127,12 @@ io.on('connection',(socket)=>{
             { 
                 username: body.username,
                 fullname: body.fullname,
-                website: body.website,
+                work: body.work,
                 location: body.location,
-                url: body.url
+                url: body.url,
+                contact: body.mobile,
+                qualities: body.qualities,
+                bday: body.bday
             }
         },
         {

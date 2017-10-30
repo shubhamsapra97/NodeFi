@@ -37,7 +37,7 @@ var UserSchema = new mongoose.Schema({
     required: false,
     minlength: 1
   },
-  website: {
+  work: {
       type: String,
       required: false
   },
@@ -56,7 +56,19 @@ var UserSchema = new mongoose.Schema({
   status: {
     type: String,
     required: false  
-  },  
+  },
+  bday: {
+      type: String,
+      required: false
+  },
+  qualities: {
+      type: String,
+      required: false
+  },
+  contact: {
+      type: Number,
+      required: false
+  },    
   tokens: [{
     access: {
       type: String,
@@ -76,7 +88,7 @@ UserSchema.methods.toJSON = function(){
     var user = this;
     var userObject = user.toObject();
     
-    return _.pick(userObject,['_id','email','username','fullname','website','location','url','status']);
+    return _.pick(userObject,['_id','email','username','fullname','website','location','url','status','bday','qualities','contact']);
 }
 
 UserSchema.methods.generateAuthToken = function(){
