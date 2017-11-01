@@ -215,6 +215,38 @@ if($("body").data("title") === "mainPage"){
         
     });
     
+    var allUsers = {};
+    var searchArray = {};
+    socket.on('allUsers',function(users){
+        allUsers = jQuery.extend({}, users);
+
+        searchArray = jQuery.extend({}, users);
+    });
+    
+    var input='';
+    $( ".userSearch" ).keyup(function() {
+        input = $(".userSearch").val();
+        if(input.length === 0){
+            searchArray = jQuery.extend({}, allUsers);
+            $("#myUL").empty();
+        }
+        else{
+            if(Object.keys(searchArray).length == 0){
+                searchArray = jQuery.extend({}, allUsers);
+            }
+            for (var i = 0; i <= (Object.keys(searchArray).length); i++) {
+                if (searchArray[i].username.toLowerCase().indexOf(input.toLowerCase()) > -1) {
+                    if($('#myUL').find("."+allUsers[i].username).length == 0){
+                        $("#myUL").append("<li class='myLi'><a class='myA "+searchArray[i].username+"'>"+searchArray[i].username+"</a></li>");
+                    }
+                    delete searchArray[i];                    
+                } else {
+                    $('.'+allUsers[i].username).remove();
+                    delete searchArray[i];                   
+                }
+            }
+        }
+    });
 }
 
 if($("body").data("title") === "profilePage"){

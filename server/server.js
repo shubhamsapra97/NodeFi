@@ -251,6 +251,15 @@ io.on('connection',(socket)=>{
                 throw err;
             }
         });
+        
+        Users.find({}).lean().exec(function(err, docs) {
+            if (!err){ 
+                socket.emit('allUsers', docs);
+            } else {
+                throw err;
+            }
+        });
+        
     });
     
     socket.on('userPosts',(info)=>{
@@ -263,6 +272,7 @@ io.on('connection',(socket)=>{
                 throw err;
             }
         });
+        
     });
     
     // Event received as soon as mainPage loads 
