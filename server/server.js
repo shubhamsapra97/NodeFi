@@ -110,7 +110,8 @@ io.on('connection',(socket)=>{
           pathname:"userAcc.html",   
           query: {
              "email": body.email,
-              "id": body.id
+              "id": body.id,
+              "user": "yes"
            }
         }));        
     });

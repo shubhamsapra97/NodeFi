@@ -392,6 +392,7 @@ hr{
     width: 20vw;
     padding: 0;
     margin: 0;
+/*    z-index: 1000;*/
 }
 
 #myUL .myLi .myA {

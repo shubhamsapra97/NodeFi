@@ -235,9 +235,9 @@ if($("body").data("title") === "mainPage"){
                 searchArray = jQuery.extend({}, allUsers);
             }
             for (var i = 0; i <= (Object.keys(searchArray).length); i++) {
-                if (searchArray[i].username.toLowerCase().indexOf(input.toLowerCase()) > -1) {
+                if (searchArray[i].username.toLowerCase().indexOf(input.toLowerCase()) > -1 && searchArray[i].username !== currentUser.username) {
                     if($('#myUL').find("."+allUsers[i].username).length == 0){
-                        $("#myUL").append("<li class='myLi'><a class='myA "+searchArray[i].username+"'>"+searchArray[i].username+"</a></li>");
+                        $("#myUL").append("<li class='myLi'><a class='myA "+searchArray[i].username+"' href='http://localhost:3000/userAcc.html?email="+searchArray[i].email+"&id="+searchArray[i]._id+"&user=no'>"+searchArray[i].username+"</a></li>");
                     }
                     delete searchArray[i];                    
                 } else {
@@ -324,8 +324,10 @@ if($("body").data("title") === "userAcc"){
     });
     
     var currentUser = {};
+    
     //current user info received
     socket.on('UserInfo',function(user){
+        
         currentUser = Object.assign({}, user);
         
         var template = document.getElementById("user-template").innerHTML;
@@ -343,6 +345,11 @@ if($("body").data("title") === "userAcc"){
            status: currentUser.status    
         });
         document.getElementById("header").innerHTML += html;
+        
+        if(params.user == 'no'){
+            $(".updateProfile").css('display','none');
+            $(".statusEdit").css('display','none');
+        }
         
     $(".statusEdit").click(function(){
         $("#userStatus").css("display","none");
