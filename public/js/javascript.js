@@ -200,10 +200,10 @@ if($("body").data("title") === "mainPage"){
            url : '/userAcc',
            type : 'POST',
            data : {
-             id: currentUser._id,   
+             id: btoa(currentUser._id),   
              username: currentUser.username,
              location: currentUser.location,
-             email: currentUser.email,
+             email: btoa(currentUser.email),
              fullname: currentUser.fullname,
              work: currentUser.work,
              url: currentUser.url   
@@ -227,6 +227,7 @@ if($("body").data("title") === "mainPage"){
     $( ".userSearch" ).keyup(function() {
         input = $(".userSearch").val();
         if(input.length === 0){
+            //console.log(searchArray);
             searchArray = jQuery.extend({}, allUsers);
             $("#myUL").empty();
         }
@@ -234,15 +235,19 @@ if($("body").data("title") === "mainPage"){
             if(Object.keys(searchArray).length == 0){
                 searchArray = jQuery.extend({}, allUsers);
             }
-            for (var i = 0; i <= (Object.keys(searchArray).length); i++) {
+            for (var i = (Object.keys(searchArray).length)-1 ; i >= 0 ;i--) {
+                console.log(i);
+                console.log(Object.keys(searchArray).length);
+                console.log(allUsers[i].username);
                 if (searchArray[i].username.toLowerCase().indexOf(input.toLowerCase()) > -1 && searchArray[i].username !== currentUser.username) {
                     if($('#myUL').find("."+allUsers[i].username).length == 0){
-                        $("#myUL").append("<li class='myLi'><a class='myA "+searchArray[i].username+"' href='http://localhost:3000/userAcc.html?email="+searchArray[i].email+"&id="+searchArray[i]._id+"&user=no'>"+searchArray[i].username+"</a></li>");
+                        $("#myUL").append("<li class='myLi'><a class='myA "+searchArray[i].username+"' href='http://localhost:3000/userAcc.html?email="+btoa(searchArray[i].email)+"&id="+btoa(searchArray[i]._id)+"&user=no'>"+searchArray[i].username+"</a></li>");
                     }
-                    delete searchArray[i];                    
-                } else {
+                    delete searchArray[i];
+                }
+                else {
                     $('.'+allUsers[i].username).remove();
-                    delete searchArray[i];                   
+                    delete searchArray[i];
                 }
             }
         }
@@ -316,10 +321,10 @@ if($("body").data("title") === "userAcc"){
     var params = $.deparam(window.location.search);
     $(function(){
         socket.emit('userInfo',{
-            id: params.id
+            id: atob(params.id)
         });
         socket.emit('userPosts',{
-            email: params.email
+            email: atob(params.email)
         });
     });
     
