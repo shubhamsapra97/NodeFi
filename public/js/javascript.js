@@ -23,7 +23,21 @@ if($("body").data("title") === "index"){
 
 //SignIn Page Js
 if($("body").data("title") === "signInPage"){
-            
+    $(".fa").click(function(){
+       if ($('.fa').hasClass('fa-pencil')){
+           $(".fa").removeClass('fa-pencil').addClass('fa-times');    
+           $('.signInContent').addClass('fadeOut');
+           setTimeout(function(){ 
+               $(".signUpContent").css('display','block').removeClass('fadeOut').addClass('fadeInUp'); 
+           }, 500);    
+       }
+       else{
+           $(".fa").removeClass('fa-times').addClass('fa-pencil');    
+           $('.signUpContent').removeClass('fadeInUp').css('display','none');   
+           $(".signInContent").removeClass('fadeOut').addClass('fadeInUp'); 
+        }
+    });  
+
 }
 
 //signUpPage Js
@@ -133,7 +147,7 @@ if($("body").data("title") === "mainPage"){
     var status;
     //Post Upload button click 
     fileUpload.addEventListener('change',function(e){
-        status = $("#statusText").val(); 
+        status = $(".inputUserstatus").val(); 
         var file = event.target.files[0];
         var formData = new FormData();
         formData.append('file',file);
@@ -294,7 +308,7 @@ if($("body").data("title") === "profilePage"){
     // Uploading User Display Pic to Cloud 
     var fileUpload = document.getElementById('fileUpload');
     fileUpload.addEventListener('change',function(e){
-        
+        console.log("sdfsdfdsf");
         var file = event.target.files[0];
         var formData = new FormData();
         formData.append('file',file);
@@ -328,19 +342,26 @@ if($("body").data("title") === "userAcc"){
         });
     });
     
-    var currentUser = {};
+    var currentUser = {},url;
     
     //current user info received
     socket.on('UserInfo',function(user){
         
         currentUser = Object.assign({}, user);
         
+        if(!currentUser.url){
+            url = 'images/anony.jpg';
+        }
+        else{
+            url = currentUser.url;
+        }
+        
         var template = document.getElementById("user-template").innerHTML;
         var html = Mustache.render(template,{
            user: currentUser.username,
            fullname: currentUser.fullname,    
            location: currentUser.location,
-           dp: currentUser.url,
+           dp: url,
            work: currentUser.work,
            email: currentUser.email,
            posts: currentUser.posts,
@@ -360,6 +381,7 @@ if($("body").data("title") === "userAcc"){
         $("#userStatus").css("display","none");
         $(".statusEdit").css("display","none");
         $("#inputStatus").css("display","block");
+        $(".inputClose").css("display","block");
         $("#inputStatus").on('keyup', function (e) {
             if (e.keyCode == 13) {
                 $(".loader").css("display","block");
@@ -375,6 +397,7 @@ if($("body").data("title") === "userAcc"){
         $("#userStatus").css("display","block");
         $(".statusEdit").css("display","block");
         $("#inputStatus").css("display","none");
+        $(".inputClose").css("display","none");
         $(".loader").css("display","none");
         console.log(user);
         $("#userStatus").text(user.status);

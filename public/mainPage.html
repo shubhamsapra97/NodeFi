@@ -46,33 +46,17 @@
           </div><!-- /.container-fluid -->
         </nav>
         
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Post</h5> 
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-<!--
-                  <div id="userInfo">
-                      <span id="userEmail">{{email}}</span>
-                      <span id="userName">{{username}}</span>
-                  </div>
--->
-                      <span>STATUS<input id="statusText" type="text" /></span> 
-                      <input id="fileUpload" type="file" value="choose file" name="postImage" />
-                        
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-              </div>
+          <div>
+            <div class="UserStatusPost">
+                <div><input type="text" class="inputUserstatus form-control" placeholder="Whats going on in your Mind ...."></div>
+                <div>
+                  <label for="fileUpload" class="custom-file-upload">
+                  <i class="fa fa-camera"></i>
+                  </label>
+                </div>
+              <input id="fileUpload" type="file"/>
             </div>
           </div>
-        </div>
         
         <div id="Container">            
             <div id="allPosts">

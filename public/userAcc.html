@@ -37,34 +37,6 @@
           </div><!-- /.container-fluid -->
         </nav>
         
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Post</h5> 
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-<!--
-                  <div id="userInfo">
-                      <span id="userEmail">{{email}}</span>
-                      <span id="userName">{{username}}</span>
-                  </div>
--->
-                      <span>STATUS<input id="statusText" type="text" /></span> 
-                      <input id="fileUpload" type="file" value="choose file" name="postImage" />
-                        
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
         <div id="header">
          
         </div>
@@ -95,7 +67,7 @@
         <script id="user-template" type="text/x-handlebars-template">
             <div id="SidebarInfo">
                 <img class="backImage" src="images/iceland.jpg" alt='image'>
-                <img class="userDp rounded-circle" src="{{dp}}" alt="userDp">
+                <img class="userDp img-circle" src="{{dp}}">
                 <div class="below">
                     <div class="username1"><span>{{user}}</span></div><br>
                     <div class="status">
@@ -103,6 +75,7 @@
                         <i class="statusEdit fa fa-pencil" aria-hidden="true"></i>
                         <div id="inputStatus1">
                             <input id="inputStatus" type="text" autofocus />
+                            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
                             <div class="loader"></div>
                         </div>    
                     </div>
