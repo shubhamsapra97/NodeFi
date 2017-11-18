@@ -20,7 +20,7 @@
               </button>
                 <div id="nav-left">
                     <i class=" navbar-brand fa fa-instagram" aria-hidden="true"></i>
-                    <a class="navbar-brand" href="#">| FakeInsta</a>
+                    <a class="navbar-brand" href="#">| NodeFi</a>
                 </div>    
             </div>
 
@@ -28,11 +28,6 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav">
               </ul>    
-              <form class="navbar-form navbar-nav submitForm">
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Search">
-                </div>
-              </form>      
               <ul class="nav navbar-nav navbar-right" id="nav-right">
                   <li data-toggle="modal" data-target="#exampleModal">
                       <i id='PostInput' class="fa fa-compass user-nav" aria-hidden="true"></i>
@@ -45,8 +40,13 @@
         </nav>
         
         <div>
-            <img id="profilePic" src="images/anony.jpg" class="rounded-circle">
-            <input id="fileUpload" type="file" value="choose file" name="postImage" />
+            <div>
+            <label for="fileUpload2">
+                <img id="profilePic" src="images/anony.jpg" class="rounded-circle">
+            </label>
+            </div>  
+            <input id="fileUpload2" type="file"/>
+            </div>
             <form method="post" action="/update">
               <div id="div1">    
                   <div class="form-group form1">

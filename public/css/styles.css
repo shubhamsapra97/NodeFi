@@ -67,7 +67,7 @@ body{
     width: 80%;
     height: 32px;
     color: white;
-    margin: auto;
+    margin-left: 30px;
     padding: 6px 15px;
     top: 0; left: 0; bottom: 0; right: 0;
 }
@@ -249,9 +249,10 @@ hr{
     margin-left: 27.3vw;
 }
 
-#fileUpload {
+#fileUpload,#fileUpload1,#fileUpload2{
     display: none;
 }
+
 .custom-file-upload {
     border: 1px solid #ccc;
     display: inline-block;
@@ -306,10 +307,9 @@ hr{
 }
 
 #SidebarInfo{
-    width: 96vw;
+    width: 2000vw;
     height: 80vh;
     margin-left: 2vw;
-    margin-right: 2vw;
     border:0.01em solid #DCDCDC;
     background-color: white;    
 }
@@ -338,6 +338,19 @@ nav{
     position: absolute;
     margin-left: 44vw;
     margin-top: 19vh;
+}
+
+#textPost{
+    font-family: 'PT Serif', serif;
+    font-size: 20px;
+}
+
+#loader{
+    margin-left: 49vw;
+    margin-top: 10px;
+    margin-bottom: 100px;
+    width: 2em;
+/*    display: none;*/
 }
 
 .username1{

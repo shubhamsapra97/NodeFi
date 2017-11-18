@@ -21,7 +21,7 @@
               </button>
                 <div id="nav-left">
                     <i class=" navbar-brand fa fa-instagram" aria-hidden="true"></i>
-                    <a class="navbar-brand" href="#">| FakeInsta</a>
+                    <a class="navbar-brand" href="#">| NodeFi</a>
                 </div>    
             </div>
 
@@ -54,13 +54,13 @@
                   <i class="fa fa-camera"></i>
                   </label>
                 </div>
-              <input id="fileUpload" type="file"/>
+                <input id="fileUpload" type="file"/>
             </div>
           </div>
         
         <div id="Container">            
             <div id="allPosts">
-
+                
             </div>
         </div>    
         
@@ -94,8 +94,34 @@
                 </div>
         </script>
         
-        <script id="mainUser-template" type="text/x-handlebars-template">
-
+        <script id="mainPostTemplate" type="text/x-handlebars-template">
+                <div class="posts">
+                    <div class="posts-header">
+                        <img src="{{dp}}" class="profilePic img-circle">
+                        <ul class="postHeading">
+                            <li><span>{{user}}</span></li>
+                            <li><span class='UserLoc'>{{location}}</span></li>
+                        </ul>
+                    </div>
+                    <div class="post">
+                        <span id="textPost">{{postStatus}}</span>
+                    </div>
+                    <div class="postOptions">
+                        <i class="fa {{likeIcon}} postLike" aria-hidden="true" id="{{}}" name="hello" title="{{user}}"></i>
+                        <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
+                    </div>
+                    <div class="postLikesNum">
+                        <span>{{like}} </span>
+                    </div>
+                    <div class="postStatus">
+                        <span class="UserName">{{user}}</span><span class="statusContent">{{status}}</span>
+                    </div>
+                    <div class="postTime">
+                        <span>{{time}}</span>
+                    </div>
+                    <hr>
+                    <textarea placeholder="Add a Comment.." name={{email}} class="comment"></textarea>
+                </div>
         </script>
         
         <script src="/js/libs/jquery-3.1.1.min.js"></script>

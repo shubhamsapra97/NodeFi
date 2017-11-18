@@ -76,6 +76,7 @@ if($("body").data("title") === "mainPage"){
     var currentUser = {};
     var likesArray = new Array();
     socket.on('allImages',function(images){
+        console.log(images);
         var postStatus = document.getElementsByClassName('.postStatus');
         for(var i=0;i<images.length;i++){
            like = images[i].like + " Likes";
@@ -86,21 +87,43 @@ if($("body").data("title") === "mainPage"){
            }
             else{
                 likeIcon = 'fa-heart-o';
-            }   
-           var template = document.getElementById("post-template").innerHTML;
-           var html = Mustache.render(template,{
-               email: images[i].email,
-               user: images[i].username,
-               url: images[i].url,
-               time: images[i].time,
-               like: like,
-               status: images[i].status,
-               location: images[i].location,
-               dp: images[i].userDp,
-               likeIcon: likeIcon               
-           });
-           $("#allPosts").prepend(html);
+            }
+            
+           if(images[i].postStatus){
+               
+               var template = document.getElementById("mainPostTemplate").innerHTML;
+               var html = Mustache.render(template,{
+                   email: images[i].email,
+                   user: images[i].username,
+                   time: images[i].time,
+                   like: like,
+                   postStatus: images[i].postStatus,
+                   location: images[i].location,
+                   dp: images[i].userDp,
+                   likeIcon: likeIcon               
+               });
+               $("#allPosts").prepend(html);
+               
+           }  
+           else{            
+               
+               var template = document.getElementById("post-template").innerHTML;
+               var html = Mustache.render(template,{
+                   email: images[i].email,
+                   user: images[i].username,
+                   url: images[i].url,
+                   time: images[i].time,
+                   like: like,
+                   status: images[i].status,
+                   location: images[i].location,
+                   dp: images[i].userDp,
+                   likeIcon: likeIcon               
+               });
+               $("#allPosts").prepend(html);
+               
+           }
         }
+        $("#allPosts").append("<img id='loader' src='images/loader.gif' alt='loader'>");
     });
     
     //current user info received
@@ -142,6 +165,41 @@ if($("body").data("title") === "mainPage"){
             }
 
         }, false);
+    });
+
+    $( ".inputUserstatus" ).keyup(function() {
+        var status,time,likes;
+        status = $('.inputUserstatus').val();
+        if(event.key === 'Enter' && status.length !==0){
+            time = moment(moment().valueOf()).format('h:mm a MM-DD-YYYY');
+            likes = 0+" Likes";
+            
+            var template = document.getElementById("mainPostTemplate").innerHTML;
+            var html = Mustache.render(template,{
+               email: currentUser.email,
+               user: currentUser.username,
+               time: time,
+               like: likes,
+               postStatus: status,
+               location: currentUser.location,
+               dp: currentUser.url,
+               likeIcon: 'fa-heart-o'
+            });
+            console.log(html);
+            $("#allPosts").prepend(html);
+            
+            $( ".inputUserstatus" ).val( "" );
+            
+            socket.emit('postStatus',{
+              id: currentUser._id,
+              email:currentUser.email,
+              username:currentUser.username,
+              time: time,
+              location: currentUser.location,
+              postStatus: status,
+              dp: currentUser.url     
+             });
+         }
     });
     
     var status;
@@ -306,7 +364,7 @@ if($("body").data("title") === "profilePage"){
     });
     
     // Uploading User Display Pic to Cloud 
-    var fileUpload = document.getElementById('fileUpload');
+    var fileUpload = document.getElementById('fileUpload2');
     fileUpload.addEventListener('change',function(e){
         console.log("sdfsdfdsf");
         var file = event.target.files[0];
@@ -368,7 +426,7 @@ if($("body").data("title") === "userAcc"){
            bday: currentUser.bday,
            qualities: currentUser.qualities,
            contact: currentUser.contact,
-           status: currentUser.status    
+           status: currentUser.mainStatus    
         });
         document.getElementById("header").innerHTML += html;
         
@@ -427,18 +485,20 @@ if($("body").data("title") === "userAcc"){
     });
     
     socket.on('userImages',function(images){
-        for(var i=0;i<images.length;i++){    
-           var template = document.getElementById("post-template").innerHTML;
-           var html = Mustache.render(template,{
-               user: images[i].username,
-               url: images[i].url,
-               time: images[i].time,
-               like: images[i].like,
-               status: images[i].status,
-               location: images[i].location,
-               dp: images[i].userDp
-           });
-           $("#Posts").prepend(html);
+        for(var i=0;i<images.length;i++){
+           if(!images[i].postStatus){
+               var template = document.getElementById("post-template").innerHTML;
+               var html = Mustache.render(template,{
+                   user: images[i].username,
+                   url: images[i].url,
+                   time: images[i].time,
+                   like: images[i].like,
+                   status: images[i].status,
+                   location: images[i].location,
+                   dp: images[i].userDp
+               });
+               $("#Posts").prepend(html);
+           }
         }
     });
  

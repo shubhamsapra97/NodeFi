@@ -14,7 +14,7 @@ var UserSchema = new mongoose.Schema({
   },
   url:{
       type: String,
-      required: true
+      required: false
   },
   time:{
       type: String,
@@ -25,6 +25,10 @@ var UserSchema = new mongoose.Schema({
     required: true
   },
   status:{
+      type: String,
+      required: false
+  },
+  postStatus: {
       type: String,
       required: false
   },

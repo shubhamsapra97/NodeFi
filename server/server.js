@@ -59,12 +59,12 @@ io.on('connection',(socket)=>{
     
     //SignUp Route
     app.post('/signUp',(req,res)=>{
-        var body = _.pick(req.body,['email','location','username','password']);
+        var body = _.pick(req.body,['email','username','location','password']);
         var id = mongoose.Types.ObjectId();
         var user = new Users(body);
         user.posts = 0;
         user._id = id;
-        user.status = "Hello there! How are you..";
+        user.mainStatus = "Hello there! How are you..";
         id = id.toString();
         user.save().then(()=>{
             res.redirect(url.format({
@@ -80,7 +80,7 @@ io.on('connection',(socket)=>{
     
     //MainPage Route
     app.post('/mainPage',(req,res)=>{
-       var body = _.pick(req.body,['email','password']);       
+       var body = _.pick(req.body,['email','password']);      
        Users.findByCredentials(body.email,body.password).then((user)=>{
             //redirecting along with some currenltly logged in user info
              var id = (user._id).toString();
@@ -196,6 +196,22 @@ io.on('connection',(socket)=>{
        });    
     });
     
+    socket.on('postStatus',(info)=>{
+        var image = new Images({
+            email : info.email,
+            username: info.username,
+            postStatus: info.postStatus,
+            time: info.time,
+            like: 0,
+            location: info.location,
+            userDp: info.dp
+        });
+        
+        image.save().then((image)=>{
+           console.log(`Text-Post Uploaded to DB by ${image.username}`);
+        });
+    });
+    
     socket.on('statusUpdate',(info)=>{
        Users.findOneAndUpdate({
            _id: info.id 
@@ -223,7 +239,7 @@ io.on('connection',(socket)=>{
                 'userLiked' : info.user    
         }
         }).then((image)=>{
-    
+            console.log("Liked Post");
         });
     });
     
@@ -239,13 +255,13 @@ io.on('connection',(socket)=>{
                 'userLiked' : info.user
             }
         }).then((image)=>{
-            
+            console.log('Dislike Post');
         });
     });
     
     //Fetching all the images from DB
     socket.on('pageLoad',(info)=>{
-        Images.find({}).lean().exec(function(err, docs) {
+        Images.find({}).skip().lean().limit(10).sort('time').exec(function(err, docs) {
             if (!err){ 
                 socket.emit('allImages', docs);
             } else {
@@ -253,7 +269,7 @@ io.on('connection',(socket)=>{
             }
         });
         
-        Users.find({}).lean().exec(function(err, docs) {
+        Users.find({}).lean(10).exec(function(err, docs) {
             if (!err){ 
                 socket.emit('allUsers', docs);
             } else {

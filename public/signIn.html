@@ -17,26 +17,6 @@
 
 </head>
 <body id="signBody" data-title="signInPage">    
-<!--
-  <div id="page">
-    <div id="login1">
-      <div id="login2">
-      </div>
-      <div id="login3">
-
-          <div id="login-box">
-            <div id="profile-image">
-            </div>
-            <form method="post" action="/mainPage">
-                Email<input type="text" name="email">
-                Password<input type="text" name="password">
-                <input type="submit" value="Submit">
-            </form>
-          </div>
-    </div>
-    </div>
-</div>      
--->
     
     <div id="signInForm">
         <div id="bluePlate">
@@ -48,33 +28,43 @@
         
         <div class="signUpContent animated">
             <h4 id="loginHeading">Create Your Account</h4>
-            <form id="loginForm">
+            <form id="loginForm" method="post" action="/signUp">
               <div class="form-group inputWidth">
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Email">
+                <input type="email" class="form-control" name="email" placeholder="Email">
               </div>
               <div class="form-group inputWidth">
-                <input type="text" class="form-control" id="exampleInputUsername1" aria-describedby="" placeholder="Username">
+                <input type="password" class="form-control" placeholder="Password" name="password">
               </div>
               <div class="form-group inputWidth">
-                <input type="text" class="form-control" id="exampleInputLoc1" aria-describedby="" placeholder="Location">
+                <input type="text" class="form-control" placeholder="Username" name="username">
+              </div>
+              <div class="form-group inputWidth">
+                <input type="text" class="form-control" placeholder="Location" name="location">
               </div>    
-              <div class="form-group inputWidth">
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-              </div>
-              <div id="loginSubmit">Login</div>
+              <label for="fileUpload1" id="loginSubmit">
+                  <div type="submit">Submit</div>
+              </label>
+              <input id="fileUpload1" type="submit" value="Submit"/>
             </form>
         </div> 
         
         <div class="signInContent animated">
             <h4 id="loginHeading">Login To Your Account</h4>
-            <form id="loginForm">
+            <form id="loginForm" method="post" action="/mainPage">
               <div class="form-group inputWidth">
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Email">
+                <input type="email" class="form-control" placeholder="Email" name="email">
               </div>
               <div class="form-group inputWidth">
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                <input type="password" class="form-control" placeholder="Password" name="password">
               </div>
-              <div id="loginSubmit">Login</div>
+              <div>
+                <label for="fileUpload" id="loginSubmit">
+                    <div type="submit">Submit</div>
+                </label>
+              </div>
+              <input id="fileUpload" type="submit" value="Submit"/>    
+<!--              <div id="loginSubmit" type="submit">Submit</div>-->
+<!--                <input type="submit" value="Submit">-->
             </form>
         </div>
     </div>
