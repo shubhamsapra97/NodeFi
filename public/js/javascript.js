@@ -7,19 +7,6 @@ socket.on('connect',function(){
 socket.on('disconnect',function(){
    console.log('Disconnected from server'); 
 });
-   
-//index.html Js
-if($("body").data("title") === "index"){
-    
-    $("#SignInButton").click(function(){
-       window.location = 'signIn.html'; 
-    });
-    
-    $("#SignUpButton").click(function(){
-       window.location = 'signUp.html'; 
-    });   
-    
-}
 
 //SignIn Page Js
 if($("body").data("title") === "signInPage"){
@@ -40,11 +27,6 @@ if($("body").data("title") === "signInPage"){
 
 }
 
-//signUpPage Js
-if($("body").data("title") === "signUpPage"){
-
-}
-
 //mainPage Js
 var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload';
 var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
@@ -61,14 +43,15 @@ if($("body").data("title") === "mainPage"){
     var params = $.deparam(window.location.search);
     
     var fileUpload = document.getElementById('fileUpload');
-    
+    var count=0;
     //Fetches user info and all posts as soon as page loads
     $(function(){
         socket.emit('userInfo',{
             id: params.id
         });
         socket.emit('pageLoad',{
-            id: params.id
+            id: params.id,
+            county: count
         });
      });
     
@@ -76,61 +59,92 @@ if($("body").data("title") === "mainPage"){
     var currentUser = {};
     var likesArray = new Array();
     socket.on('allImages',function(images){
-        console.log(images);
+        $("#loader1").remove();
         var postStatus = document.getElementsByClassName('.postStatus');
-        for(var i=0;i<images.length;i++){
-           like = images[i].like + " Likes";
-           likesArray = images[i].userLiked;            
-           index = likesArray.indexOf(currentUser.username);
-           if(index>-1){
-               likeIcon = 'fa-heart';
-           }
-            else{
-                likeIcon = 'fa-heart-o';
+        if(!images.empty){
+            console.log(images.docs.length);
+            for(var i=0;i<images.docs.length;i++){
+               like = images.docs[i].like + " Likes";
+               likesArray = images.docs[i].userLiked;            
+               index = likesArray.indexOf(currentUser.username);
+               if(index>-1){
+                   likeIcon = 'fa-heart';
+               }
+                else{
+                    likeIcon = 'fa-heart-o';
+                }
+
+               if(images.docs[i].postStatus){
+
+                   var template = document.getElementById("mainPostTemplate").innerHTML;
+                   var html = Mustache.render(template,{
+                       email: images.docs[i].email,
+                       user: images.docs[i].username,
+                       time: images.docs[i].time,
+                       like: like,
+                       postStatus: images.docs[i].postStatus,
+                       location: images.docs[i].location,
+                       dp: images.docs[i].userDp,
+                       likeIcon: likeIcon,
+                       date: images.docs[i].date
+                   });
+                   $("#allPosts").append(html);
+
+               }  
+               else{            
+
+                   var template = document.getElementById("post-template").innerHTML;
+                   var html = Mustache.render(template,{
+                       email: images.docs[i].email,
+                       user: images.docs[i].username,
+                       url: images.docs[i].url,
+                       time: images.docs[i].time,
+                       like: like,
+                       status: images.docs[i].status,
+                       location: images.docs[i].location,
+                       dp: images.docs[i].userDp,
+                       likeIcon: likeIcon,
+                       date: images.docs[i].date
+                   });
+                   $("#allPosts").append(html);
+
+               }
             }
-            
-           if(images[i].postStatus){
-               
-               var template = document.getElementById("mainPostTemplate").innerHTML;
-               var html = Mustache.render(template,{
-                   email: images[i].email,
-                   user: images[i].username,
-                   time: images[i].time,
-                   like: like,
-                   postStatus: images[i].postStatus,
-                   location: images[i].location,
-                   dp: images[i].userDp,
-                   likeIcon: likeIcon               
-               });
-               $("#allPosts").prepend(html);
-               
-           }  
-           else{            
-               
-               var template = document.getElementById("post-template").innerHTML;
-               var html = Mustache.render(template,{
-                   email: images[i].email,
-                   user: images[i].username,
-                   url: images[i].url,
-                   time: images[i].time,
-                   like: like,
-                   status: images[i].status,
-                   location: images[i].location,
-                   dp: images[i].userDp,
-                   likeIcon: likeIcon               
-               });
-               $("#allPosts").prepend(html);
-               
-           }
+            $("#allPosts").append("<img id='loader' class='load' src='images/loader.gif' alt='loader'>");
         }
-        $("#allPosts").append("<img id='loader' src='images/loader.gif' alt='loader'>");
+    });
+    
+    //Check if loader is visible inviewport after scroll.
+    $(window).scroll(function(e) {
+        if($("#loader").length !== 0) {
+
+           var hT = $('#loader').offset().top,
+               hH = $('#loader').outerHeight(),
+               wH = $(window).height(),
+               wS = $(this).scrollTop();
+               if (wS > (hT+hH-wH) && (hT > wS) && (wS+wH > hT+hH)){ 
+                    count = count+1;
+                   
+                    //To make loader disppear after the new posts are loaded.
+                    $('#loader').removeAttr('id');
+                    $('.load').attr('id', 'loader1');
+                   
+                    //request for new posts.
+                    socket.emit('pageLoad',{
+                        id: params.id,
+                        county: count
+                    });
+                   
+               }
+            
+        }
     });
     
     //current user info received
     socket.on('UserInfo',function(user){
         currentUser = Object.assign({}, user); 
-        console.log(currentUser._id);
-            //Like and Dislike Button Functionality
+        
+        //Like and Dislike Button Functionality
         var c;
         function hasClass(elem, className) {
             return elem.className.split(' ').indexOf(className) > -1;
@@ -168,10 +182,11 @@ if($("body").data("title") === "mainPage"){
     });
 
     $( ".inputUserstatus" ).keyup(function() {
-        var status,time,likes;
+        var status,time,likes,date;
         status = $('.inputUserstatus').val();
         if(event.key === 'Enter' && status.length !==0){
-            time = moment(moment().valueOf()).format('h:mm a MM-DD-YYYY');
+            time = moment(moment().valueOf()).format('h:mm a');
+            date = moment(moment().valueOf()).format('MM-DD-YYYY');
             likes = 0+" Likes";
             
             var template = document.getElementById("mainPostTemplate").innerHTML;
@@ -183,12 +198,13 @@ if($("body").data("title") === "mainPage"){
                postStatus: status,
                location: currentUser.location,
                dp: currentUser.url,
-               likeIcon: 'fa-heart-o'
+               likeIcon: 'fa-heart-o',
+               date: date    
             });
-            console.log(html);
+            
             $("#allPosts").prepend(html);
             
-            $( ".inputUserstatus" ).val( "" );
+            $( ".inputUserstatus" ).val("");
             
             socket.emit('postStatus',{
               id: currentUser._id,
@@ -197,7 +213,8 @@ if($("body").data("title") === "mainPage"){
               time: time,
               location: currentUser.location,
               postStatus: status,
-              dp: currentUser.url     
+              dp: currentUser.url,
+              date: date     
              });
          }
     });
@@ -221,7 +238,8 @@ if($("body").data("title") === "mainPage"){
             data: formData
         }).then(function(res){
            //moment to fetch the time-date     
-           var time = moment(moment().valueOf()).format('h:mm a  MM-DD-YYYY');
+           var time = moment(moment().valueOf()).format('h:mm a');
+           var date = moment(moment().valueOf()).format('MM-DD-YYYY');
            var likes = 0+" Likes";
            //Mustache Templating    
            var template = document.getElementById("post-template").innerHTML;
@@ -231,6 +249,7 @@ if($("body").data("title") === "mainPage"){
                url: res.data.secure_url,
                time: time,
                like: likes,
+               date: date,
                status: status,
                location: currentUser.location,
                dp: currentUser.url,
@@ -258,7 +277,8 @@ if($("body").data("title") === "mainPage"){
                time: time,
                status: status,
                location: currentUser.location,
-               url: currentUser.url
+               url: currentUser.url,
+               date: date
            });
             
         }).catch(function(err){

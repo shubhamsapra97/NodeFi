@@ -20,6 +20,10 @@ var UserSchema = new mongoose.Schema({
       type: String,
       required: true
   },
+  date:{
+      type: String,
+      required: true
+  },    
   like:{
     type: Number,
     required: true

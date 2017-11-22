@@ -130,13 +130,6 @@ hr{
     box-shadow: 1px 1px 1px #888888;
 }
 
-.profilePic{
-    width: 40px;
-    height: 40px;
-/*    padding: 20px 10px 20px 20px;*/
-    
-}
-
 .postOptions{
     font-size: 25px;
 }
@@ -153,6 +146,8 @@ hr{
     margin-left: 10px;
     font-weight: 550;
     margin-top: 5px;
+    width: 40px;
+    height: 40px;
 }
 
 .postHeading{
@@ -346,6 +341,14 @@ nav{
 }
 
 #loader{
+    margin-left: 49vw;
+    margin-top: 10px;
+    margin-bottom: 100px;
+    width: 2em;
+/*    display: none;*/
+}
+
+#loader1{
     margin-left: 49vw;
     margin-top: 10px;
     margin-bottom: 100px;

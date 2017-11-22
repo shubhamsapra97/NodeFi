@@ -65,6 +65,7 @@ io.on('connection',(socket)=>{
         user.posts = 0;
         user._id = id;
         user.mainStatus = "Hello there! How are you..";
+        user.url = 'images/anony.jpg'
         id = id.toString();
         user.save().then(()=>{
             res.redirect(url.format({
@@ -178,7 +179,8 @@ io.on('connection',(socket)=>{
           like: 0,
           status: user.status,
           location: user.location,
-          userDp: user.url   
+          userDp: user.url,
+          date: user.date   
        });
            
        image.save().then((image)=>{
@@ -204,7 +206,8 @@ io.on('connection',(socket)=>{
             time: info.time,
             like: 0,
             location: info.location,
-            userDp: info.dp
+            userDp: info.dp,
+            date: info.date
         });
         
         image.save().then((image)=>{
@@ -261,9 +264,23 @@ io.on('connection',(socket)=>{
     
     //Fetching all the images from DB
     socket.on('pageLoad',(info)=>{
-        Images.find({}).skip().lean().limit(10).sort('time').exec(function(err, docs) {
-            if (!err){ 
-                socket.emit('allImages', docs);
+        var skip = info.county*8;
+        Images.find({}).lean().skip(Number(skip)).sort({
+            date: -1,
+            time: -1  
+        }).limit(8).exec(function(err, docs) {
+            if (!err){
+                if(docs.length!==0){
+                    socket.emit('allImages', {
+                        docs: docs,
+                        empty: false
+                    });
+                }
+                else{
+                    socket.emit('allImages',{
+                       empty: true 
+                    });
+                }
             } else {
                 throw err;
             }
