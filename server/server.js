@@ -64,12 +64,12 @@ io.on('connection',(socket)=>{
         var user = new Users(body);
         user.posts = 0;
         user._id = id;
-        user.mainStatus = "Hello there! How are you..";
+        user.mainStatus = "Hello there!";
         user.url = 'images/anony.jpg'
         id = id.toString();
         user.save().then(()=>{
             res.redirect(url.format({
-                  pathname:"mainPage.html",
+                  pathname:"profile.html",
                   query: {
                       id: id
                    }
@@ -220,12 +220,11 @@ io.on('connection',(socket)=>{
            _id: info.id 
        },{
            $set: {
-               'status': info.status
+               'mainStatus': info.status
            }
        },{
            new: true
        }).then((user)=>{
-           console.log(user);
            socket.emit('statusUpdated',user);          
        });    
     });

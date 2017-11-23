@@ -53,7 +53,7 @@ var UserSchema = new mongoose.Schema({
     type: Number,
     required: false
   },   
-  status: {
+  mainStatus: {
     type: String,
     required: false  
   },
@@ -88,7 +88,7 @@ UserSchema.methods.toJSON = function(){
     var user = this;
     var userObject = user.toObject();
     
-    return _.pick(userObject,['_id','email','username','fullname','website','location','url','status','bday','qualities','contact']);
+    return _.pick(userObject,['_id','email','username','fullname','website','location','url','status','bday','qualities','contact','mainStatus']);
 }
 
 UserSchema.methods.generateAuthToken = function(){

@@ -327,10 +327,7 @@ if($("body").data("title") === "mainPage"){
             if(Object.keys(searchArray).length == 0){
                 searchArray = jQuery.extend({}, allUsers);
             }
-            for (var i = (Object.keys(searchArray).length)-1 ; i >= 0 ;i--) {
-                console.log(i);
-                console.log(Object.keys(searchArray).length);
-                console.log(allUsers[i].username);
+            for (var i = (Object.keys(searchArray).length)-1 ; i >= 0 ;i--){
                 if (searchArray[i].username.toLowerCase().indexOf(input.toLowerCase()) > -1 && searchArray[i].username !== currentUser.username) {
                     if($('#myUL').find("."+allUsers[i].username).length == 0){
                         $("#myUL").append("<li class='myLi'><a class='myA "+searchArray[i].username+"' href='http://localhost:3000/userAcc.html?email="+btoa(searchArray[i].email)+"&id="+btoa(searchArray[i]._id)+"&user=no'>"+searchArray[i].username+"</a></li>");
@@ -453,33 +450,42 @@ if($("body").data("title") === "userAcc"){
         if(params.user == 'no'){
             $(".updateProfile").css('display','none');
             $(".statusEdit").css('display','none');
+            $('#userStatus').bind('dblclick',function(e){
+                e.preventDefault();
+            });
+        }
+        else{
+            $("#userStatus").dblclick(function(){
+                $("#userStatus").css("display","none");
+                $(".statusEdit").css("display","none");
+                $("#inputStatus").css("display","block");
+                $(".inputClose").css("display","block");
+                $("#inputStatus").on('keyup', function (e) {
+                    if (event.key === 'Enter') {
+                        socket.emit('statusUpdate',{
+                            id: currentUser._id,
+                            status: $("#inputStatus").val() 
+                        });
+                    }
+                });
+            });
         }
         
-    $(".statusEdit").click(function(){
-        $("#userStatus").css("display","none");
-        $(".statusEdit").css("display","none");
-        $("#inputStatus").css("display","block");
-        $(".inputClose").css("display","block");
-        $("#inputStatus").on('keyup', function (e) {
-            if (e.keyCode == 13) {
-                $(".loader").css("display","block");
-                socket.emit('statusUpdate',{
-                    id: currentUser._id,
-                    status: $("#inputStatus").val() 
-                });
-            }
-        });
-    });
+
+        
+    $(".inputClose").click(function(){
+        $("#userStatus").css("display","block");
+        $(".statusEdit").css("display","block");
+        $("#inputStatus").css("display","none");
+        $(".inputClose").css("display","none");
+    });  
     
     socket.on('statusUpdated',function(user){
         $("#userStatus").css("display","block");
         $(".statusEdit").css("display","block");
         $("#inputStatus").css("display","none");
         $(".inputClose").css("display","none");
-        $(".loader").css("display","none");
-        console.log(user);
-        $("#userStatus").text(user.status);
-        console.log('Status Updated');
+        $("#userStatus").text(user.mainStatus);
     });    
         
         // Ajax request to redirect from main page to profile page along with user info

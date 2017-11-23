@@ -22,9 +22,9 @@ body{
     background-color: white;
 }
 
-.fa-pencil,.fa-times{
+.fa-times{
     color: white;
-    padding-left: 5.5px;
+    padding-left: 5.5vw;
 }
 
 .signUpContent{
@@ -70,6 +70,14 @@ body{
     margin-left: 30px;
     padding: 6px 15px;
     top: 0; left: 0; bottom: 0; right: 0;
+}
+
+#textPost{
+    padding-left: 10px;
+}
+
+.loginOption{
+    padding-left: 5px;
 }
 
 .inputWidth:focus{
@@ -235,8 +243,19 @@ hr{
     padding-bottom: 10px;
 }
 
+.inputClose{
+    display: none;
+    font-size: 22px;
+    padding-top: 5px;
+    padding-left: 5PX;
+}
+
 .UserStatusPost{
     display: flex;
+}
+
+#userStatus{
+    cursor: pointer;
 }
 
 .inputUserstatus{
@@ -302,7 +321,7 @@ hr{
 }
 
 #SidebarInfo{
-    width: 2000vw;
+    width: 100vw;
     height: 80vh;
     margin-left: 2vw;
     border:0.01em solid #DCDCDC;
@@ -327,12 +346,15 @@ nav{
 }
 
 .userDp{
-    max-width: 110px;
-    border-radius: 100px;
-    border: 3px solid #fff;
+    width: 110px;
+    height: 110px;
+    border-radius: 30px;
+/*    max-width: 110px;*/
+/*    border-radius: 100px;*/
+/*    border: 3px solid #fff;*/
     position: absolute;
     margin-left: 44vw;
-    margin-top: 19vh;
+    margin-top: 20vh;
 }
 
 #textPost{
@@ -353,7 +375,6 @@ nav{
     margin-top: 10px;
     margin-bottom: 100px;
     width: 2em;
-/*    display: none;*/
 }
 
 .username1{
@@ -370,19 +391,23 @@ nav{
 }
 
 .status{
+/*    display: flex;*/
     text-align: center;
     font-family: 'PT Serif', serif;
     font-size: 16px;
     color: whitesmoke;
     line-height: 0px;
     position: absolute;
-    margin-left: 41.1vw;
+    margin-left: 42vw;
     margin-top: 41vh;
+    width: 50%;
+    display:table;
+    text-align:center;
+    width: 150px;
 }
 
 .information{
     display: flex;
-    width: 100%;
     margin-left: 44.5vw;
     margin-top: 50vh;
     position: absolute;
@@ -464,12 +489,15 @@ nav{
 
 #inputStatus{
     display: none;
-    margin-left: 40.7vw;
     margin-bottom: 0;
 }
 
-#inputStatus1{
+.inputStatus1{
     display: flex;
+}
+
+#inputStatus{
+    width: 200px;
 }
 
 .loader {
@@ -484,7 +512,7 @@ nav{
 }
 
 #statusEdit{
-    display: inline;
+/*    display: reltive;*/
 }
 
 #div1,#div2,#div3,#div4{
@@ -515,7 +543,7 @@ nav{
 #myUL {
     /* Remove default list styling */
     list-style-type: none;
-    width: 20vw;
+    width: 200px;
     padding: 0;
     margin: 0;
     z-index: 10;
@@ -523,16 +551,17 @@ nav{
 }
 
 #myUL .myLi .myA {
+    background-color: #f0f8ff;
     line-height: .5;
     height: 5vh;
-    border: 1px solid #ddd; /* Add a border to all links */
-    margin-top: -1px; /* Prevent double borders */
-    background-color: #f6f6f6; /* Grey background color */
-    padding: 12px; /* Add some padding */
-    text-decoration: none; /* Remove default text underline */
-    font-size: 14px; /* Increase the font-size */
-    color: black; /* Add a black text color */
-    display: block; /* Make it into a block element to fill the whole list */
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-top: -1px;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 14px;
+    color: black;
+    display: block;
 }
 
 #myUL .myLi .myA:hover:not(.header) {
