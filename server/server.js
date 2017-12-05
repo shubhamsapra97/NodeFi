@@ -9,8 +9,10 @@ const mongoose = require('mongoose');
 const hbs = require('hbs');
 const fs = require('fs');
 const cloudinary = require('cloudinary');
-var engines = require('consolidate');
-var url = require('url');
+const engines = require('consolidate');
+const url = require('url');
+const session = require('express-session');
+const internetAvailable = require("internet-available");
 
 mongoose.Promise = global.Promise;    //Telling mongoose which promise library to use;
 mongoose.connect('mongodb://localhost:27017/FakeInsta');
@@ -25,8 +27,9 @@ const publicPath = path.join(__dirname,'../public');
 //app.engine('html', require('ejs').renderFile);
 app.set('views', publicPath);
 //app.set('view engine', 'html');
-app.engine('html', engines.mustache);
+//app.engine('html', engines.mustache);
 app.set('view engine', 'html');
+app.use(session({secret: "vkvkjsdsbj12334",resave:false,saveUninitialized: true}));
 
 var {Users} = require('./models/user');
 var {Images} = require('./models/images');
@@ -57,6 +60,14 @@ io.on('connection',(socket)=>{
        console.log('User was disconnected'); 
     });
     
+    internetAvailable({
+        timeout: 1000
+    }).then(function(){
+        console.log("Internet available");
+    }).catch(function(){
+        console.log("No internet");
+    });
+
     //SignUp Route
     app.post('/signUp',(req,res)=>{
         var body = _.pick(req.body,['email','username','location','password']);
@@ -65,9 +76,10 @@ io.on('connection',(socket)=>{
         user.posts = 0;
         user._id = id;
         user.mainStatus = "Hello there!";
-        user.url = 'images/anony.jpg'
+        user.url = 'images/anony.jpg';
         id = id.toString();
         user.save().then(()=>{
+            req.session.user = user;
             res.redirect(url.format({
                   pathname:"profile.html",
                   query: {
@@ -84,6 +96,7 @@ io.on('connection',(socket)=>{
        var body = _.pick(req.body,['email','password']);      
        Users.findByCredentials(body.email,body.password).then((user)=>{
             //redirecting along with some currenltly logged in user info
+             req.session.user = user;
              var id = (user._id).toString();
                res.redirect(url.format({
                   pathname:"mainPage.html",   
@@ -114,7 +127,15 @@ io.on('connection',(socket)=>{
               "id": body.id,
               "user": "yes"
            }
-        }));        
+        }));   
+    });
+    
+    app.post('/logOut',(req,res)=>{
+        req.session.destroy();
+        res.redirect(url.format({
+            pathname:"index.html"
+        }));     
+        console.log("destroyed");
     });
     
     //Profile Update Route
@@ -185,6 +206,7 @@ io.on('connection',(socket)=>{
            
        image.save().then((image)=>{
            console.log(`Image Uploaded to DB by ${image.username}`);
+           socket.broadcast.emit('newPost',image);
        });
         
        Users.findOneAndUpdate({
@@ -212,6 +234,7 @@ io.on('connection',(socket)=>{
         
         image.save().then((image)=>{
            console.log(`Text-Post Uploaded to DB by ${image.username}`);
+           socket.broadcast.emit('newPost',image);    
         });
     });
     
@@ -263,6 +286,13 @@ io.on('connection',(socket)=>{
     
     //Fetching all the images from DB
     socket.on('pageLoad',(info)=>{
+        internetAvailable({
+            timeout: 1000
+        }).then(function(){
+            console.log("Internet available");
+        }).catch(function(){
+            console.log("No internet");
+        });
         var skip = info.county*8;
         Images.find({}).lean().skip(Number(skip)).sort({
             date: -1,

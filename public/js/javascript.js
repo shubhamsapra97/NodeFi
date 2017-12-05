@@ -1,11 +1,13 @@
 var socket = io();
 
 socket.on('connect',function(){
-   console.log('Connected to server'); 
+   console.log('Connected to server');
+   $("#overlay12").css("display","none");
 });
 
 socket.on('disconnect',function(){
    console.log('Disconnected from server'); 
+   $("#overlay12").css("display","block");
 });
 
 //SignIn Page Js
@@ -138,6 +140,46 @@ if($("body").data("title") === "mainPage"){
                }
             
         }
+    });
+    
+    socket.on('newPost',function(images){
+        var postStatus = document.getElementsByClassName('.postStatus');
+                console.log("CALLED NEWPOST");
+               if(images.postStatus){
+                   console.log("YES");
+                   var template = document.getElementById("mainPostTemplate").innerHTML;
+                   var html = Mustache.render(template,{
+                       email: images.email,
+                       user: images.username,
+                       time: images.time,
+                       like: (0+" Likes"),
+                       postStatus: images.postStatus,
+                       location: images.location,
+                       dp: images.userDp,
+                       likeIcon: "fa-heart-o",
+                       date: images.date
+                   });
+                   $("#allPosts").prepend(html);
+
+               }  
+               else{            
+                   console.log("NO");
+                   var template = document.getElementById("post-template").innerHTML;
+                   var html = Mustache.render(template,{
+                       email: images.email,
+                       user: images.username,
+                       url: images.url,
+                       time: images.time,
+                       like: (0+" Likes"),
+                       status: images.status,
+                       location: images.location,
+                       dp: images.userDp,
+                       likeIcon: "fa-heart-o",
+                       date: images.date
+                   });
+                   $("#allPosts").prepend(html);
+
+               }
     });
     
     //current user info received
@@ -527,6 +569,13 @@ if($("body").data("title") === "userAcc"){
            }
         }
     });
+    
+//    $(".signOut").click(function(){
+//        alert("clicked");
+//       socket.emit('logOut',{
+//           logout: true
+//       }); 
+//    });
  
 //OVERLAY ON USER POSTS    
 //    function hasClass(elem, className) {

@@ -10,59 +10,70 @@
         <link rel="stylesheet" type="text/css" href="css/styles.css">
     </head>
     <body data-title='mainPage'>
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-                <div id="nav-left">
-                    <i class=" navbar-brand fa fa-instagram" aria-hidden="true"></i>
-                    <a class="navbar-brand" href="#">| NodeFi</a>
-                </div>    
-            </div>
+        <div id="wholePage">
+            
+            <div id="underDiv">
+              
+              <nav class="navbar navbar-default">
+              <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
+                    <div id="nav-left">
+                        <i class=" navbar-brand fa fa-instagram" aria-hidden="true"></i>
+                        <a class="navbar-brand" href="#">| NodeFi</a>
+                    </div>    
+                </div>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <ul class="nav navbar-nav">
-              </ul>    
-              <form class="navbar-form navbar-nav submitForm">
-                <div class="form-group">
-                   <input type="text" class="form-control userSearch" placeholder="Search" name="search">
-                   <ul id="myUL"></ul> 
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                  <ul class="nav navbar-nav">
+                  </ul>    
+                  <form class="navbar-form navbar-nav submitForm">
+                    <div class="form-group">
+                       <input type="text" class="form-control userSearch" placeholder="Search" name="search">
+                       <ul id="myUL"></ul> 
+                    </div>
+                  </form>      
+                  <ul class="nav navbar-nav navbar-right" id="nav-right">
+                      <li data-toggle="modal" data-target="#exampleModal">
+                          <i id='PostInput' class="fa fa-compass user-nav" aria-hidden="true"></i>
+                      </li> 
+                      <li><i class="fa fa-heart-o user-nav profile" aria-hidden="true"></i></li>
+                      <li><i class="personalAcc fa fa-user-o user-nav" aria-hidden="true"></i></li>
+                  </ul>
                 </div>
-              </form>      
-              <ul class="nav navbar-nav navbar-right" id="nav-right">
-                  <li data-toggle="modal" data-target="#exampleModal">
-                      <i id='PostInput' class="fa fa-compass user-nav" aria-hidden="true"></i>
-                  </li> 
-                  <li><i class="fa fa-heart-o user-nav profile" aria-hidden="true"></i></li>
-                  <li><i class="personalAcc fa fa-user-o user-nav" aria-hidden="true"></i></li>
-              </ul>
-            </div><!-- /.navbar-collapse -->
-          </div><!-- /.container-fluid -->
-        </nav>
-        
-          <div>
-            <div class="UserStatusPost">
-                <div><input type="text" class="inputUserstatus form-control" placeholder="Whats going on in your Mind ...."></div>
-                <div>
-                  <label for="fileUpload" class="custom-file-upload">
-                  <i class="fa fa-camera"></i>
-                  </label>
+              </div>
+            </nav>
+
+              <div>
+                <div class="UserStatusPost">
+                    <div><input type="text" class="inputUserstatus form-control" placeholder="Whats going on in your Mind ...."></div>
+                    <div>
+                      <label for="fileUpload" class="custom-file-upload">
+                      <i class="fa fa-camera"></i>
+                      </label>
+                    </div>
+                    <input id="fileUpload" type="file"/>
                 </div>
-                <input id="fileUpload" type="file"/>
+              </div>
+
+            <div id="Container">            
+                <div id="allPosts">
+
+                </div>
             </div>
-          </div>
-        
-        <div id="Container">            
-            <div id="allPosts">
-                
             </div>
+            
+            <div id="overlay12">
+                <img id='mainPageLoader' class='load' src='images/loader.gif' alt='loader'>
+            </div>
+            
         </div>    
         
         <script id="post-template" type="text/x-handlebars-template">
