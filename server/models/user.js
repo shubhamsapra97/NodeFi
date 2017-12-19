@@ -88,7 +88,7 @@ UserSchema.methods.toJSON = function(){
     var user = this;
     var userObject = user.toObject();
     
-    return _.pick(userObject,['_id','email','username','fullname','website','location','url','status','bday','qualities','contact','mainStatus']);
+    return _.pick(userObject,['_id','email','username','fullname','website','location','url','status','bday','qualities','contact','mainStatus','confirmPass']);
 }
 
 UserSchema.methods.generateAuthToken = function(){
@@ -127,6 +127,18 @@ UserSchema.statics.findByCredentials = function(email,password){
 
   });
 };
+
+UserSchema.statics.passMatch = function(password,hashPassword){
+    var User = this;
+    return new Promise((resolve,reject)=>{
+      bcrypt.compare(password,hashPassword,(err,res)=>{
+          if(err){
+              return reject(err);
+          }
+          return resolve(res);
+      });  
+    });
+}
 
 UserSchema.statics.findByEmail = function(id){
   var User = this;

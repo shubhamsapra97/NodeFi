@@ -11,8 +11,16 @@ const fs = require('fs');
 const cloudinary = require('cloudinary');
 const engines = require('consolidate');
 const url = require('url');
-const session = require('express-session');
+var session = require('express-session');
 const internetAvailable = require("internet-available");
+const exphbs = require('express-handlebars');
+const expressValidator = require('express-validator');
+const flash = require('connect-flash');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const cookieParser = require('cookie-parser');
+const sharedsession = require("express-socket.io-session");
+
 
 mongoose.Promise = global.Promise;    //Telling mongoose which promise library to use;
 mongoose.connect('mongodb://localhost:27017/FakeInsta');
@@ -21,15 +29,19 @@ const port = process.env.PORT || 3000;
 var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
-//app.set('view engine', 'hbs');
+
+
 const publicPath = path.join(__dirname,'../public');
-//app.set('view engine', 'ejs');
-//app.engine('html', require('ejs').renderFile);
+app.use(express.static(publicPath));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
+app.use(cookieParser());
+
 app.set('views', publicPath);
-//app.set('view engine', 'html');
-//app.engine('html', engines.mustache);
 app.set('view engine', 'html');
-app.use(session({secret: "vkvkjsdsbj12334",resave:false,saveUninitialized: true}));
+app.engine('html', require('hbs').__express);
 
 var {Users} = require('./models/user');
 var {Images} = require('./models/images');
@@ -41,14 +53,67 @@ cloudinary.config({
   api_secret: 'sC4_am-XrdDs4AuMkY1am5-tI9c' 
 });
 
-//app.set('../',__dirname+'/views');
-//app.use("/public", express.static(publicPath));
-app.use(express.static(publicPath));
-//Parse JSON data
-app.use(bodyParser.urlencoded({
-    extended: true
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(expressValidator({
+  errorFormatter: function(param, msg, value) {
+      var namespace = param.split('.')
+      , root    = namespace.shift()
+      , formParam = root;
+
+    while(namespace.length) {
+      formParam += '[' + namespace.shift() + ']';
+    }
+    return {
+      param : formParam,
+      msg   : msg,
+      value : value
+    };
+  }
 }));
-app.use(bodyParser.json());
+
+app.use(session({
+    secret: "kvkjsdsbj12334",
+    resave:false,
+    saveUninitialized: false,
+    cookie:{
+        authStatus: "NotLoggedIn",
+        secure: false
+    },
+    rolling: true
+}));
+
+
+
+app.use(function (req, res, next){
+    if(req.url == '/login' || req.url == '/register' || req.session.user){
+       next();
+    }
+});
+
+
+
+
+io.use(sharedsession(session({
+    secret: "kvkjsdsbj12334",
+    resave:false,
+    saveUninitialized: false,
+    cookie:{
+        authStatus: "NotLoggedIn",
+        secure: false
+    },
+    rolling: true
+}))); 
+       
+ io.use(function(socket, next) {
+    var req = socket.handshake;
+//    console.log(req.session.id);
+
+     next();
+
+});
 
 //User Connected
 io.on('connection',(socket)=>{
@@ -67,9 +132,13 @@ io.on('connection',(socket)=>{
     }).catch(function(){
         console.log("No internet");
     });
-
+    
+    app.get('/',(req,res)=>{
+       res.render('index.html'); 
+    });
+    
     //SignUp Route
-    app.post('/signUp',(req,res)=>{
+    app.post('/register',(req,res)=>{
         var body = _.pick(req.body,['email','username','location','password']);
         var id = mongoose.Types.ObjectId();
         var user = new Users(body);
@@ -80,10 +149,12 @@ io.on('connection',(socket)=>{
         id = id.toString();
         user.save().then(()=>{
             req.session.user = user;
+            req.session.cookie.authStatus = "loggedIn";
             res.redirect(url.format({
                   pathname:"profile.html",
                   query: {
-                      id: id
+                      id: id,
+                      email: user.email
                    }
             }));
         }).catch((e)=>{
@@ -92,35 +163,67 @@ io.on('connection',(socket)=>{
     });
     
     //MainPage Route
-    app.post('/mainPage',(req,res)=>{
-       var body = _.pick(req.body,['email','password']);      
-       Users.findByCredentials(body.email,body.password).then((user)=>{
-            //redirecting along with some currenltly logged in user info
-             req.session.user = user;
-             var id = (user._id).toString();
-               res.redirect(url.format({
-                  pathname:"mainPage.html",   
-                  query: {
-                     "id": id
-                   }
-               }));           
-       });      
+    app.post('/login',(req,res)=>{
+       var body = _.pick(req.body,['email','password']);   
+       var email = body.email;
+       var password = body.password;
+      
+       req.checkBody('email','Email is required').notEmpty();
+       req.checkBody('email','Email is not valid').isEmail();
+       req.checkBody('password','Password is required').notEmpty();
+        
+       var errors = req.validationErrors();
+//        socket.emit('loginErrors',{
+//               errors: errors
+//        });
+        
+       if(errors){
+           res.render('index.html',{
+               errors: errors
+           });       
+       }
+        else{
+            Users.findByCredentials(body.email,body.password).then((user)=>{
+                //redirecting along with some currenltly logged in user info
+                 req.session.user = user;
+                 req.session.cookie.authStatus = "loggedIn";
+                req.session.user = user;
+//                socket.handshake.session.authStatus = 'LoggedIn';
+//                socket.handshake.headers.cookie.auth = 'NOt';
+//                socket.handshake.session.save();
+                 var id = (user._id).toString();
+                   res.redirect(url.format({
+                      pathname:"mainPage.html",   
+                      query: {
+                         "id": id
+                       }
+                   }));           
+            }).catch((error) => {
+              console.log(error);
+            }); 
+        }    
+        
+        
     });
     
-    //On ProfileButton Click
+        //On ProfileButton Click
     app.post('/profile',(req,res)=>{
-        var body = _.pick(req.body,['id']);
-        res.send(url.format({
+        var body = _.pick(req.body,['id','email']);
+        req.session.cookie.authStatus = "loggedIn";
+        return res.send(url.format({
           pathname:"profile.html",   
           query: {
-             "id": body.id
+             "id": body.id,
+             "email": body.email
            }
         }));
     });
     
     app.post('/userAcc',(req,res)=>{
+        req.session.cookie.authStatus = "userACC";
+        req.session.save();
         var body = _.pick(req.body,['email','id']);
-        res.send(url.format({
+        return res.send(url.format({
           pathname:"userAcc.html",   
           query: {
              "email": body.email,
@@ -130,24 +233,50 @@ io.on('connection',(socket)=>{
         }));   
     });
     
-    app.post('/logOut',(req,res)=>{
-        req.session.destroy();
-        res.redirect(url.format({
-            pathname:"index.html"
-        }));     
-        console.log("destroyed");
+    app.get('/logOut',(req,res)=>{
+        req.session.cookie.authStatus = "loggedOut";
+         req.session.destroy(function (err) {
+            return res.send(url.format({
+              pathname:"index.html"
+            })); 
+         });
+    });
+    
+    app.post('/delete',(req,res)=>{
+       var body = _.pick(req.body,['email','id']);
+       req.session.cookie.authStatus = 'loggedOut';
+       
+       Users.remove({ _id: body.id }, function(err) {
+           console.log('User Account Deleted Successfully');
+       });     
+        
+        Images.find({
+            email: body.email
+        }, function (err, users) {
+            Images.deleteMany({ 
+                email: body.email
+            }, function(err) {
+                console.log("Removed all user Images");
+                req.session.destroy(function (err) {
+                  return res.send(url.format({
+                      pathname:"index.html"
+                  }));     
+                }); 
+            });
+        });
     });
     
     //Profile Update Route
     app.post('/update',(req,res)=>{
-        var body = _.pick(req.body,['email','username','fullname','work','location','url','mobile','qualities','bday']);
+        var body = _.pick(req.body,['username','fullname','work','location','url','mobile','qualities','bday','confirmPass']);
+        var obj1;
+
         Users.findOneAndUpdate(
         { 
-            email :body.email 
+            username :body.username 
         },
         { 
-            $set:
-            { 
+            $set: { 
                 username: body.username,
                 fullname: body.fullname,
                 work: body.work,
@@ -162,9 +291,15 @@ io.on('connection',(socket)=>{
             new :true
         },
         function(err, user) {
+            
+            if(body.confirmPass){
+                user.password = body.confirmPass;
+                user.save();
+            }
+            
             Images.update(
             {
-                email:user.email
+                username: user.username
             }, 
             {
                 userDp: user.url,
@@ -284,6 +419,38 @@ io.on('connection',(socket)=>{
         });
     });
     
+    //Like Functionality
+    socket.on('Like1',(info)=>{
+        Images.findOneAndUpdate({
+            postStatus: info.postStatus
+        }, {
+            $inc : {
+                'like' : 1
+            },
+            $push : {
+                'userLiked' : info.user    
+        }
+        }).then((image)=>{
+            console.log("Liked Post");
+        });
+    });
+    
+    //Dislike Functionality
+    socket.on('Dislike1',(info)=>{
+        Images.findOneAndUpdate({
+            postStatus: info.postStatus
+        }, {
+            $inc : {
+                'like' : -1
+            },
+            $pull : {
+                'userLiked' : info.user
+            }
+        }).then((image)=>{
+            console.log('Dislike Post');
+        });
+    });
+    
     //Fetching all the images from DB
     socket.on('pageLoad',(info)=>{
         internetAvailable({
@@ -349,6 +516,19 @@ io.on('connection',(socket)=>{
     socket.on('profileuserInfo',(info)=>{
         Users.findByEmail(info.id).then((user)=>{
             socket.emit('profileUserInfo', user);
+        });
+    });
+    
+    socket.on('passMatchProcess',(info)=>{
+        Users.passMatch(info.pass,info.hashedPass).then((match)=>{
+          if(match){
+              socket.emit('Match',{});
+          }  
+          else{
+              socket.emit('noMatch',{});
+          }
+        }).catch((error) => {
+          console.log(error);
         });
     });
     

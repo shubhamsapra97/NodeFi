@@ -47,7 +47,7 @@ var UserSchema = new mongoose.Schema({
   userLiked: [{
       type: String,
       required: false
-  }]    
+  }]
 });
 
 UserSchema.statics.findByCredentials = function(username,time){

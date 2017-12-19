@@ -10,6 +10,18 @@ socket.on('disconnect',function(){
    $("#overlay12").css("display","block");
 });
 
+
+
+//window.addEventListener('popstate', function(event) {
+//    // The popstate event is fired each time when the current history entry changes.
+//
+//    alert("fired");
+//// socket.emit('backButton',{
+////     hello: "hello"
+//// });
+//
+//}, false);
+
 //SignIn Page Js
 if($("body").data("title") === "signInPage"){
     $(".fa").click(function(){
@@ -29,7 +41,7 @@ if($("body").data("title") === "signInPage"){
 
 }
 
-//mainPage Js
+//mainPagnodwe Js
 var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload';
 var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
 
@@ -64,7 +76,7 @@ if($("body").data("title") === "mainPage"){
         $("#loader1").remove();
         var postStatus = document.getElementsByClassName('.postStatus');
         if(!images.empty){
-            console.log(images.docs.length);
+            
             for(var i=0;i<images.docs.length;i++){
                like = images.docs[i].like + " Likes";
                likesArray = images.docs[i].userLiked;            
@@ -77,7 +89,7 @@ if($("body").data("title") === "mainPage"){
                 }
 
                if(images.docs[i].postStatus){
-
+                   //appending text Posts
                    var template = document.getElementById("mainPostTemplate").innerHTML;
                    var html = Mustache.render(template,{
                        email: images.docs[i].email,
@@ -94,7 +106,7 @@ if($("body").data("title") === "mainPage"){
 
                }  
                else{            
-
+                   //appending image Posts
                    var template = document.getElementById("post-template").innerHTML;
                    var html = Mustache.render(template,{
                        email: images.docs[i].email,
@@ -112,7 +124,11 @@ if($("body").data("title") === "mainPage"){
 
                }
             }
-            $("#allPosts").append("<img id='loader' class='load' src='images/loader.gif' alt='loader'>");
+            
+            if(images.docs.length > 6){
+                $("#allPosts").append("<img id='loader' class='load' src='images/loader.gif' alt='loader'>");
+            }
+            
         }
     });
     
@@ -144,9 +160,7 @@ if($("body").data("title") === "mainPage"){
     
     socket.on('newPost',function(images){
         var postStatus = document.getElementsByClassName('.postStatus');
-                console.log("CALLED NEWPOST");
                if(images.postStatus){
-                   console.log("YES");
                    var template = document.getElementById("mainPostTemplate").innerHTML;
                    var html = Mustache.render(template,{
                        email: images.email,
@@ -163,7 +177,6 @@ if($("body").data("title") === "mainPage"){
 
                }  
                else{            
-                   console.log("NO");
                    var template = document.getElementById("post-template").innerHTML;
                    var html = Mustache.render(template,{
                        email: images.email,
@@ -191,7 +204,7 @@ if($("body").data("title") === "mainPage"){
         function hasClass(elem, className) {
             return elem.className.split(' ').indexOf(className) > -1;
         }
-
+        
         document.addEventListener('click', function (e) {
             if (hasClass(e.target, 'postLike')) {
                 c = $(e.target).parent().next().text();
@@ -200,21 +213,39 @@ if($("body").data("title") === "mainPage"){
                     $(e.target).parent().next().text(parseInt(c) - 1 + " Likes");
                     var index = likesArray.indexOf(currentUser.username);
                     likesArray.splice(index, 1);
-                    socket.emit('Dislike',{
-                        name: e.target.title,
-                        url: e.target.id,
-                        user: currentUser.username
-                    });
+                    if($(e.target).parent().prev().children().hasClass('textPost')){
+                        socket.emit('Dislike1',{
+                            name: e.target.title,
+                            postStatus: e.target.id,
+                            user: currentUser.username
+                        });
+                    }
+                    else if($(e.target).parent().prev().children().hasClass('postImage')){
+                        socket.emit('Dislike',{
+                            name: e.target.title,
+                            url: e.target.id,
+                            user: currentUser.username
+                        });
+                    }
                 }
                 else{
                     $(e.target).removeClass('fa-heart-o').addClass('fa-heart');
                     $(e.target).parent().next().text(parseInt(c) + 1 + " Likes");
                     likesArray.push(currentUser.username);
-                    socket.emit('Like',{
-                        name: e.target.title,
-                        url: e.target.id,
-                        user: currentUser.username
-                    });
+                    if($(e.target).parent().prev().children().hasClass('textPost')){
+                        socket.emit('Like1',{
+                            name: e.target.title,
+                            postStatus: e.target.id,
+                            user: currentUser.username
+                        });
+                    }
+                    else if($(e.target).parent().prev().children().hasClass('postImage')){
+                        socket.emit('Like',{
+                            name: e.target.title,
+                            url: e.target.id,
+                            user: currentUser.username
+                        });
+                    }
                 }
             } else if (hasClass(e.target, 'postComment')) {
                 alert('test');
@@ -334,13 +365,8 @@ if($("body").data("title") === "mainPage"){
            url : '/userAcc',
            type : 'POST',
            data : {
-             id: btoa(currentUser._id),   
-             username: currentUser.username,
-             location: currentUser.location,
-             email: btoa(currentUser.email),
-             fullname: currentUser.fullname,
-             work: currentUser.work,
-             url: currentUser.url   
+             id: btoa(currentUser._id),
+             email: currentUser.email
            },
            success : function(data){
               window.location.replace(data);   
@@ -372,7 +398,7 @@ if($("body").data("title") === "mainPage"){
             for (var i = (Object.keys(searchArray).length)-1 ; i >= 0 ;i--){
                 if (searchArray[i].username.toLowerCase().indexOf(input.toLowerCase()) > -1 && searchArray[i].username !== currentUser.username) {
                     if($('#myUL').find("."+allUsers[i].username).length == 0){
-                        $("#myUL").append("<li class='myLi'><a class='myA "+searchArray[i].username+"' href='http://localhost:3000/userAcc.html?email="+btoa(searchArray[i].email)+"&id="+btoa(searchArray[i]._id)+"&user=no'>"+searchArray[i].username+"</a></li>");
+                        $("#myUL").append("<li class='myLi'><a class='myA "+searchArray[i].username+"' href='http://localhost:3000/userAcc.html?email="+searchArray[i].email+"&id="+btoa(searchArray[i]._id)+"&user=no'>"+searchArray[i].username+"</a></li>");
                     }
                     delete searchArray[i];
                 }
@@ -398,7 +424,6 @@ if($("body").data("title") === "profilePage"){
     //Fetching profile user info
     socket.on('profileUserInfo',function(user){
         // Autofilling Info already provided by user
-        document.getElementById('email').value = user.email;
         document.getElementById('username').value = user.username;
         document.getElementById('location').value = user.location; 
         if(user.work){
@@ -420,6 +445,96 @@ if($("body").data("title") === "profilePage"){
         if(user.qualities){
             document.getElementById('qualities').value = user.qualities;
         }
+        
+//        $( "#currentPassword" ).keypress(function() {
+//          console.log( "Handler for .keypress() called." );
+//            
+////            $("#currentPassword").keyup(function(){
+//                socket.emit('passMatchProcess',{
+//                    pass: $("#currentPassword").val(),
+//                    hashedPass: user.password
+//                });
+//                console.log('emitted');
+//
+//                socket.on('noMatch',function(info){
+//                   alert('Not Matched'); 
+//                });
+//
+//                socket.on('Match',function(){
+//                   alert('Matched'); 
+//                });
+//
+////            });
+//            
+//        });
+
+        // Init a timeout variable to be used below
+        var timeout = null;
+
+        // Listen for keystroke events
+        $("#currentPassword").keyup(function(){
+            console.log('KEYUP');
+            // Clear the timeout if it has already been set.
+            // This will prevent the previous task from executing
+            // if it has been less than <MILLISECONDS>
+            clearTimeout(timeout);
+
+            // Make a new timeout set to go off in 800ms
+            timeout = setTimeout(function () {
+                $(".passMatch").css('display','inline');
+                socket.emit('passMatchProcess',{
+                    pass: $("#currentPassword").val(),
+                    hashedPass: user.password
+                });
+                console.log('emitted');
+                
+            }, 500);
+        });
+        
+        socket.on('noMatch',function(info){ 
+           $(".passMatch").css('display','none');
+           $(".wrongMatch").css('display','inline'); 
+           $(".match").css('display','none');
+           $("#newPassword").attr('readonly','readonly');
+        });
+
+        socket.on('Match',function(){
+           $(".passMatch").css('display','none');
+           $(".wrongMatch").css('display','none');
+           $(".match").css('display','inline');
+           $("#newPassword").removeAttr('readonly');
+        });
+        
+        $("#newPassword").keyup(function(){
+            if($("#newPassword").val().length == 0){
+                $("#updateBtn").removeAttr('disabled');
+            }
+            if($("#newPassword").val().length > 5 ){
+                $(".match1").css('display','inline');
+                $("#confirmPass").removeAttr('readonly');
+            }
+            else{
+                $(".match1").css('display','none');
+                $("#confirmPass").attr('readonly','readonly');
+//                $("#updateBtn").attr('disabled','disbaled');
+            }
+        });
+        
+        $("#confirmPass").keyup(function(){
+            if($("#confirmPass").val() === $("#newPassword").val() ){
+                if($("#confirmPass").val().length!=0){
+                    $(".match2").css('display','inline');
+                    $("#updateBtn").removeAttr('disabled'); 
+                }
+                else{
+                    $(".match2").css('display','none'); 
+                }
+            }
+            else{
+                    $("#updateBtn").attr('disabled','disabled');
+            }
+        });
+        
     });
     
     // Uploading User Display Pic to Cloud 
@@ -455,7 +570,7 @@ if($("body").data("title") === "userAcc"){
             id: atob(params.id)
         });
         socket.emit('userPosts',{
-            email: atob(params.email)
+            email: params.email
         });
     });
     
@@ -553,21 +668,53 @@ if($("body").data("title") === "userAcc"){
     });
     
     socket.on('userImages',function(images){
-        for(var i=0;i<images.length;i++){
-           if(!images[i].postStatus){
-               var template = document.getElementById("post-template").innerHTML;
-               var html = Mustache.render(template,{
-                   user: images[i].username,
-                   url: images[i].url,
-                   time: images[i].time,
-                   like: images[i].like,
-                   status: images[i].status,
-                   location: images[i].location,
-                   dp: images[i].userDp
-               });
-               $("#Posts").prepend(html);
-           }
-        }
+            var k=0;
+            for(var i=0;i<images.length;i++){
+               if(!images[i].postStatus){
+                   var template = document.getElementById("post-template").innerHTML;
+                   var html = Mustache.render(template,{
+                       user: images[i].username,
+                       url: images[i].url,
+                       time: images[i].time,
+                       like: images[i].like,
+                       status: images[i].status,
+                       location: images[i].location,
+                       dp: images[i].userDp
+                   });
+                   $("#Posts").prepend(html);
+                   k=1;
+               }
+            }
+            if(k==0){
+                $("#Posts").append('<p id="noPosts">No Posts Yet!</p>');
+            }
+    });
+    
+    
+    $("#LogOut").click(function(e){
+        console.log("clicked");
+        $.ajax({
+            url:"/logOut",
+            type: "GET",
+            success: function(result) {
+                window.location.replace(result); 
+            }                
+        });
+    });
+    
+    $("#DeleteAcc").click(function(e){
+       console.log('clicky');
+       $.ajax({
+          url: "/delete" ,
+          type: "POST",
+          data:{
+             email: currentUser.email,
+             id: currentUser._id
+          },
+          success: function(result){
+              window.location.replace(result);
+          }
+       });
     });
     
 //    $(".signOut").click(function(){

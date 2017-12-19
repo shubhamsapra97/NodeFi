@@ -10,6 +10,16 @@ body{
     position: absolute;
 }
 
+#errors{
+    display: none;
+}
+
+#noPosts{
+    padding-left: 30vw;
+    font-size: 30px;
+    font-family: 'PT Serif', serif;
+}
+
 #overlay12{
     z-index: 2;
     top: 0px; 
@@ -150,7 +160,6 @@ hr{
     padding-left: 1vw;
     overflow: auto;
     height: 25px;
-    background-color: #f5f8fa;
 }
 
 .submitForm{
@@ -158,7 +167,7 @@ hr{
   padding-top: 1vh;
 }
 
-.posts{
+.posty{
     width: 45vw;
     margin-left: 27vw;
     margin-right: auto;
@@ -386,7 +395,7 @@ nav{
     margin-top: 20vh;
 }
 
-#textPost{
+.textPost{
     font-family: 'PT Serif', serif;
     font-size: 20px;
 }
@@ -540,11 +549,18 @@ nav{
     margin-left: 20px;
 }
 
+.match,.passMatch,.wrongMatch,.match1,.wrongMatch1,.match2{
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+    display: none;
+}
+
 #statusEdit{
 /*    display: reltive;*/
 }
 
-#div1,#div2,#div3,#div4{
+#div1,#div2,#div3,#div4,#div5{
     display: flex;
 }
 
@@ -593,6 +609,53 @@ nav{
     display: block;
 }
 
+/*
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    font-size: 10px;
+    border: none;
+    cursor: pointer;
+}
+*/
+
+.deletedAccount,.LogOutAlert{
+    display: none;
+}
+
+#profilePic{
+    margin-top: 50px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 120px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    font-size : 13px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 6px 8px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
 #myUL .myLi .myA:hover:not(.header) {
     background-color: #eee; /* Add a hover effect to all links, except for headers */
 }
@@ -620,6 +683,12 @@ nav{
     .submitForm{
       padding-left: 23vw;
     }
+    
+    .posty{
+        margin-left: 22vw;
+        margin-right: auto;
+        width: 50vw;
+    }
 
 }
 
@@ -640,6 +709,12 @@ nav{
     
     .Name{
         font-size: 3.5vw;
+    }
+    
+    .posty{
+        margin-left: 17vw;
+        margin-right: auto;
+        width: 60vw;
     }
 
 }
@@ -667,6 +742,12 @@ nav{
         margin-left: 2vw;
         margin-right: auto;
         margin-top: 7vw;
+    }
+    
+    .posty{
+        margin-left: 10vw;
+        margin-right: auto;
+        width: 80vw;
     }
     
     #userprofilePic{
