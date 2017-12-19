@@ -35,8 +35,8 @@ body{
 #mainPageLoader{
     margin-left: 50vw;
     margin-top: 50vh;
-    height: 25px;
-    width: 25px;    
+    height: 41px;
+    width: 41px;    
 }
 
 #signBody{
@@ -301,7 +301,12 @@ hr{
     margin-left: 27.3vw;
 }
 
-#fileUpload,#fileUpload1,#fileUpload2,#logOut{
+.required{ 
+    color: red;
+    font-size: 18px;
+}
+
+#fileUpload,#fileUpload1,#fileUpload2,#logOut,#BackgroundfileUpload{
     display: none;
 }
 
@@ -310,6 +315,17 @@ hr{
     display: inline-block;
     padding: 6px 12px;
     cursor: pointer;
+}
+
+#BackgroundPic{
+    font-weight: normal;
+}
+
+#backPicLoad{
+    width: 18px;
+    height: 18px;
+    margin-left: 2px;
+    display: none;
 }
 
 .custom-file-upload:hover{

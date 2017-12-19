@@ -10,18 +10,6 @@ socket.on('disconnect',function(){
    $("#overlay12").css("display","block");
 });
 
-
-
-//window.addEventListener('popstate', function(event) {
-//    // The popstate event is fired each time when the current history entry changes.
-//
-//    alert("fired");
-//// socket.emit('backButton',{
-////     hello: "hello"
-//// });
-//
-//}, false);
-
 //SignIn Page Js
 if($("body").data("title") === "signInPage"){
     $(".fa").click(function(){
@@ -126,7 +114,7 @@ if($("body").data("title") === "mainPage"){
             }
             
             if(images.docs.length > 6){
-                $("#allPosts").append("<img id='loader' class='load' src='images/loader.gif' alt='loader'>");
+                $("#allPosts").append("<img id='loader' class='load' src='images/loader1.gif' alt='loader'>");
             }
             
         }
@@ -600,7 +588,8 @@ if($("body").data("title") === "userAcc"){
            bday: currentUser.bday,
            qualities: currentUser.qualities,
            contact: currentUser.contact,
-           status: currentUser.mainStatus    
+           status: currentUser.mainStatus,
+           backPic: currentUser.backgroundPic
         });
         document.getElementById("header").innerHTML += html;
         
@@ -627,6 +616,38 @@ if($("body").data("title") === "userAcc"){
                 });
             });
         }
+        
+    $("#BackgroundPic").click(function(){
+   
+        var fileUpload = document.getElementById('BackgroundfileUpload');
+        fileUpload.addEventListener('change',function(e){
+            var file = event.target.files[0];
+            var formData = new FormData();
+            formData.append('file',file);
+            formData.append('upload_preset',CLOUDINARY_UPLOAD_PRESET);
+            $("#backPicLoad").css('display','inline');
+
+            //Linking with Cloud
+            axios({
+               url: CLOUDINARY_URL,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                data: formData
+            }).then(function(res){
+               $(".backImage").attr('src' , res.data.secure_url); 
+               $("#backPicLoad").css('display','none');
+                
+               socket.emit('backgroundPic' , {
+                  backUrl : res.data.secure_url,
+                  email : currentUser.email
+               });
+            });
+
+        });
+        
+    });    
         
 
         

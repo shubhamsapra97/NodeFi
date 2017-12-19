@@ -34,11 +34,16 @@
                       <li data-toggle="modal" data-target="#exampleModal">
                         <div class="dropdown">
                           <button class="btn btn-secondary dropdown-toggle dropbtn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Settings
+                              <span id="settingsText">Settings</span><img src="images/loader1.gif" id="backPicLoad" />
                           </button>
                           <div class="dropdown-content">
-                              <a></a>
-                            <a id="LogOut">LogOut</a>
+                            <a id="LogOut">LogOut</a>                            
+                            <div>
+                              <label for="BackgroundfileUpload" class="file-upload1">
+                                <a id="BackgroundPic">Background Pic</a>
+                              </label>
+                            </div>
+                            <input id="BackgroundfileUpload" type="file"/>
                             <a id="DeleteAcc">Delete Account</a>
                           </div>
                         </div>
@@ -79,7 +84,7 @@
         
         <script id="user-template" type="text/x-handlebars-template">
             <div id="SidebarInfo">
-                <img class="backImage" src="images/iceland.jpg" alt='image'>
+                <img class="backImage" src="{{backPic}}" alt='image'>
                 <img class="userDp img-circle" src="{{dp}}">
                 <div class="below">
                     <div class="username1"><span>{{user}}</span></div><br>

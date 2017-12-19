@@ -146,6 +146,7 @@ io.on('connection',(socket)=>{
         user._id = id;
         user.mainStatus = "Hello there!";
         user.url = 'images/anony.jpg';
+        user.backgroundPic = 'https://res.cloudinary.com/https-blog-5946b-firebaseapp-com/image/upload/v1513716645/tujs9qumbcxuq0gv8qb0.jpg';
         id = id.toString();
         user.save().then(()=>{
             req.session.user = user;
@@ -529,6 +530,18 @@ io.on('connection',(socket)=>{
           }
         }).catch((error) => {
           console.log(error);
+        });
+    });
+    
+    socket.on('backgroundPic',(info)=>{
+        Users.findOneAndUpdate({
+            email: info.email
+        }, {
+            $set : {
+                'backgroundPic' : info.backUrl
+            }
+        }).then((image)=>{
+            console.log('Background Image Updated');
         });
     });
     
