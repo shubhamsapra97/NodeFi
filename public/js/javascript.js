@@ -10,6 +10,10 @@ socket.on('disconnect',function(){
    $("#overlay12").css("display","block");
 });
 
+socket.on('unauthorizedUser',function(dest){
+   window.location.href = dest.destination;
+});
+
 //SignIn Page Js
 if($("body").data("title") === "signInPage"){
     $(".fa").click(function(){
@@ -26,20 +30,20 @@ if($("body").data("title") === "signInPage"){
            $(".signInContent").removeClass('fadeOut').addClass('fadeInUp'); 
         }
     });  
+    
+    socket.on('loginErrors',function(){
+       console.log('CALLED');
+        alert("sdfsdf");
+    });
 
 }
 
-//mainPagnodwe Js
+//mainPage Js
 var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload';
 var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
 
 if($("body").data("title") === "mainPage"){
-    
-    //Prevent Page from redirecting to Login Page
-    history.pushState(null, null, $(location).attr('href'));
-    window.addEventListener('popstate', function () {
-        history.pushState(null, null, $(location).attr('href'));
-    });
+
     
     //fetching info from search url
     var params = $.deparam(window.location.search);
@@ -289,6 +293,60 @@ if($("body").data("title") === "mainPage"){
         formData.append('file',file);
         formData.append('upload_preset',CLOUDINARY_UPLOAD_PRESET);
         
+        console.log(formData);    
+        
+//        $.post({
+//           url: 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload',
+//           type: 'POST',
+//           beforeSend: function(request) {
+//             request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+//           },
+//           processData: false,
+//           data: {
+//               form: formData
+//           },
+//           success: function(data){
+//               console.log("ajax");
+//               console.log(res);
+//               //moment to fetch the time-date
+//               var time = moment(moment().valueOf()).format('h:mm a');
+//               var date = moment(moment().valueOf()).format('MM-DD-YYYY');
+//               var likes = 0+" Likes";
+//               //Mustache Templating    
+//               var template = document.getElementById("post-template").innerHTML;
+//               var html = Mustache.render(template,{
+//                   email: currentUser.email,
+//                   user: currentUser.username,
+//                   url: res.data.secure_url,
+//                   time: time,
+//                   like: likes,
+//                   date: date,
+//                   status: status,
+//                   location: currentUser.location,
+//                   dp: currentUser.url,
+//                   likeIcon: 'fa-heart-o'
+//               });
+//               $("#allPosts").prepend(html);
+//               
+//               // Sending data to server on image upload   
+//               socket.emit('onPost',{
+//                   id: currentUser._id,
+//                   email:currentUser.email,
+//                   username:currentUser.username,
+//                   imageUrl:res.data.secure_url,
+//                   time: time,
+//                   status: status,
+//                   location: currentUser.location,
+//                   url: currentUser.url,
+//                   date: date
+//               });
+               
+//           },
+//            error: function (err) {
+//                console.log(err);
+//            }
+//        });
+        
         //Linking with Cloud
         axios({
            url: CLOUDINARY_URL,
@@ -298,11 +356,15 @@ if($("body").data("title") === "mainPage"){
             },
             data: formData
         }).then(function(res){
+            
+            console.log("axios");
+//           var url = res.data.secure_url.slice(0, 72) + '/q_50/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
+//            console.log(url);
            //moment to fetch the time-date     
            var time = moment(moment().valueOf()).format('h:mm a');
            var date = moment(moment().valueOf()).format('MM-DD-YYYY');
            var likes = 0+" Likes";
-           //Mustache Templating    
+//           //Mustache Templating    
            var template = document.getElementById("post-template").innerHTML;
            var html = Mustache.render(template,{
                email: currentUser.email,
@@ -317,7 +379,7 @@ if($("body").data("title") === "mainPage"){
                likeIcon: 'fa-heart-o'
            });
            $("#allPosts").prepend(html);
- 
+// 
 // Handlebars Templating
             
 //            var source = $("#post-template").html();
@@ -352,6 +414,9 @@ if($("body").data("title") === "mainPage"){
         $.ajax({
            url : '/userAcc',
            type : 'POST',
+           beforeSend: function(request) {
+             request.setRequestHeader("x-auth", currentUser.tokens[0].token);
+           },
            data : {
              id: btoa(currentUser._id),
              email: currentUser.email
@@ -599,6 +664,7 @@ if($("body").data("title") === "userAcc"){
             $('#userStatus').bind('dblclick',function(e){
                 e.preventDefault();
             });
+            $(".dropdown").css('display','none');
         }
         else{
             $("#userStatus").dblclick(function(){
@@ -606,6 +672,7 @@ if($("body").data("title") === "userAcc"){
                 $(".statusEdit").css("display","none");
                 $("#inputStatus").css("display","block");
                 $(".inputClose").css("display","block");
+                $(".dropdown").css('display','block');
                 $("#inputStatus").on('keyup', function (e) {
                     if (event.key === 'Enter') {
                         socket.emit('statusUpdate',{
@@ -671,6 +738,9 @@ if($("body").data("title") === "userAcc"){
             $.ajax({
                url : '/profile',
                type : 'POST',
+               beforeSend: function(request) {
+                 request.setRequestHeader("x-auth", currentUser.tokens[0].token);
+               },
                data : {
                  id: currentUser._id,   
                  username: currentUser.username,    
@@ -717,6 +787,9 @@ if($("body").data("title") === "userAcc"){
         $.ajax({
             url:"/logOut",
             type: "GET",
+            beforeSend: function(request) {
+              request.setRequestHeader("x-auth", currentUser.tokens[0].token);
+            },
             success: function(result) {
                 window.location.replace(result); 
             }                
@@ -728,6 +801,9 @@ if($("body").data("title") === "userAcc"){
        $.ajax({
           url: "/delete" ,
           type: "POST",
+          beforeSend: function(request) {
+           request.setRequestHeader("x-auth", currentUser.tokens[0].token);
+          },
           data:{
              email: currentUser.email,
              id: currentUser._id

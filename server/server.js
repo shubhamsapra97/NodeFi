@@ -7,17 +7,17 @@ const bodyParser = require('body-parser');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const hbs = require('hbs');
-const fs = require('fs');
+//const fs = require('fs');
 const cloudinary = require('cloudinary');
 const engines = require('consolidate');
 const url = require('url');
 var session = require('express-session');
 const internetAvailable = require("internet-available");
-const exphbs = require('express-handlebars');
+//const exphbs = require('express-handlebars');
 const expressValidator = require('express-validator');
-const flash = require('connect-flash');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+//const flash = require('connect-flash');
+//const passport = require('passport');
+//const LocalStrategy = require('passport-local').Strategy;
 const cookieParser = require('cookie-parser');
 const sharedsession = require("express-socket.io-session");
 
@@ -37,7 +37,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
-app.use(cookieParser());
+app.use(cookieParser('1234'));
 
 app.set('views', publicPath);
 app.set('view engine', 'html');
@@ -45,6 +45,7 @@ app.engine('html', require('hbs').__express);
 
 var {Users} = require('./models/user');
 var {Images} = require('./models/images');
+var {authenticate} = require('../middleware/authenticate');
 
 //Cloud Configured
 cloudinary.config({ 
@@ -54,64 +55,82 @@ cloudinary.config({
 });
 
 
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use(expressValidator({
-  errorFormatter: function(param, msg, value) {
-      var namespace = param.split('.')
-      , root    = namespace.shift()
-      , formParam = root;
-
-    while(namespace.length) {
-      formParam += '[' + namespace.shift() + ']';
-    }
-    return {
-      param : formParam,
-      msg   : msg,
-      value : value
-    };
-  }
-}));
-
+//app.use(passport.initialize());
+//app.use(passport.session());
+//
+//app.use(expressValidator({
+//  errorFormatter: function(param, msg, value) {
+//      var namespace = param.split('.')
+//      , root    = namespace.shift()
+//      , formParam = root;
+//
+//    while(namespace.length) {
+//      formParam += '[' + namespace.shift() + ']';
+//    }
+//    return {
+//      param : formParam,
+//      msg   : msg,
+//      value : value
+//    };
+//  }
+//}));
 app.use(session({
-    secret: "kvkjsdsbj12334",
+    secret: "1234",
     resave:false,
     saveUninitialized: false,
     cookie:{
         authStatus: "NotLoggedIn",
-        secure: false
-    },
-    rolling: true
+        secure: false,
+        maxAge: 100000000000000
+    }
 }));
 
 
 
-app.use(function (req, res, next){
-    if(req.url == '/login' || req.url == '/register' || req.session.user){
-       next();
-    }
-});
+//app.use(function (req, res, next){
+//    console.log(req.session.id);
+//    console.log(req.session);
+////    if(req.url == '/login' || req.url == '/register' || req.session.user){
+//       next();
+////    }
+//});
 
 
 
-
+var ID=0,i=0;
 io.use(sharedsession(session({
-    secret: "kvkjsdsbj12334",
-    resave:false,
-    saveUninitialized: false,
+    secret: "1234",
+    resave:true,
+    saveUninitialized: true,
     cookie:{
         authStatus: "NotLoggedIn",
-        secure: false
-    },
-    rolling: true
+        secure: false,
+        maxAge: 100000000000000
+    }
 }))); 
        
  io.use(function(socket, next) {
     var req = socket.handshake;
-//    console.log(req.session.id);
-
-     next();
+    if(i==0){        
+        ID = req.sessionID;
+        i++;
+        next();
+    }
+     
+    if(req.sessionStore.sessions[ID]){
+        var sessionObj = JSON.parse(req.sessionStore.sessions[ID]);
+        if(sessionObj.user){
+            console.log("Authorized User " + sessionObj.user.username);
+            next();
+        }
+        else{
+            console.log('UNAUTH User');
+            socket.emit('unauthorizedUser',{
+                destination: '/index.html'
+            });
+//            next();
+        }
+    }
 
 });
 
@@ -125,16 +144,16 @@ io.on('connection',(socket)=>{
        console.log('User was disconnected'); 
     });
     
-    internetAvailable({
-        timeout: 1000
-    }).then(function(){
-        console.log("Internet available");
-    }).catch(function(){
-        console.log("No internet");
-    });
+//    internetAvailable({
+//        timeout: 1000
+//    }).then(function(){
+//        console.log("Internet available");
+//    }).catch(function(){
+//        console.log("No internet");
+//    });
     
     app.get('/',(req,res)=>{
-       res.render('index.html'); 
+       res.render('index.html');
     });
     
     //SignUp Route
@@ -149,17 +168,23 @@ io.on('connection',(socket)=>{
         user.backgroundPic = 'https://res.cloudinary.com/https-blog-5946b-firebaseapp-com/image/upload/v1513716645/tujs9qumbcxuq0gv8qb0.jpg';
         id = id.toString();
         user.save().then(()=>{
-            req.session.user = user;
-            req.session.cookie.authStatus = "loggedIn";
+            
+            return user.generateAuthToken();
+            
+        }).then((token)=>{
+            res.header('x-auth',token);
+            socket.handshake.session.user = user;
+            socket.handshake.session.save();
             res.redirect(url.format({
-                  pathname:"profile.html",
-                  query: {
-                      id: id,
-                      email: user.email
-                   }
+              pathname:"profile.html",
+              query: {
+                  id: id,
+                  email: user.email
+              }
             }));
         }).catch((e)=>{
-            res.status(400).send(e);
+            console.log(err);
+            res.redirect('/')
         });
     });
     
@@ -168,49 +193,58 @@ io.on('connection',(socket)=>{
        var body = _.pick(req.body,['email','password']);   
        var email = body.email;
        var password = body.password;
-      
-       req.checkBody('email','Email is required').notEmpty();
-       req.checkBody('email','Email is not valid').isEmail();
-       req.checkBody('password','Password is required').notEmpty();
         
-       var errors = req.validationErrors();
+       Users.findOne({email}).then((user)=>{
+           if(!user){
+               socket.emit('loginErrors',{});
+           }
+           
+           return user.bcryptPass(body.password).then((user)=>{
+               
+                var id = (user._id).toString();
+                res.header('x-auth',user.tokens[0].token);
+                req.session.cookie.authStatus = "not";
+                req.session.save();
+                
+                socket.handshake.session.user = user;
+                socket.handshake.session.save();
+                 res.redirect(url.format({
+                    pathname:"mainPage.html",   
+                      query: {
+                         "id": id
+                      }
+                 }));  
+               
+           })
+           
+       }).catch((err)=>{
+           console.log(err);
+           res.redirect('/');           
+       });
+      
+      
+//       req.checkBody('email','Email is required').notEmpty();
+//       req.checkBody('email','Email is not valid').isEmail();
+//       req.checkBody('password','Password is required').notEmpty();
+        
+//       var errors = req.validationErrors();
 //        socket.emit('loginErrors',{
 //               errors: errors
 //        });
         
-       if(errors){
-           res.render('index.html',{
-               errors: errors
-           });       
-       }
-        else{
-            Users.findByCredentials(body.email,body.password).then((user)=>{
-                //redirecting along with some currenltly logged in user info
-                 req.session.user = user;
-                 req.session.cookie.authStatus = "loggedIn";
-                req.session.user = user;
-//                socket.handshake.session.authStatus = 'LoggedIn';
-//                socket.handshake.headers.cookie.auth = 'NOt';
-//                socket.handshake.session.save();
-                 var id = (user._id).toString();
-                   res.redirect(url.format({
-                      pathname:"mainPage.html",   
-                      query: {
-                         "id": id
-                       }
-                   }));           
-            }).catch((error) => {
-              console.log(error);
-            }); 
-        }    
-        
+//       if(errors){
+//           res.render('index.html',{
+//               errors: errors
+//           });       
+//       }
+//        else{ 
         
     });
     
-        //On ProfileButton Click
-    app.post('/profile',(req,res)=>{
+    //On ProfileButton Click
+    app.post('/profile',authenticate,(req,res)=>{
         var body = _.pick(req.body,['id','email']);
-        req.session.cookie.authStatus = "loggedIn";
+        res.header('x-auth',req.token);
         return res.send(url.format({
           pathname:"profile.html",   
           query: {
@@ -220,10 +254,9 @@ io.on('connection',(socket)=>{
         }));
     });
     
-    app.post('/userAcc',(req,res)=>{
-        req.session.cookie.authStatus = "userACC";
-        req.session.save();
+    app.post('/userAcc',authenticate,(req,res)=>{
         var body = _.pick(req.body,['email','id']);
+        res.header('x-auth',req.token);
         return res.send(url.format({
           pathname:"userAcc.html",   
           query: {
@@ -234,20 +267,24 @@ io.on('connection',(socket)=>{
         }));   
     });
     
-    app.get('/logOut',(req,res)=>{
-        req.session.cookie.authStatus = "loggedOut";
-         req.session.destroy(function (err) {
-            return res.send(url.format({
+    app.get('/logOut',authenticate,(req,res)=>{
+        req.user.removeToken(req.token).then(()=>{
+           delete socket.handshake.session.user;
+           socket.handshake.session.save();
+           return res.status(200).send(url.format({
               pathname:"index.html"
-            })); 
-         });
+            }));  
+        },()=>{
+            res.status(400).send();
+        });
     });
     
     app.post('/delete',(req,res)=>{
        var body = _.pick(req.body,['email','id']);
-       req.session.cookie.authStatus = 'loggedOut';
        
        Users.remove({ _id: body.id }, function(err) {
+           delete socket.handshake.session.user;
+           socket.handshake.session.save();
            console.log('User Account Deleted Successfully');
        });     
         

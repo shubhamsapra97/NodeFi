@@ -102,34 +102,54 @@ UserSchema.methods.generateAuthToken = function(){
     
     user.tokens.push({access,token});
     
-    return user.save().then((token)=>{
+    return user.save().then(()=>{
         return token;
     });
 };
 
-UserSchema.statics.findByCredentials = function(email,password){
-  var User = this;
+//UserSchema.statics.generateAuthToken1 = function(email,password){
+//    var User = this;
+//    var access = 'auth';
+//    var token = jwt.sign({password: password,access},'pennyS').toString();
+//    
+//    Users.findOneAndUpdate({
+//        email: email
+//    },
+//    {
+//        $push:{
+//            tokens: {access,token}
+//        }  
+//    },{
+//        new: true
+//    }, function(err,user){
+//       return new Promise(token); 
+//    });
+//};
 
-  return Users.findOne({email}).lean().then((user)=>{
-
-    if(!user){
-      return Promise.reject();
-    }
-
+UserSchema.methods.bcryptPass = function(password){
+  var user = this;
+    
     return new Promise((resolve,reject)=>{
+        
       bcrypt.compare(password,user.password,(err,res)=>{
-
           if(res){
-            resolve(user);
+            if(user.tokens.length == 0){
+                var access = 'auth';
+                var token = jwt.sign({password: user.password,access},'pennyS').toString();
+
+                user.tokens.push({access,token});
+
+                user.save();
+            }              
+            return resolve(user);        
           }
           else{
-            reject();
+            return reject();
           }
-
       });
+        
     });
-
-  });
+    
 };
 
 UserSchema.statics.passMatch = function(password,hashPassword){
@@ -157,6 +177,32 @@ UserSchema.statics.findByEmail = function(id){
     }
 
   });
+};
+
+UserSchema.statics.findByToken = function(token){
+    var User = this;
+    var decoded;
+    
+    try{
+     decoded = jwt.verify(token,'pennyS');
+    }
+    catch(e){
+        console.log('not Found ' + e);
+        return Promise.reject();
+    }
+    return User.findOne({
+        'tokens.token': token,
+        'tokens.access': 'auth'
+    });   
+};
+
+UserSchema.methods.removeToken = function(token){
+    var user = this;
+    return user.update({
+        $pull: {
+            tokens: {token}
+        }
+    });
 };
 
 UserSchema.pre('save',function(next){
