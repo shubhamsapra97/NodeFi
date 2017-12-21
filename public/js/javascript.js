@@ -358,8 +358,7 @@ if($("body").data("title") === "mainPage"){
         }).then(function(res){
             
             console.log("axios");
-//           var url = res.data.secure_url.slice(0, 72) + '/q_50/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
-//            console.log(url);
+           var url = res.data.secure_url.slice(0, 72) + '/q_50/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
            //moment to fetch the time-date     
            var time = moment(moment().valueOf()).format('h:mm a');
            var date = moment(moment().valueOf()).format('MM-DD-YYYY');
@@ -369,7 +368,7 @@ if($("body").data("title") === "mainPage"){
            var html = Mustache.render(template,{
                email: currentUser.email,
                user: currentUser.username,
-               url: res.data.secure_url,
+               url: url,
                time: time,
                like: likes,
                date: date,
