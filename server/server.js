@@ -183,7 +183,7 @@ io.on('connection',(socket)=>{
               }
             }));
         }).catch((e)=>{
-            console.log(err);
+            console.log(e);
             res.redirect('/')
         });
     });
@@ -499,10 +499,9 @@ io.on('connection',(socket)=>{
             console.log("No internet");
         });
         var skip = info.county*8;
-        Images.find({}).lean().skip(Number(skip)).sort({
-            date: -1,
-            time: -1  
-        }).limit(8).exec(function(err, docs) {
+        Images.find({}).lean().sort({
+            _id: -1
+        }).skip(Number(skip)).limit(8).exec(function(err, docs) {
             if (!err){
                 if(docs.length!==0){
                     socket.emit('allImages', {

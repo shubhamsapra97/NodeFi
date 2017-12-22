@@ -43,7 +43,13 @@ var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebasea
 var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
 
 if($("body").data("title") === "mainPage"){
-
+    
+    //Stoppping Back Button Functionality
+//    history.pushState(null, document.title, location.href);
+//    window.addEventListener('popstate', function (event)
+//    {
+//      history.pushState(null, document.title, location.href);
+//    });
     
     //fetching info from search url
     var params = $.deparam(window.location.search);
@@ -81,6 +87,7 @@ if($("body").data("title") === "mainPage"){
                 }
 
                if(images.docs[i].postStatus){
+                   console.log(images.docs[i].time)
                    //appending text Posts
                    var template = document.getElementById("mainPostTemplate").innerHTML;
                    var html = Mustache.render(template,{
@@ -99,6 +106,7 @@ if($("body").data("title") === "mainPage"){
                }  
                else{            
                    //appending image Posts
+                   console.log(images.docs[i].time);
                    var template = document.getElementById("post-template").innerHTML;
                    var html = Mustache.render(template,{
                        email: images.docs[i].email,
@@ -250,7 +258,9 @@ if($("body").data("title") === "mainPage"){
         var status,time,likes,date;
         status = $('.inputUserstatus').val();
         if(event.key === 'Enter' && status.length !==0){
-            time = moment(moment().valueOf()).format('h:mm a');
+            $(".fa-camera").css('display','none');
+            $("#backPicLoad").css('display','inline');
+            time = moment(moment().valueOf()).format('H:mm');
             date = moment(moment().valueOf()).format('MM-DD-YYYY');
             likes = 0+" Likes";
             
@@ -266,7 +276,8 @@ if($("body").data("title") === "mainPage"){
                likeIcon: 'fa-heart-o',
                date: date    
             });
-            
+            $("#backPicLoad").css('display','none');
+            $(".fa-camera").css('display','inline');
             $("#allPosts").prepend(html);
             
             $( ".inputUserstatus" ).val("");
@@ -287,13 +298,13 @@ if($("body").data("title") === "mainPage"){
     var status;
     //Post Upload button click 
     fileUpload.addEventListener('change',function(e){
+        $(".fa-camera").css('display','none');
+        $("#backPicLoad").css('display','inline');
         status = $(".inputUserstatus").val(); 
         var file = event.target.files[0];
         var formData = new FormData();
         formData.append('file',file);
-        formData.append('upload_preset',CLOUDINARY_UPLOAD_PRESET);
-        
-        console.log(formData);    
+        formData.append('upload_preset',CLOUDINARY_UPLOAD_PRESET);   
         
 //        $.post({
 //           url: 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload',
@@ -356,11 +367,9 @@ if($("body").data("title") === "mainPage"){
             },
             data: formData
         }).then(function(res){
-            
-            console.log("axios");
-           var url = res.data.secure_url.slice(0, 72) + '/q_50/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
+           var url = res.data.secure_url.slice(0, 72) + '/w_615,h_350,q_50/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
            //moment to fetch the time-date     
-           var time = moment(moment().valueOf()).format('h:mm a');
+           var time = moment(moment().valueOf()).format('H:mm');
            var date = moment(moment().valueOf()).format('MM-DD-YYYY');
            var likes = 0+" Likes";
 //           //Mustache Templating    
@@ -377,6 +386,8 @@ if($("body").data("title") === "mainPage"){
                dp: currentUser.url,
                likeIcon: 'fa-heart-o'
            });
+           $("#backPicLoad").css('display','none');
+           $(".fa-camera").css('display','inline');
            $("#allPosts").prepend(html);
 // 
 // Handlebars Templating
@@ -395,7 +406,7 @@ if($("body").data("title") === "mainPage"){
                id: currentUser._id,
                email:currentUser.email,
                username:currentUser.username,
-               imageUrl:res.data.secure_url,
+               imageUrl:url,
                time: time,
                status: status,
                location: currentUser.location,
@@ -607,8 +618,9 @@ if($("body").data("title") === "profilePage"){
             },
             data: formData
         }).then(function(res){
-           document.getElementById("profilePic").src = res.data.secure_url;
-           document.getElementById("url").value = res.data.secure_url;    
+            var url = res.data.secure_url.slice(0, 72) + '/q_30/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
+           document.getElementById("profilePic").src = url;
+           document.getElementById("url").value = url;    
         });
         
     });
@@ -616,6 +628,7 @@ if($("body").data("title") === "profilePage"){
 }
 
 if($("body").data("title") === "userAcc"){
+    
     var params = $.deparam(window.location.search);
     $(function(){
         socket.emit('userInfo',{
@@ -702,11 +715,12 @@ if($("body").data("title") === "userAcc"){
                 },
                 data: formData
             }).then(function(res){
-               $(".backImage").attr('src' , res.data.secure_url); 
+                var url = res.data.secure_url.slice(0, 72) + '/q_70/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
+               $(".backImage").attr('src' , url); 
                $("#backPicLoad").css('display','none');
                 
                socket.emit('backgroundPic' , {
-                  backUrl : res.data.secure_url,
+                  backUrl : url,
                   email : currentUser.email
                });
             });
