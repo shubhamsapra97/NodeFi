@@ -5,6 +5,22 @@ body{
     overflow-y:scroll;
 }
 
+input[disabled="disabled"]  {
+
+    background-color: black;
+
+}
+
+.smallText{
+    font-size: 8px;
+}
+
+.required1{
+    font-size: 12px;
+    padding-top: 20px;
+    color: red;
+}
+
 #underDiv {
     z-index: 1;
     position: absolute;
@@ -328,11 +344,20 @@ hr{
     display: none;
 }
 
+#morePostsLoad{
+    width: 40px;
+    height: 40px;
+    margin-left: 2px;
+    display: none;
+    text-align: center;
+    margin-left: 50vw;
+}
+
 .custom-file-upload:hover{
     background-color: #E6E6E6;
 }
 
-#Posts{
+#postify{
     display: flex;
     flex-wrap: wrap;
     margin-left: 12vw;
@@ -588,6 +613,19 @@ nav{
     margin-left: 7vw;
 }
 
+#morePostDiv{
+    margin-top: 0;
+    margin-bottom: 50px;
+}
+
+.morePosts{
+    text-align: center;
+    display: block;
+    font-size: 25px;
+    color: grey;
+    font-family: 'PT Serif', serif;
+}
+
 #updateBtn{
     width: 150px;
     margin-left: 42vw;
@@ -775,6 +813,18 @@ nav{
     
     .Name{
         font-size: 3.5vw;
+    }
+    
+    .userDp,.information{
+        margin-left: 35vw;
+    }
+    
+    .status{
+        margin-left: 32vw;
+    }
+    
+    .username1{
+        margin-left: 34vw;
     }
 
 }

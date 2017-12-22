@@ -11,6 +11,7 @@ socket.on('disconnect',function(){
 });
 
 socket.on('unauthorizedUser',function(dest){
+    console.log("called");
    window.location.href = dest.destination;
 });
 
@@ -45,11 +46,11 @@ var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
 if($("body").data("title") === "mainPage"){
     
     //Stoppping Back Button Functionality
-//    history.pushState(null, document.title, location.href);
-//    window.addEventListener('popstate', function (event)
-//    {
-//      history.pushState(null, document.title, location.href);
-//    });
+    history.pushState(null, document.title, location.href);
+    window.addEventListener('popstate', function (event)
+    {
+      history.pushState(null, document.title, location.href);
+    });
     
     //fetching info from search url
     var params = $.deparam(window.location.search);
@@ -484,6 +485,14 @@ if($("body").data("title") === "profilePage"){
         });
     });
     
+    function validateForm(){
+        if (isNaN(document.getElementById('mobile'))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     //Fetching profile user info
     socket.on('profileUserInfo',function(user){
         // Autofilling Info already provided by user
@@ -508,6 +517,38 @@ if($("body").data("title") === "profilePage"){
         if(user.qualities){
             document.getElementById('qualities').value = user.qualities;
         }
+        
+//        $( "#updateBtn" ).hover(function() {
+//            if(!document.getElementById('location').value || !document.getElementById('work').value || !document.getElementById('bday').value ||      !document.getElementById('qualities').value || !document.getElementById('mobile').value){
+//                alert("One or More Required Fields Empty/Invalid");
+//            }
+//            
+//        });
+        
+//        $("#updateBtn").click(function(e){
+//            
+//            $.ajax({
+//               url : '/update',
+//               type : 'POST',
+//               beforeSend: function(request) {
+//                 request.setRequestHeader("x-auth", user.tokens[0].token);
+//               },
+//               data : {
+//                 username: document.getElementById('username').value,    
+//                 location: document.getElementById('location').value,
+//                 fullname: document.getElementById('fullname').value,
+//                 work: document.getElementById('work').value,
+//                 url: document.getElementById('url').value ,
+//                 qualities: document.getElementById('qualities').value,
+//                 mobile: document.getElementById('mobile').value,
+//                 bday: document.getElementById('bday').value,
+//                 confirmPass: document.getElementById('confirmPass').value
+//               },
+//               success : function(data){
+//                  window.location.replace(data);   
+//               }
+//            });
+//        });  
         
 //        $( "#currentPassword" ).keypress(function() {
 //          console.log( "Handler for .keypress() called." );
@@ -544,12 +585,18 @@ if($("body").data("title") === "profilePage"){
 
             // Make a new timeout set to go off in 800ms
             timeout = setTimeout(function () {
-                $(".passMatch").css('display','inline');
-                socket.emit('passMatchProcess',{
-                    pass: $("#currentPassword").val(),
-                    hashedPass: user.password
-                });
-                console.log('emitted');
+                if($("#currentPassword").val().length == 0){
+                    $(".wrongMatch").css('display','none');
+                    $(".match").css('display','none');
+                    $("#newPassword").attr('readonly','readonly');
+                }
+                else{
+                    $(".passMatch").css('display','inline');
+                    socket.emit('passMatchProcess',{
+                        pass: $("#currentPassword").val(),
+                        hashedPass: user.password
+                    });    
+                }
                 
             }, 500);
         });
@@ -603,7 +650,8 @@ if($("body").data("title") === "profilePage"){
     // Uploading User Display Pic to Cloud 
     var fileUpload = document.getElementById('fileUpload2');
     fileUpload.addEventListener('change',function(e){
-        console.log("sdfsdfdsf");
+        $("#submitText").css('display','none');
+        $("#backPicLoad").css('display','inline');
         var file = event.target.files[0];
         var formData = new FormData();
         formData.append('file',file);
@@ -619,6 +667,8 @@ if($("body").data("title") === "profilePage"){
             data: formData
         }).then(function(res){
             var url = res.data.secure_url.slice(0, 72) + '/q_30/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
+           $("#backPicLoad").css('display','none');    
+           $("#submitText").css('display','inline');
            document.getElementById("profilePic").src = url;
            document.getElementById("url").value = url;    
         });
@@ -628,14 +678,15 @@ if($("body").data("title") === "profilePage"){
 }
 
 if($("body").data("title") === "userAcc"){
-    
+    var county = 0;
     var params = $.deparam(window.location.search);
     $(function(){
         socket.emit('userInfo',{
             id: atob(params.id)
         });
         socket.emit('userPosts',{
-            email: params.email
+            email: params.email,
+            county: county
         });
     });
     
@@ -771,32 +822,54 @@ if($("body").data("title") === "userAcc"){
         
     });
     
+    var k=0;
     socket.on('userImages',function(images){
-            var k=0;
-            for(var i=0;i<images.length;i++){
-               if(!images[i].postStatus){
-                   var template = document.getElementById("post-template").innerHTML;
-                   var html = Mustache.render(template,{
-                       user: images[i].username,
-                       url: images[i].url,
-                       time: images[i].time,
-                       like: images[i].like,
-                       status: images[i].status,
-                       location: images[i].location,
-                       dp: images[i].userDp
-                   });
-                   $("#Posts").prepend(html);
-                   k=1;
-               }
+            console.log(images);
+            if(!images.empty){
+                $("#morePostsLoad").css('display','none');
+                for(var i=0;i<images.docs.length;i++){
+                       var template = document.getElementById("post-template").innerHTML;
+                       var html = Mustache.render(template,{
+                           user: images.docs[i].username,
+                           url: images.docs[i].url,
+                           time: images.docs[i].time,
+                           like: images.docs[i].like,
+                           status: images.docs[i].status,
+                           location: images.docs[i].location,
+                           dp: images.docs[i].userDp
+                       });
+                       $("#postify").append(html);
+                       k=1;
+                }
+                if((images.skip+6)<currentUser.posts && currentUser.posts>6){
+                    $("#morePostDiv").append("<div class='morePosts'>More Posts</div>");
+                }
+                
+                
+                $(".morePosts").click(function(){
+                    $(".morePosts").remove();
+                    $("#morePostsLoad").css('display','inline');
+                    county++;
+                    socket.emit('userPosts',{
+                        email: params.email,
+                        county: county
+                    });
+                });
+                
             }
-            if(k==0){
-                $("#Posts").append('<p id="noPosts">No Posts Yet!</p>');
+            else{
+                
+                if(k==0){
+                    $("#postify").append('<p id="noPosts">No Posts Yet!</p>');
+                }
+                
+                $("#morePostsLoad").css('display','none');
+                
             }
-    });
-    
+    });    
     
     $("#LogOut").click(function(e){
-        console.log("clicked");
+        $("#backPicLoad").css('display','inline');
         $.ajax({
             url:"/logOut",
             type: "GET",
@@ -804,13 +877,14 @@ if($("body").data("title") === "userAcc"){
               request.setRequestHeader("x-auth", currentUser.tokens[0].token);
             },
             success: function(result) {
+                $("#backPicLoad").css('display','none');
                 window.location.replace(result); 
             }                
         });
     });
     
     $("#DeleteAcc").click(function(e){
-       console.log('clicky');
+       $("#backPicLoad").css('display','inline');
        $.ajax({
           url: "/delete" ,
           type: "POST",
@@ -822,17 +896,11 @@ if($("body").data("title") === "userAcc"){
              id: currentUser._id
           },
           success: function(result){
+              $("#backPicLoad").css('display','none');
               window.location.replace(result);
           }
        });
     });
-    
-//    $(".signOut").click(function(){
-//        alert("clicked");
-//       socket.emit('logOut',{
-//           logout: true
-//       }); 
-//    });
  
 //OVERLAY ON USER POSTS    
 //    function hasClass(elem, className) {

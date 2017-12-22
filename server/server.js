@@ -307,11 +307,11 @@ io.on('connection',(socket)=>{
     //Profile Update Route
     app.post('/update',(req,res)=>{
         var body = _.pick(req.body,['username','fullname','work','location','url','mobile','qualities','bday','confirmPass']);
-        var obj1;
+        console.log(body);
 
         Users.findOneAndUpdate(
         { 
-            username :body.username 
+            username : body.username 
         },
         { 
             $set: { 
@@ -330,6 +330,10 @@ io.on('connection',(socket)=>{
         },
         function(err, user) {
             
+            if(err){
+                console.log(err);
+            }
+            
             if(body.confirmPass){
                 user.password = body.confirmPass;
                 user.save();
@@ -337,7 +341,7 @@ io.on('connection',(socket)=>{
             
             Images.update(
             {
-                username: user.username
+                username: body.username
             }, 
             {
                 userDp: user.url,
@@ -348,17 +352,15 @@ io.on('connection',(socket)=>{
                 multi: true
             }, 
             function(err,docs) {
-                
+                console.log('Profile Updated');
+                res.redirect(url.format({
+                  pathname:"mainPage.html",
+                  query: {
+                      id: (user._id).toString()
+                  }
+                }));
             });
-            
-            console.log('Profile Updated');
-            
-            res.redirect(url.format({
-                pathname:"mainPage.html",   
-                query: {
-                    "id": (user._id).toString()
-                }
-            }));      
+    
         });
         
     });
@@ -409,6 +411,7 @@ io.on('connection',(socket)=>{
            console.log(`Text-Post Uploaded to DB by ${image.username}`);
            socket.broadcast.emit('newPost',image);    
         });
+
     });
     
     socket.on('statusUpdate',(info)=>{
@@ -530,14 +533,35 @@ io.on('connection',(socket)=>{
     });
     
     socket.on('userPosts',(info)=>{
+        var skip = info.county*6;
         Images.find({
-            email: info.email
-        }).lean().exec(function(err, docs) {
-            if (!err){                 
-                socket.emit('userImages', docs);
+            email: info.email,
+            postStatus : {
+                "$exists" : false
+            }
+        }).sort({
+            _id: -1
+        }).skip(Number(skip)).lean().limit(6).exec(function(err, docs) {
+            
+            if (!err){
+                
+                if(docs.length!==0){
+                    socket.emit('userImages', {
+                        docs: docs,
+                        empty: false,
+                        skip: skip
+                    });
+                }
+                else{
+                    socket.emit('userImages',{
+                       empty: true 
+                    });
+                }
+                
             } else {
                 throw err;
             }
+            
         });
         
     });
