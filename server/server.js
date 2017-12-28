@@ -204,9 +204,6 @@ io.on('connection',(socket)=>{
     //Delete Account Route
     app.post('/delete',(req,res)=>{
        var body = _.pick(req.body,['email','id']);
-       
-       //Destroy the Session
-       req.session.destroy();
         
        //Remove User from DB
        Users.remove({ _id: body.id }, function(err) {

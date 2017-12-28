@@ -1,4 +1,4 @@
-var staticCacheName = 'NodeFi-static-v11';
+var staticCacheName = 'NodeFi-static-v1';
 
 //While Service Worker is getting Installed
 self.addEventListener('install', function(event) {

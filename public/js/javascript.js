@@ -9,53 +9,51 @@ socket.on('disconnect',function(){
 });
 
 // SERVICE WORKER
-//if ('serviceWorker' in navigator) {
-//    window.addEventListener('load', function() {
-//      navigator.serviceWorker.register('/sw.js').then(function(reg) {
-//        if (!navigator.serviceWorker.controller) {
-//          return;
-//        }
-//
-//        if (reg.waiting) {
-//          updateReady(reg.waiting);
-//          return;
-//        }
-//
-//        if (reg.installing) {
-//          trackInstalling(reg.installing);
-//          return;
-//        }
-//
-//        reg.addEventListener('updatefound', function() {
-//          trackInstalling(reg.installing);
-//        });
-//      });
-//        
-//        //Ensures refreshing is done only once..
-//        var refreshing;
-//        navigator.serviceWorker.addEventListener('controllerchange', function() {
-//            if (refreshing) return;
-//            window.location.reload();
-//            refreshing = true;
-//        });
-//    });
-//}
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js').then(function(reg) {
+        if (!navigator.serviceWorker.controller) {
+          return;
+        }
+
+        if (reg.waiting) {
+          updateReady(reg.waiting);
+          return;
+        }
+
+        if (reg.installing) {
+          trackInstalling(reg.installing);
+          return;
+        }
+
+        reg.addEventListener('updatefound', function() {
+          trackInstalling(reg.installing);
+        });
+      });
+        
+        //Ensures refreshing is done only once..
+        var refreshing;
+        navigator.serviceWorker.addEventListener('controllerchange', function() {
+            if (refreshing) return;
+            window.location.reload();
+            refreshing = true;
+        });
+    });
+}
 
 // Tracking State Change in Service Worker
-//function trackInstalling(worker){
-//    worker.addEventListener('statechange', function() {
-//        console.log('Checking State Change');
-//        if (worker.state == 'installed') {
-//            console.log('Installed');
-//            updateReady(worker);
-//        }
-//    });
-//}
-//
-//// Updating Service Worker.
-//function updateReady(worker){
-//    worker.postMessage({action: 'skipWaiting'});
-//}
+function trackInstalling(worker){
+    worker.addEventListener('statechange', function() {
+        if (worker.state == 'installed') {
+            updateReady(worker);
+        }
+    });
+}
+
+// Updating Service Worker.
+function updateReady(worker){
+    worker.postMessage({action: 'skipWaiting'});
+}
 
 //SignIn Page Js
 if($("body").data("title") === "signInPage"){
@@ -74,11 +72,6 @@ if($("body").data("title") === "signInPage"){
            $(".signInContent").removeClass('fadeOut').addClass('fadeInUp'); 
         }
     });  
-    
-//    socket.on('loginErrors',function(){
-//       console.log('CALLED');
-//        alert("sdfsdf");
-//    });
 
 }
 
@@ -172,7 +165,7 @@ if($("body").data("title") === "mainPage"){
 
                }
             }
-             console.log(performance.now());
+            
             if(images.docs.length > 6){
                 $("#Container").append("<img id='loader' class='load' src='images/loader1.gif' alt='loader'>");
             }
@@ -353,58 +346,6 @@ if($("body").data("title") === "mainPage"){
         formData.append('file',file);
         formData.append('upload_preset',CLOUDINARY_UPLOAD_PRESET);   
         
-//        $.post({
-//           url: 'https://api.cloudinary.com/v1_1/https-blog-5946b-firebaseapp-com/upload',
-//           type: 'POST',
-//           beforeSend: function(request) {
-//             request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-//           },
-//           processData: false,
-//           data: {
-//               form: formData
-//           },
-//           success: function(data){
-//               console.log("ajax");
-//               console.log(res);
-//               //moment to fetch the time-date
-//               var time = moment(moment().valueOf()).format('h:mm a');
-//               var date = moment(moment().valueOf()).format('MM-DD-YYYY');
-//               var likes = 0+" Likes";
-//               //Mustache Templating    
-//               var template = document.getElementById("post-template").innerHTML;
-//               var html = Mustache.render(template,{
-//                   email: currentUser.email,
-//                   user: currentUser.username,
-//                   url: res.data.secure_url,
-//                   time: time,
-//                   like: likes,
-//                   date: date,
-//                   status: status,
-//                   location: currentUser.location,
-//                   dp: currentUser.url,
-//                   likeIcon: 'fa-heart-o'
-//               });
-//               $("#allPosts").prepend(html);
-//               
-//               // Sending data to server on image upload   
-//               socket.emit('onPost',{
-//                   id: currentUser._id,
-//                   email:currentUser.email,
-//                   username:currentUser.username,
-//                   imageUrl:res.data.secure_url,
-//                   time: time,
-//                   status: status,
-//                   location: currentUser.location,
-//                   url: currentUser.url,
-//                   date: date
-//               });
-               
-//           },
-//            error: function (err) {
-//                console.log(err);
-//            }
-//        });
-        
         //Linking with Cloud
         axios({
            url: CLOUDINARY_URL,
@@ -497,7 +438,6 @@ if($("body").data("title") === "mainPage"){
     $( ".userSearch" ).keyup(function() {
         input = $(".userSearch").val();
         if(input.length === 0){
-            //console.log(searchArray);
             searchArray = jQuery.extend({}, allUsers);
             $("#myUL").empty();
         }
@@ -560,67 +500,12 @@ if($("body").data("title") === "profilePage"){
         if(user.qualities){
             document.getElementById('qualities').value = user.qualities;
         }
-        
-//        $( "#updateBtn" ).hover(function() {
-//            if(!document.getElementById('location').value || !document.getElementById('work').value || !document.getElementById('bday').value ||      !document.getElementById('qualities').value || !document.getElementById('mobile').value){
-//                alert("One or More Required Fields Empty/Invalid");
-//            }
-//            
-//        });
-        
-//        $("#updateBtn").click(function(e){
-//            
-//            $.ajax({
-//               url : '/update',
-//               type : 'POST',
-//               beforeSend: function(request) {
-//                 request.setRequestHeader("x-auth", user.tokens[0].token);
-//               },
-//               data : {
-//                 username: document.getElementById('username').value,    
-//                 location: document.getElementById('location').value,
-//                 fullname: document.getElementById('fullname').value,
-//                 work: document.getElementById('work').value,
-//                 url: document.getElementById('url').value ,
-//                 qualities: document.getElementById('qualities').value,
-//                 mobile: document.getElementById('mobile').value,
-//                 bday: document.getElementById('bday').value,
-//                 confirmPass: document.getElementById('confirmPass').value
-//               },
-//               success : function(data){
-//                  window.location.replace(data);   
-//               }
-//            });
-//        });  
-        
-//        $( "#currentPassword" ).keypress(function() {
-//          console.log( "Handler for .keypress() called." );
-//            
-////            $("#currentPassword").keyup(function(){
-//                socket.emit('passMatchProcess',{
-//                    pass: $("#currentPassword").val(),
-//                    hashedPass: user.password
-//                });
-//                console.log('emitted');
-//
-//                socket.on('noMatch',function(info){
-//                   alert('Not Matched'); 
-//                });
-//
-//                socket.on('Match',function(){
-//                   alert('Matched'); 
-//                });
-//
-////            });
-//            
-//        });
 
         // Init a timeout variable to be used below
         var timeout = null;
 
         // Listen for keystroke events
         $("#currentPassword").keyup(function(){
-            console.log('KEYUP');
             // Clear the timeout if it has already been set.
             // This will prevent the previous task from executing
             // if it has been less than <MILLISECONDS>
@@ -867,7 +752,6 @@ if($("body").data("title") === "userAcc"){
     
     var k=0;
     socket.on('userImages',function(images){
-            console.log(images);
             if(!images.empty){
                 $("#morePostsLoad").css('display','none');
                 for(var i=0;i<images.docs.length;i++){
@@ -893,7 +777,6 @@ if($("body").data("title") === "userAcc"){
                     $(".morePosts").remove();
                     $("#morePostsLoad").css('display','inline');
                     county++;
-                    console.log(params.email);
                     socket.emit('userPosts',{
                         email: params.email,
                         county: county
