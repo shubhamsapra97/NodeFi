@@ -1,161 +1,158 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset='utf-8'>
-        <title>Fake</title>
-             <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-     <meta http-equiv="Pragma" content="no-cache"/>
-     <meta http-equiv="Expires" content="0"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" type="text/css" href="css/styles.css">
-    </head>
-    <body data-title='userAcc'>
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-                <div id="nav-left">
-                    <i class=" navbar-brand fa fa-instagram" aria-hidden="true"></i>
-                    <a class="navbar-brand" href="#">| NodeFi</a>
-                </div>
-            </div>
-              
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-    
-                  <ul class="nav navbar-nav navbar-right" id="nav-right">
-                      <li data-toggle="modal" data-target="#exampleModal">
-                        <div class="dropdown">
-                          <button class="btn btn-secondary dropdown-toggle dropbtn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              <span id="settingsText">Settings</span><img src="images/loader1.gif" id="backPicLoad" />
-                          </button>
-                          <div class="dropdown-content">
-                            <a id="LogOut">LogOut</a>                            
-                            <div>
-                              <label for="BackgroundfileUpload" class="file-upload1">
-                                <a id="BackgroundPic">Background Pic</a>
-                              </label>
-                            </div>
-                            <input id="BackgroundfileUpload" type="file"/>
-                            <a id="DeleteAcc">Delete Account</a>
-                          </div>
-                        </div>
-                      </li> 
-                  </ul>
-                
-            </div> 
-              
-          </div>
-        </nav>
-        
-        <div id="header">
-         
-        </div>
-        
-        <div id="Posts">
-            <div id="postify"></div>
-            <div id="morePostDiv">
-                <img src="images/loader1.gif" id="morePostsLoad" />
-            </div>
-        </div>
+
+<head>
+    <meta charset='utf-8'>
+    <title>NodeFi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+
+<body data-title='userAcc'>
 <!--
-        
-        <script id="user-template" type="text/x-handlebars-template">
-            <div class="head">
-                <div><img id="userprofilePic" src="{{dp}}" class="rounded-circle"></div>
-                <div class="userInfo">
-                    <div>
-                        <span class="Name">{{user}}</span>
-                        <input class="updateProfile" type="button" value="Edit Profile" />
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            
+            <div class="navbar-header">
+                    <div id="nav-left">
+                        <i class=" navbar-brand fa fa-instagram" aria-hidden="true"></i>
+                        <a tabindex="-1" class="navbar-brand" href="#">| NodeFi</a>
                     </div>
-                    <div class="activity">
-                        <span class="numOfposts">{{posts}} </span><span>Posts</span>
-                        <span class="info followers">88 </span><span>followers</span>
-                        <span class="info following">116 </span><span>following</span>
-                    </div>
-                </div>
-            </div>
-        </script>
--->
-        
-        <script id="user-template" type="text/x-handlebars-template">
-            <div id="SidebarInfo">
-                <img class="backImage" src="{{backPic}}" alt='image'>
-                <img class="userDp img-circle" src="{{dp}}">
-                <div class="below">
-                    <div class="username1"><span>{{user}}</span></div><br>
-                    <div class="status">
-                        <div><span id="userStatus">{{status}}</span></div>
-                        <div class="form-group inputStatus1">
-                            <input type="text" class="form-control" id="inputStatus" autofocus placeholder="Update Status" name="status" maxlength="25">
-                            <i class="fa fa-times-circle-o inputClose" aria-hidden="true"></i>
+                <ul class="nav navbar-nav navbar-right" id="nav-right">
+                    <div class="navbar-nav dropdown">
+                        <button class="btn btn-secondary dropdown-toggle dropbtn" id="dropdownMenuButton">
+                            <span id="settingsText">Settings</span><img src="images/loader1.gif" id="backPicLoad" />
+                        </button>
+                        <div class="dropdown-content">
+                            <a id="LogOut">LogOut</a>
+                            <label for="BackgroundfileUpload" class="file-upload1">
+                                <a id="BackgroundPic">Background Pic</a>
+                            </label>
+                            <input id="BackgroundfileUpload" type="file" />
+                            <a id="DeleteAcc">Delete Account</a>
                         </div>
                     </div>
-                </div>
-                <div class="information">
-                    <div class="userPosty">
-                        <span class="heading1">Posts</span><br>
-                        <span class="shift">{{posts}}</span>
-                    </div>
-                    <div class="vr"></div>
-                    <div class="followers">
-                        <span class="heading1">followers</span><br>
-                        <span class="shift1">78</span>
-                    </div>
-                </div>                
+                </ul>
             </div>
-            
-            <div id="about">
-                <span id="heads">About</span>
-                <a class="updateProfile">Edit</a>
-                <div class="top">
-                    <div id="location">
-                        <i class="icon fa fa-calendar-o" aria-hidden="true"></i>
-                        <span class="aboutData">Lives in <span class="blue">{{location}}</span></span>
-                    </div>
-                    <div id="bday">
-                        <i class="icon fa fa-birthday-cake" aria-hidden="true"></i>
-                        <span class="aboutData">Born On <span class="blue">{{bday}}</span></span>
-                    </div>
-                    <div id="work">
-                        <i class="icon fa fa-briefcase" aria-hidden="true"></i>
-                        <span class="aboutData">Worked at <span class="blue">{{work}}</span></span>
-                    </div>
-                    <div id="bio">
-                        <i class="icon fa fa-user" aria-hidden="true"></i>
-                        <span class="aboutData">I am <span class="blue">{{qualities}}</span></span>
-                    </div>
-                    <div id="contact">
-                        <i class="icon fa fa-phone" aria-hidden="true"></i>
-                        <span class="aboutData">Call me on <span class="blue">{{contact}}</span></span>
+        </div>
+    </nav>
+-->
+    
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div id="nav-left" class="navyLeft">
+                <i class="navbar-brand fa fa-instagram" aria-hidden="true"></i>
+                <a tabindex="-1" class="navbar-brand" href="#">| NodeFi</a>
+            </div>
+
+            <div class="nav navbar-right navyRight" id="nav-right">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle dropbtn" id="dropdownMenuButton">
+                        <span id="settingsText">Settings</span><img src="images/loader1.gif" id="backPicLoad" />
+                    </button>
+                    <div class="dropdown-content">
+                        <a id="LogOut">LogOut</a>
+                        <label for="BackgroundfileUpload" class="file-upload1">
+                            <a id="BackgroundPic">Background Pic</a>
+                        </label>
+                        <input id="BackgroundfileUpload" type="file" />
+                        <a id="DeleteAcc">Delete Account</a>
                     </div>
                 </div>
-            </div>       
-        </script>
-        
-   
-        <script id="post-template" type="text/x-handlebars-template">
-            <div id="overlay">
-              <div id="text">Overlay Text</div>
             </div>
-            <div class="userPosts">
-                <img src="{{url}}" class="img-responsive OnePost">
+        </div>
+    </nav>
+
+    <div id="header">
+
+    </div>
+
+    <div id="Posts">
+        <div id="postify"></div>
+        <div id="morePostDiv">
+            <img src="images/loader1.gif" id="morePostsLoad" />
+        </div>
+    </div>
+
+    <script id="user-template" type="text/x-handlebars-template">
+        <div id="SidebarInfo">
+            <img class="backImage" src="{{backPic}}" alt='image'>
+            <img class="userDp img-circle" src="{{dp}}">
+            <div class="below">
+                <div class="username1"><span>{{user}}</span>
+                </div>
+                <br>
+                <div class="status">
+                    <div><span id="userStatus" title="Change Status">{{status}}</span>
+                    </div>
+                    <div class="form-group inputStatus1">
+                        <input type="text" class="form-control" id="inputStatus" autofocus placeholder="Update Status" name="status" maxlength="25">
+                        <i class="fa fa-times-circle-o inputClose" aria-hidden="true"></i>
+                    </div>
+                </div>
             </div>
-        </script>
-        
-        <script src="/js/libs/jquery-3.1.1.min.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-        <script src="/js/libs/mustache.js"></script>
-        <script src="/js/libs/deparam.js"></script> 
-        <script src='/js/libs/bootstrap.min.js' type="text/javascript"></script>
-        <script src="/js/javascript.js" type="text/javascript"></script>
-    </body>
+            <div class="information">
+                <div class="userPosty">
+                    <span class="heading1">Posts</span>
+                    <br>
+                    <span class="shift">{{posts}}</span>
+                </div>
+                <div class="vr"></div>
+                <div class="followers">
+                    <span class="heading1">followers</span>
+                    <br>
+                    <span class="shift1">78</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="about">
+            <span id="heads">About</span>
+            <a tabindex="0" class="updateProfile">Edit</a>
+            <div class="top">
+                <div id="location">
+                    <i class="icon fa fa-calendar-o" aria-hidden="true"></i>
+                    <span class="aboutData">Lives in <span class="blue">{{location}}</span></span>
+                </div>
+                <div id="bday">
+                    <i class="icon fa fa-birthday-cake" aria-hidden="true"></i>
+                    <span class="aboutData">Born On <span class="blue">{{bday}}</span></span>
+                </div>
+                <div id="work">
+                    <i class="icon fa fa-briefcase" aria-hidden="true"></i>
+                    <span class="aboutData">Worked at <span class="blue">{{work}}</span></span>
+                </div>
+                <div id="bio">
+                    <i class="icon fa fa-user" aria-hidden="true"></i>
+                    <span class="aboutData">I am <span class="blue">{{qualities}}</span></span>
+                </div>
+                <div id="contact">
+                    <i class="icon fa fa-phone" aria-hidden="true"></i>
+                    <span class="aboutData">Call me on <span class="blue">{{contact}}</span></span>
+                </div>
+            </div>
+        </div>
+    </script>
+
+
+    <script id="post-template" type="text/x-handlebars-template">
+        <div id="overlay">
+            <div id="text">Overlay Text</div>
+        </div>
+        <div class="userPosts">
+            <img src="{{url}}" class="img-responsive OnePost">
+        </div>
+    </script>
+
+    <script src="/js/libs/jquery-3.1.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script defer src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script defer src="/js/libs/mustache.js"></script>
+    <script src="/js/libs/deparam.js"></script>
+    <script src='/js/libs/bootstrap.min.js' type="text/javascript"></script>
+    <script src="/js/javascript.js" type="text/javascript"></script>
+</body>
+
 </html>

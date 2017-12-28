@@ -1,146 +1,134 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset='utf-8'>
-        <title>Fake</title>
-             <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-     <meta http-equiv="Pragma" content="no-cache"/>
-     <meta http-equiv="Expires" content="0"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link href="https://fonts.googleapis.com/css?family=PT+Serif|Roboto+Mono" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="css/styles.css">
-    </head>
-    <body data-title='mainPage'>
-        <div id="wholePage">
-            
-            <div id="underDiv">
-              
-              <nav class="navbar navbar-default">
-              <div class="container-fluid">
-                <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header">
-                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
+
+<head>
+    <meta charset='utf-8'>
+    <title>NodeFi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=PT+Serif|Roboto+Mono" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+
+<body data-title='mainPage'>
+
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
-                  </button>
-                    <div id="nav-left">
-                        <i class="navbar-brand fa fa-instagram" aria-hidden="true"></i>
-                        <a class="navbar-brand" href="#">| NodeFi</a>
-                    </div>    
-                </div>
-
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                  <ul class="nav navbar-nav">
-                  </ul>    
-                  <form class="navbar-form navbar-nav submitForm">
-                    <div class="form-group">
-                       <input type="text" class="form-control userSearch" placeholder="Search" name="search">
-                       <ul id="myUL"></ul> 
-                    </div>
-                  </form>      
-                  <ul class="nav navbar-nav navbar-right" id="nav-right">
-                      <li data-toggle="modal" data-target="#exampleModal">
-                          <i id='PostInput' class="fa fa-compass user-nav" aria-hidden="true"></i>
-                      </li> 
-                      <li><i class="fa fa-heart-o user-nav profile" aria-hidden="true"></i></li>
-                      <li><i class="personalAcc fa fa-user-o user-nav" aria-hidden="true"></i></li>
-                  </ul>
-                </div>
-              </div>
-            </nav>
-
-              <div>
-                <div class="UserStatusPost">
-                    <div><input type="text" class="inputUserstatus form-control" placeholder="Whats going on in your Mind ...."></div>
-                    <div>
-                      <label for="fileUpload" class="custom-file-upload">
-                      <i class="fa fa-camera"></i>
-                      <img src="images/loader1.gif" id="backPicLoad" />
-                      </label>
-                    </div>
-                    <input id="fileUpload" type="file"/>
-                </div>
-              </div>
-
-            <div id="Container">            
-                <div id="allPosts">
-
+                </button>
+                <div id="nav-left">
+                    <i class="navbar-brand fa fa-instagram" aria-hidden="true"></i>
+                    <a tabindex="-1" class="navbar-brand" href="#">| NodeFi</a>
                 </div>
             </div>
-            </div>
-            
-            <div id="overlay12">
-                <img id='mainPageLoader' class='load' src='images/loader2.gif' alt='loader'>
-            </div>
-            
-        </div>    
-        
-        <script id="post-template" type="text/x-handlebars-template">
-                <div class="posty">
-                    <div class="posts-header">
-                        <img src="{{dp}}" class="profilePic img-circle">
-                        <ul class="postHeading">
-                            <li><span>{{user}}</span></li>
-                            <li><span class='UserLoc'>{{location}}</span></li>
-                        </ul>
-                    </div>
-                    <div class="post">
-                        <img src="{{url}}" class="img-responsive postImage">
-                    </div>
-                    <div class="postOptions">
-                        <i class="fa {{likeIcon}} postLike" aria-hidden="true" id="{{url}}" title="{{user}}"></i>
-                        <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
-                    </div>
-                    <div class="postLikesNum">
-                        <span>{{like}} </span>
-                    </div>
-                    <div class="postTime">
-                        <span>{{time}} {{date}}</span>
-                    </div>
-                    <hr>
-                    <textarea placeholder="Add a Comment.." name={{email}} class="comment"></textarea>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <div class="collapsy">
+                    <form class="navbar-form navbar-nav submitForm">
+                        <div class="form-group">
+                            <input type="text" class="form-control userSearch" placeholder="Search" name="search">
+                            <ul id="myUL"></ul>
+                        </div>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right" id="nav-right">
+                        <li data-toggle="modal" data-target="#exampleModal">
+                            <i id='PostInput' class="fa fa-compass user-nav" aria-hidden="true"></i>
+                        </li>
+                        <li><i class="fa fa-heart-o user-nav profile" aria-hidden="true"></i>
+                        </li>
+                        <li><i class="personalAcc fa fa-user-o user-nav" aria-hidden="true"></i>
+                        </li>
+                    </ul>
                 </div>
-        </script>
-        
-        <script id="mainPostTemplate" type="text/x-handlebars-template">
-                <div class="posty">
-                    <div class="posts-header">
-                        <img src="{{dp}}" class="profilePic img-circle">
-                        <ul class="postHeading">
-                            <li><span>{{user}}</span></li>
-                            <li><span class='UserLoc'>{{location}}</span></li>
-                        </ul>
-                    </div>
-                    <div class="post">
-                        <span class="textPost">{{postStatus}}</span>
-                    </div>
-                    <div class="postOptions">
-                        <i class="fa {{likeIcon}} postLike" aria-hidden="true" id="{{postStatus}}" name="hello" title="{{user}}"></i>
-                        <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
-                    </div>
-                    <div class="postLikesNum">
-                        <span>{{like}} </span>
-                    </div>
-                    <div class="postTime">
-                        <span>{{time}} {{date}}</span>
-                    </div>
-                    <hr>
-                    <textarea placeholder="Add a Comment.." name={{email}} class="comment"></textarea>
-                </div>
-        </script>
-        
-        <script src="/js/libs/jquery-3.1.1.min.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-        <script src="/js/libs/mustache.js"></script>  
-        <script src="/js/libs/moment.js"></script>
-        <script src="/js/libs/deparam.js"></script> 
-        <script src='/js/libs/bootstrap.min.js' type="text/javascript"></script>
-        <script src="/js/javascript.js" type="text/javascript"></script>
-    </body>
+            </div>
+        </div>
+    </nav>
+
+    <div class="UserStatusPost">
+        <input type="text" class="inputUserstatus form-control" placeholder="Whats going on in your Mind ....">
+        <label for="fileUpload" class="custom-file-upload">
+            <i class="fa fa-camera"></i>
+            <img src="images/loader1.gif" id="backPicLoad" />
+        </label>
+        <input id="fileUpload" type="file" />
+    </div>
+
+    <div id="Container">
+    </div>
+
+    <script id="post-template" type="text/x-handlebars-template">
+        <div class="posty">
+            <div class="posts-header">
+                <img src="{{dp}}" class="profilePic img-circle">
+                <ul class="postHeading">
+                    <li><span>{{user}}</span>
+                    </li>
+                    <li><span class='UserLoc'>{{location}}</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="post">
+                <img src="{{url}}" class="img-responsive postImage">
+            </div>
+            <div class="postOptions">
+                <i class="fa {{likeIcon}} postLike" aria-hidden="true" id="{{url}}" title="{{user}}"></i>
+                <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
+            </div>
+            <div class="postLikesNum">
+                <span>{{like}} </span>
+            </div>
+            <div class="postTime">
+                <span>{{time}} {{date}}</span>
+            </div>
+            <hr>
+            <textarea placeholder="Add a Comment.." name={{email}} class="comment"></textarea>
+        </div>
+    </script>
+
+    <script id="mainPostTemplate" type="text/x-handlebars-template">
+        <div class="posty">
+            <div class="posts-header">
+                <img src="{{dp}}" class="profilePic img-circle">
+                <ul class="postHeading">
+                    <li><span>{{user}}</span>
+                    </li>
+                    <li><span class='UserLoc'>{{location}}</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="post">
+                <span class="textPost">{{postStatus}}</span>
+            </div>
+            <div class="postOptions">
+                <i class="fa {{likeIcon}} postLike" aria-hidden="true" id="{{postStatus}}" name="hello" title="{{user}}"></i>
+                <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
+            </div>
+            <div class="postLikesNum">
+                <span>{{like}} </span>
+            </div>
+            <div class="postTime">
+                <span>{{time}} {{date}}</span>
+            </div>
+            <hr>
+            <textarea placeholder="Add a Comment.." name={{email}} class="comment"></textarea>
+        </div>
+    </script>
+
+    <script src="/js/libs/jquery-3.1.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script defer src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script defer src="/js/libs/mustache.js"></script>
+    <script defer src="/js/libs/moment.js"></script>
+    <script src="/js/libs/deparam.js"></script>
+    <script src='/js/libs/bootstrap.min.js' type="text/javascript"></script>
+    <script src="/js/javascript.js" type="text/javascript"></script>
+</body>
+
 </html>

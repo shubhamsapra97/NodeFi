@@ -1,117 +1,74 @@
-body{
+body {
     width: 100vw;
     height: 100vh;
-    overflow-x: hidden;
-    overflow-y:scroll;
 }
-
-input[disabled="disabled"]  {
-
-    background-color: black;
-
-}
-
-.smallText{
+.smallText {
     font-size: 8px;
 }
-
-.required1{
+.required1 {
     font-size: 12px;
     padding-top: 20px;
     color: red;
 }
-
-#underDiv {
-    z-index: 1;
-    position: absolute;
-}
-
-#errors{
+#errors {
     display: none;
 }
-
-#noPosts{
+#noPosts {
     padding-left: 30vw;
     font-size: 30px;
     font-family: 'PT Serif', serif;
 }
-
-#overlay12{
-    z-index: 2;
-    top: 0px; 
-    left: 0px;
-    height:100vh;
-    width:100vw;
-    position: relative;
-    background-color: grey;
-    opacity: .5;
-    display: none;
-}
-
-#mainPageLoader{
-    margin-left: 50vw;
-    margin-top: 50vh;
-    height: 41px;
-    width: 41px;    
-}
-
-#signBody{
+#signBody {
     background-color: slategrey;
     width: 100vw;
     height: 100vh;
     background-blend-mode: screen;
     overflow-y: hidden;
 }
-
-#signInForm{
+#signInForm {
     width: 300px;
     height: 400px;
     margin: auto;
     position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
     background-color: white;
 }
-
-.fa-times{
+.fa-times {
     color: white;
     padding-left: 5.5vw;
 }
-
-.signUpContent{
+.signUpContent {
     display: none;
     margin: 0;
 }
-
-#loginEdit{
+#loginEdit {
     width: 24px;
     height: 22px;
     background-color: #33b5e5;
     margin-left: 92.3%;
 }
-
-#bluePlate{
+#bluePlate {
     width: 100%;
     height: 1.2%;
     background-color: #33b5e5;
 }
-
-.inputWidth{
+.inputWidth {
     width: 240px;
     height: 37px;
     margin-left: 30px;
 }
-
-#loginHeading{
+#loginHeading {
     color: #33b5e5;
     padding-left: 30px;
     padding-top: 30px;
 }
-
-#loginForm{
-    margin-top: 40px; 
+#loginForm {
+    margin-top: 40px;
 }
-
-#loginSubmit{
+#loginSubmit {
     background-color: #33b5e5;
     text-align: center;
     width: 80%;
@@ -119,57 +76,64 @@ input[disabled="disabled"]  {
     color: white;
     margin-left: 30px;
     padding: 6px 15px;
-    top: 0; left: 0; bottom: 0; right: 0;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
 }
-
-.signOut{
+.signOut {
     display: inline-block;
     cursor: pointer;
 }
-
-#textPost{
+#textPost {
     padding-left: 10px;
 }
-
-.loginOption{
+.loginOption {
     padding-left: 5px;
 }
-
-.inputWidth:focus{
+.inputWidth:focus {
     background-color: aqua;
 }
-
-#loginBoxBeard{
+.navyLeft{
+    float: left;
+}
+.navbar-brand{
+/*    padding-left: 0px;*/
+    padding-right: 0px;
+}
+/*
+.fa-instagram{
+    padding-right: 5px;
+}
+*/
+.navyRight{
+   float: right; 
+}
+#loginBoxBeard {
     text-align: center;
     width: 400px;
     height: 200px;
 }
-
-#nav-right{
+#nav-right {
     font-size: 25px;
     padding-right: 12vw;
     margin-top: 2vh;
 }
-
-.faFonts{
+.faFonts {
     font-size: 25px;
 }
-
-#nav-left{
+#nav-left {
     font-size: 25px;
     padding-left: 13vw;
     margin-top: 1vh;
 }
-
-hr{
+hr {
     margin: 0;
 }
-
-.user-nav{
-    padding-right: 2vw;
+.user-nav {
+    padding-right: 15px;
 }
-
-.comment{
+.comment {
     border: none;
     outline: none;
     width: 43vw;
@@ -177,13 +141,11 @@ hr{
     overflow: auto;
     height: 25px;
 }
-
-.submitForm{
-  padding-left: 17vw;
-  padding-top: 1vh;
+.submitForm {
+    padding-left: 17vw;
+    padding-top: 1vh;
 }
-
-.posty{
+.posty {
     width: 45vw;
     margin-left: 27vw;
     margin-right: auto;
@@ -191,160 +153,137 @@ hr{
     position: relative;
     box-shadow: 1px 1px 1px #888888;
 }
-
-.postOptions{
+.postOptions {
     font-size: 25px;
 }
-
-.postLike,.postComment{
+.postLike,
+.postComment {
     padding-left: 10px;
 }
-
-.posts-header{
+.posts-header {
     display: flex;
 }
-
-.profilePic{
+.profilePic {
     margin-left: 10px;
     font-weight: 550;
     margin-top: 5px;
     width: 40px;
     height: 40px;
 }
-
-.postHeading{
+.postHeading {
     font-weight: bold;
     font-size: 13px;
     list-style-type: none;
     margin-top: 7px;
     padding-left: 10px;
 }
-
-.postLikesNum{
+.postLikesNum {
     padding-left: 10px;
     font-weight: 600;
     font-size: 13px;
 }
-
-hr{
+hr {
     margin: 8px 15px 8px 15px;
 }
-
-.UserName{
+.UserName {
     font-weight: 600;
     padding-left: 8px;
     padding-top: 5px;
 }
-
-.Name{
+.Name {
     font-size: 3vw;
 }
-
-.statusContent{
+.statusContent {
     padding-left: 10px;
 }
-
-.postTime{
+.postTime {
     font-size: 10px;
     color: grey;
     padding-left: 8px;
     padding-top: 5px;
 }
-
-.head{
+.head {
     display: flex;
 }
-
-.info{
+.info {
     padding-left: 20px;
     font-weight: bold;
 }
-
-.numOfposts{
+.numOfposts {
     font-weight: bold;
 }
-
 #overlay {
     position: fixed;
     display: none;
     width: 24vw;
     height: 23vw;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: 2;
     cursor: pointer;
 }
-
-.fa-heart{
+.fa-heart {
     color: red;
 }
-
-#text{
+#text {
     position: absolute;
     top: 50%;
     left: 50%;
     font-size: 50px;
     color: white;
-    transform: translate(-50%,-50%);
-    -ms-transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
 }
-
-.OnePost{
+.OnePost {
     width: 24vw;
     height: 23vw;
     min-width: 150px;
     min-height: 150px;
-    padding-left: 10px;    
+    padding-left: 10px;
     padding-bottom: 10px;
 }
-
-.inputClose{
+.inputClose {
     display: none;
     font-size: 22px;
     padding-top: 5px;
     padding-left: 5PX;
 }
-
-.UserStatusPost{
+.UserStatusPost {
     display: flex;
 }
-
-#userStatus{
+#userStatus {
     cursor: pointer;
 }
-
-.inputUserstatus{
+.inputUserstatus {
     width: 41.5vw;
     margin-left: 27.3vw;
 }
-
-.required{ 
+.required {
     color: red;
     font-size: 18px;
 }
-
-#fileUpload,#fileUpload1,#fileUpload2,#logOut,#BackgroundfileUpload{
+#fileUpload,
+#fileUpload1,
+#fileUpload2,
+#logOut,
+#BackgroundfileUpload {
     display: none;
 }
-
 .custom-file-upload {
     border: 1px solid #ccc;
     display: inline-block;
     padding: 6px 12px;
     cursor: pointer;
 }
-
-#BackgroundPic{
+#BackgroundPic {
     font-weight: normal;
 }
-
-#backPicLoad{
+#backPicLoad {
     width: 18px;
     height: 18px;
     margin-left: 2px;
     display: none;
 }
-
-#morePostsLoad{
+#morePostsLoad {
     width: 40px;
     height: 40px;
     margin-left: 2px;
@@ -352,12 +291,10 @@ hr{
     text-align: center;
     margin-left: 50vw;
 }
-
-.custom-file-upload:hover{
+.custom-file-upload:hover {
     background-color: #E6E6E6;
 }
-
-#postify{
+#postify {
     display: flex;
     flex-wrap: wrap;
     margin-left: 12vw;
@@ -365,66 +302,50 @@ hr{
     margin-top: 5vw;
     margin-bottom: 5vh;
 }
-
-.postStatus{
+.postStatus {
     padding-top: 1px;
 }
-
-.activity{
+.activity {
     margin-top: 12px;
     font-size: 2vw;
 }
-
-#profilePic{
+#profilePic {
     margin-left: 42vw;
     width: 150px;
     height: 150px;
     border-radius: 30px;
 }
-
-#userprofilePic{
+#userprofilePic {
     margin-left: 18vw;
     margin-top: 6vh;
     width: 15vw;
     height: 15vw;
-    border-radius: 100px;    
+    border-radius: 100px;
 }
-
-.userInfo{
+.userInfo {
     margin-left: 15vw;
     margin-top: 7vh;
 }
-
-#fileUpload{
+#fileUpload {
     margin-left: 42vw;
 }
-
-#SidebarInfo{
+#SidebarInfo {
     width: 100vw;
     height: 80vh;
     margin-left: 2vw;
-    border:0.01em solid #DCDCDC;
-    background-color: white;    
+    border: 0.01em solid #DCDCDC;
+    background-color: white;
 }
-
-nav{
-    position: absolute;
-    max-height: 60px;
-}
-
-#Container{
-    display: flex;
+#Container {
     width: 100vw;
     height: 100vh;
 }
-
-.backImage{
+.backImage {
     position: absolute;
     width: 96vw;
-    height: 80vh;    
+    height: 80vh;
 }
-
-.userDp{
+.userDp {
     width: 110px;
     height: 110px;
     border-radius: 30px;
@@ -432,154 +353,133 @@ nav{
     margin-left: 44vw;
     margin-top: 20vh;
 }
-
-.textPost{
+.textPost {
     font-family: 'PT Serif', serif;
     font-size: 20px;
     margin-left: 10px;
 }
-
-#loader{
-    margin-left: 49vw;
-    margin-top: 10px;
-    margin-bottom: 100px;
-    width: 2em;
-/*    display: none;*/
-}
-
-#loader1{
+#loader {
     margin-left: 49vw;
     margin-top: 10px;
     margin-bottom: 100px;
     width: 2em;
 }
-
-.username1{
+#loader1 {
+    margin-left: 49vw;
+    margin-top: 10px;
+    margin-bottom: 100px;
+    width: 2em;
+}
+.username1 {
     font-size: 17px;
     font-weight: bold;
-    margin-left: 44.5vw;
+    margin-left: 43.5vw;
     margin-top: 39vh;
     font-family: 'Roboto Mono', monospace;
     font-size: 24px;
     line-height: 0.7;
     color: white;
-    z-index: 100;
     position: absolute;
 }
-
-.status{
-/*    display: flex;*/
-    text-align: center;
+.status {
     font-family: 'PT Serif', serif;
     font-size: 16px;
     color: whitesmoke;
     line-height: 0px;
     position: absolute;
-    margin-left: 42vw;
+    margin-left: 43vw;
     margin-top: 41vh;
-    width: 50%;
-    display:table;
-    text-align:center;
+    text-align: center;
     width: 150px;
 }
-
-.information{
+.information {
     display: flex;
     margin-left: 44.5vw;
     margin-top: 50vh;
     position: absolute;
     color: white;
 }
-
-.vr{
-    border-left:1px solid grey;
-    height:40px;
+.vr {
+    border-left: 1px solid grey;
+    height: 40px;
     margin-left: 10px;
 }
-
-.heading1{
+.heading1 {
     color: grey;
 }
-
-.followers{
+.followers {
     padding-left: 7px;
 }
-
-.shift{
+.shift {
     padding-left: 7px;
-    font-weight:800;
+    font-weight: 800;
     font-size: 13px;
 }
-
-.shift1{
+.shift1 {
     padding-left: 17px;
     font-size: 13px;
     font-weight: 800;
-    
 }
-
-#about{
+#about {
     width: 96vw;
     height: 30vh;
     margin-left: 2vw;
     margin-right: 2vw;
     margin-top: 3vh;
-    border:0.01em solid #DCDCDC;
+    border: 0.01em solid #DCDCDC;
     border-radius: 5xpx;
     padding-left: 2vw;
     padding-top: 2vw;
     background-color: white;
 }
-
-#heads{
+#heads {
     font-weight: 700;
     font-size: 17px;
 }
-
-.updateProfile{
+.updateProfile {
     font-size: 11px;
     padding-left: 8px;
     cursor: pointer;
 }
-
-.blue{
+.blue {
     color: blue;
 }
-
-#location,#bday,#work,#home,#bio,#contact{
+#location,
+#bday,
+#work,
+#home,
+#bio,
+#contact {
     padding-top: 7px;
 }
-
-.icon{
+.icon {
     color: grey;
 }
-
-.aboutData{
+.aboutData {
     color: grey;
     padding-left: 5px;
 }
-
-.statusEdit:hover{
+.statusEdit:hover {
     color: black;
     cursor: pointer;
 }
-
-#inputStatus{
+#inputStatus {
     display: none;
     margin-bottom: 0;
 }
-
-.inputStatus1{
+.inputStatus1 {
     display: flex;
 }
-
-#inputStatus{
+#inputStatus {
     width: 200px;
 }
-
 .loader {
-    border: 2px solid #f3f3f3; /* Light grey */
-    border-top: 2px solid #3498db; /* Blue */
+    border: 2px solid #f3f3f3;
+    /* Light grey */
+    
+    border-top: 2px solid #3498db;
+    /* Blue */
+    
     border-radius: 50%;
     width: 20px;
     height: 20px;
@@ -587,58 +487,59 @@ nav{
     display: none;
     margin-left: 20px;
 }
-
-.match,.passMatch,.wrongMatch,.match1,.wrongMatch1,.match2{
+.match,
+.passMatch,
+.wrongMatch,
+.match1,
+.wrongMatch1,
+.match2 {
     width: 16px;
     height: 16px;
     margin-left: 5px;
     display: none;
 }
-
-#statusEdit{
-/*    display: reltive;*/
-}
-
-#div1,#div2,#div3,#div4,#div5{
+#div1,
+#div2,
+#div3,
+#div4,
+#div5 {
     display: flex;
 }
-
-.form1,.form2,.form3,.form4{
+.form1,
+.form2,
+.form3,
+.form4 {
     width: 38vw;
     margin-left: 7vw;
 }
-
-.form5{
+.form5 {
     width: 83vw;
     margin-left: 7vw;
 }
-
-#morePostDiv{
+#morePostDiv {
     margin-top: 0;
     margin-bottom: 50px;
 }
-
-.morePosts{
+.morePosts {
     text-align: center;
     display: block;
     font-size: 25px;
     color: grey;
     font-family: 'PT Serif', serif;
 }
-
-#updateBtn{
+#updateBtn {
     width: 150px;
     margin-left: 42vw;
     margin-bottom: 20px;
 }
-
-.userSearch{
+.personalAcc{
+    cursor: pointer;
+}
+.userSearch {
     margin-right: 100px;
     width: 20vw;
 }
-
 #myUL {
-    /* Remove default list styling */
     list-style-type: none;
     width: 200px;
     padding: 0;
@@ -646,7 +547,6 @@ nav{
     z-index: 10;
     position: absolute;
 }
-
 #myUL .myLi .myA {
     background-color: #f0f8ff;
     line-height: .5;
@@ -660,171 +560,168 @@ nav{
     color: black;
     display: block;
 }
-
-/*
-.dropbtn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    font-size: 10px;
-    border: none;
-    cursor: pointer;
-}
-*/
-
-.deletedAccount,.LogOutAlert{
+.deletedAccount,
+.LogOutAlert {
     display: none;
 }
-
-#profilePic{
+#profilePic {
     margin-top: 50px;
 }
-
 .dropdown {
     position: relative;
     display: inline-block;
 }
-
 .dropdown-content {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
     min-width: 120px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
-    font-size : 13px;
+    font-size: 13px;
 }
-
 .dropdown-content a {
     color: black;
     padding: 6px 8px;
     text-decoration: none;
     display: block;
 }
-
-.dropdown-content a:hover {background-color: #f1f1f1}
-
+.dropdown-content a:hover {
+    background-color: #f1f1f1
+}
 .dropdown:hover .dropdown-content {
     display: block;
 }
-
 #myUL .myLi .myA:hover:not(.header) {
-    background-color: #eee; /* Add a hover effect to all links, except for headers */
+    background-color: #eee
 }
-
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@media only screen and (max-width: 1100px)  and (min-width: 768px)  {
-
-    #nav-right{
+@media only screen and (max-width: 1100px) and (min-width: 768px) {
+    #nav-right {
         padding: 0;
         padding-right: 3vw;
     }
-    #nav-left{
+    #nav-left {
         padding: 0;
         padding-left: 3vw;
     }
-    .submitForm{
-      padding-left: 23vw;
+    .submitForm {
+        padding-left: 23vw;
     }
-    
-    .posty{
+    .posty {
         margin-left: 22vw;
         margin-right: auto;
         width: 50vw;
     }
-
 }
 
-@media only screen and (max-width: 550px)  and (min-width: 510px)  {
-
-    #Posts{
-        margin-left: 9vw;
+@media only screen and (max-width: 768px) {
+    #nav-right {
+        display: flex;
+        padding: 0;
+        padding-right: 3vw;
     }
     
-    #userprofilePic{
-        width: 18vw;
-        height: 18vw;   
+    .collapsy{
+        display: flex;
     }
     
-    .activity{
-        font-size: 3vw;
-    }
-    
-    .Name{
-        font-size: 3.5vw;
+    .userSearch{
+        width: 30vw;
     }
     
     .posty{
+        width: 60vw;
+        margin-left: 20vw;
+    }
+}
+
+@media only screen and (max-width: 550px) and (min-width: 510px) {
+    #Posts {
+        margin-left: 9vw;
+    }
+    #userprofilePic {
+        width: 18vw;
+        height: 18vw;
+    }
+    .activity {
+        font-size: 3vw;
+    }
+    .Name {
+        font-size: 3.5vw;
+    }
+    .posty {
         margin-left: 17vw;
         margin-right: auto;
         width: 60vw;
     }
-
+    #noPosts{
+        padding: 0;
+        padding-left: 14vw;
+    }
 }
-
 @media only screen and (max-width: 510px) and (min-width: 500px) {
-
-    #Posts{
+    #Posts {
         margin-left: 5vw;
     }
-    
-    #userprofilePic{
+    #userprofilePic {
         width: 18vw;
-        height: 18vw;   
+        height: 18vw;
     }
-    
-    .activity{
+    .activity {
         font-size: 3.5vw;
-    }    
-
+    }
+    #noPosts{
+        padding: 0;
+        padding-left: 14vw;
+    }
 }
-
 @media only screen and (max-width: 500px) {
-
-    #Posts{
+    #Posts {
         margin-left: 2vw;
         margin-right: auto;
         margin-top: 7vw;
     }
-    
-    .posty{
+    .posty {
         margin-left: 10vw;
         margin-right: auto;
         width: 80vw;
     }
-    
-    #userprofilePic{
+    #userprofilePic {
         width: 18vw;
-        height: 18vw;   
+        height: 18vw;
     }
-    
-    .activity{
+    .activity {
         font-size: 3.5vw;
     }
-    
-    .Name{
+    .Name {
         font-size: 3.5vw;
     }
-    
-    .userDp,.information{
+    .userDp,
+    .information {
         margin-left: 35vw;
     }
-    
-    .status{
+    .status {
         margin-left: 32vw;
     }
-    
-    .username1{
+    .username1 {
         margin-left: 34vw;
     }
-
+    .inputUserstatus{
+        width: 75vw;
+        margin-left: 8vw;
+    }
+    #noPosts{
+        padding: 0;
+        padding-left: 14vw;
+    }
+    #updateBtn{
+        margin-left: 31vw;
+        margin-bottom: 20px;
+    }
+    #profilePic {
+        margin-left: 31vw;
+        width: 150px;
+        height: 150px;
+        border-radius: 30px;
+    }
 }

@@ -7,30 +7,24 @@ const bodyParser = require('body-parser');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const hbs = require('hbs');
-//const fs = require('fs');
 const cloudinary = require('cloudinary');
 const engines = require('consolidate');
 const url = require('url');
 var session = require('express-session');
 const internetAvailable = require("internet-available");
-//const exphbs = require('express-handlebars');
-const expressValidator = require('express-validator');
-//const flash = require('connect-flash');
-//const passport = require('passport');
-//const LocalStrategy = require('passport-local').Strategy;
 const cookieParser = require('cookie-parser');
-const sharedsession = require("express-socket.io-session");
-
 
 mongoose.Promise = global.Promise;    //Telling mongoose which promise library to use;
-mongoose.connect('mongodb://localhost:27017/FakeInsta');
+mongoose.connect('mongodb://localhost:27017/FakeInsta'); //Connecting to DB.
 
+
+//Setting Up Server
 const port = process.env.PORT || 3000;
 var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
 
-
+//To fetch Static Files (html)
 const publicPath = path.join(__dirname,'../public');
 app.use(express.static(publicPath));
 app.use(bodyParser.urlencoded({
@@ -39,10 +33,12 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(cookieParser('1234'));
 
+//Setting Up views..
 app.set('views', publicPath);
 app.set('view engine', 'html');
 app.engine('html', require('hbs').__express);
 
+//Export from other files
 var {Users} = require('./models/user');
 var {Images} = require('./models/images');
 var {authenticate} = require('../middleware/authenticate');
@@ -54,104 +50,50 @@ cloudinary.config({
   api_secret: 'sC4_am-XrdDs4AuMkY1am5-tI9c' 
 });
 
-
-//app.use(passport.initialize());
-//app.use(passport.session());
-//
-//app.use(expressValidator({
-//  errorFormatter: function(param, msg, value) {
-//      var namespace = param.split('.')
-//      , root    = namespace.shift()
-//      , formParam = root;
-//
-//    while(namespace.length) {
-//      formParam += '[' + namespace.shift() + ']';
-//    }
-//    return {
-//      param : formParam,
-//      msg   : msg,
-//      value : value
-//    };
-//  }
-//}));
-app.use(session({
+//Session Config
+var sessionMiddleware = session({
     secret: "1234",
     resave:false,
     saveUninitialized: false,
     cookie:{
         authStatus: "NotLoggedIn",
-        secure: false,
         maxAge: 100000000000000
     }
-}));
+});
 
+//Session Middleware
+app.use(sessionMiddleware);
 
+//Socket.io Middleware
+io.use(function(socket, next) {
+    sessionMiddleware(socket.request, socket.request.res, next);
+});
 
-//app.use(function (req, res, next){
-//    console.log(req.session.id);
-//    console.log(req.session);
-////    if(req.url == '/login' || req.url == '/register' || req.session.user){
-//       next();
-////    }
-//});
-
-
-
-var ID=0,i=0;
-io.use(sharedsession(session({
-    secret: "1234",
-    resave:true,
-    saveUninitialized: true,
-    cookie:{
-        authStatus: "NotLoggedIn",
-        secure: false,
-        maxAge: 100000000000000
-    }
-}))); 
-       
- io.use(function(socket, next) {
-    var req = socket.handshake;
-    if(i==0){        
-        ID = req.sessionID;
-        i++;
+//Auth Check.
+app.use(function (req, res, next){
+    if(req.session.user || req.url == '/login'){
         next();
     }
-     
-    if(req.sessionStore.sessions[ID]){
-        var sessionObj = JSON.parse(req.sessionStore.sessions[ID]);
-        if(sessionObj.user){
-            console.log("Authorized User " + sessionObj.user.username);
-            next();
-        }
-        else{
-            console.log('UNAUTH User');
-            socket.emit('unauthorizedUser',{
-                destination: '/index.html'
-            });
-//            next();
-        }
-    }
-
 });
 
 //User Connected
 io.on('connection',(socket)=>{
     
-    console.log('New user connected');
+    console.log('New user connected'); 
+    
+    // Prevent Unauth Dialog Box To appear on Login Page..
+    var referer = socket.request.headers.referer;
+    if(!socket.request.session.user && referer !== "http://localhost:3000/" && referer !== "http://localhost:3000/index.html"){
+        socket.emit('unauthorized',{});
+    }   
     
     //User  Disconnected
     socket.on('disconnect',()=>{
        console.log('User was disconnected'); 
     });
     
-//    internetAvailable({
-//        timeout: 1000
-//    }).then(function(){
-//        console.log("Internet available");
-//    }).catch(function(){
-//        console.log("No internet");
-//    });
     
+    //Login Page Route
     app.get('/',(req,res)=>{
        res.render('index.html');
     });
@@ -169,22 +111,23 @@ io.on('connection',(socket)=>{
         id = id.toString();
         user.save().then(()=>{
             
+            //Generate Tokens For authentication
             return user.generateAuthToken();
             
         }).then((token)=>{
+            //Sending Tokens as headers for verification
             res.header('x-auth',token);
-            socket.handshake.session.user = user;
-            socket.handshake.session.save();
-            res.redirect(url.format({
-              pathname:"profile.html",
-              query: {
-                  id: id,
-                  email: user.email
-              }
-            }));
+            
+            //Saving user in session 
+            req.session.user = user;
+            req.session.save();
+            
+            //Redirection
+            res.redirect("profile.html");
+            
         }).catch((e)=>{
             console.log(e);
-            res.redirect('/')
+            res.redirect('/');
         });
     });
     
@@ -193,27 +136,26 @@ io.on('connection',(socket)=>{
        var body = _.pick(req.body,['email','password']);   
        var email = body.email;
        var password = body.password;
-        
+       
        Users.findOne({email}).then((user)=>{
            if(!user){
-               socket.emit('loginErrors',{});
+               console.log('No User Found');
            }
            
            return user.bcryptPass(body.password).then((user)=>{
                
                 var id = (user._id).toString();
                 res.header('x-auth',user.tokens[0].token);
-                req.session.cookie.authStatus = "not";
+               
+                req.session.user = user;
                 req.session.save();
-                
-                socket.handshake.session.user = user;
-                socket.handshake.session.save();
-                 res.redirect(url.format({
-                    pathname:"mainPage.html",   
-                      query: {
-                         "id": id
-                      }
-                 }));  
+               
+                res.redirect(url.format({
+                  pathname:"mainPage.html",
+                  query: {
+                      email: user.email
+                  }
+                }));
                
            })
            
@@ -221,56 +163,36 @@ io.on('connection',(socket)=>{
            console.log(err);
            res.redirect('/');           
        });
-      
-      
-//       req.checkBody('email','Email is required').notEmpty();
-//       req.checkBody('email','Email is not valid').isEmail();
-//       req.checkBody('password','Password is required').notEmpty();
-        
-//       var errors = req.validationErrors();
-//        socket.emit('loginErrors',{
-//               errors: errors
-//        });
-        
-//       if(errors){
-//           res.render('index.html',{
-//               errors: errors
-//           });       
-//       }
-//        else{ 
-        
     });
     
     //On ProfileButton Click
     app.post('/profile',authenticate,(req,res)=>{
         var body = _.pick(req.body,['id','email']);
         res.header('x-auth',req.token);
-        return res.send(url.format({
-          pathname:"profile.html",   
-          query: {
-             "id": body.id,
-             "email": body.email
-           }
-        }));
+        if(req.session.user){
+            return res.send(url.format({
+              pathname:"profile.html"
+            }));
+        }
     });
     
+    //Route To redirect to User Account Page
     app.post('/userAcc',authenticate,(req,res)=>{
         var body = _.pick(req.body,['email','id']);
         res.header('x-auth',req.token);
         return res.send(url.format({
           pathname:"userAcc.html",   
           query: {
-             "email": body.email,
-              "id": body.id,
+              "email": body.email,
               "user": "yes"
            }
         }));   
     });
     
+    //Logout Route
     app.get('/logOut',authenticate,(req,res)=>{
         req.user.removeToken(req.token).then(()=>{
-           delete socket.handshake.session.user;
-           socket.handshake.session.save();
+           req.session.destroy();
            return res.status(200).send(url.format({
               pathname:"index.html"
             }));  
@@ -279,15 +201,19 @@ io.on('connection',(socket)=>{
         });
     });
     
+    //Delete Account Route
     app.post('/delete',(req,res)=>{
        var body = _.pick(req.body,['email','id']);
        
+       //Destroy the Session
+       req.session.destroy();
+        
+       //Remove User from DB
        Users.remove({ _id: body.id }, function(err) {
-           delete socket.handshake.session.user;
-           socket.handshake.session.save();
            console.log('User Account Deleted Successfully');
        });     
         
+        //Delete all User Images 
         Images.find({
             email: body.email
         }, function (err, users) {
@@ -307,7 +233,6 @@ io.on('connection',(socket)=>{
     //Profile Update Route
     app.post('/update',(req,res)=>{
         var body = _.pick(req.body,['username','fullname','work','location','url','mobile','qualities','bday','confirmPass']);
-        console.log(body);
 
         Users.findOneAndUpdate(
         { 
@@ -334,11 +259,13 @@ io.on('connection',(socket)=>{
                 console.log(err);
             }
             
+            //Check if Password was changed
             if(body.confirmPass){
                 user.password = body.confirmPass;
                 user.save();
             }
             
+            //Update Images with latest User Info
             Images.update(
             {
                 username: body.username
@@ -356,7 +283,7 @@ io.on('connection',(socket)=>{
                 res.redirect(url.format({
                   pathname:"mainPage.html",
                   query: {
-                      id: (user._id).toString()
+                      email: user.email
                   }
                 }));
             });
@@ -379,11 +306,13 @@ io.on('connection',(socket)=>{
           date: user.date   
        });
            
+       //Save Image to DB
        image.save().then((image)=>{
            console.log(`Image Uploaded to DB by ${image.username}`);
            socket.broadcast.emit('newPost',image);
        });
         
+       // Increase User Posts Count by 1
        Users.findOneAndUpdate({
            _id: user.id 
        },{
@@ -395,7 +324,9 @@ io.on('connection',(socket)=>{
        });    
     });
     
+    // Saving Main Page Text Post
     socket.on('postStatus',(info)=>{
+        
         var image = new Images({
             email : info.email,
             username: info.username,
@@ -414,6 +345,7 @@ io.on('connection',(socket)=>{
 
     });
     
+    // User Account Status Update
     socket.on('statusUpdate',(info)=>{
        Users.findOneAndUpdate({
            _id: info.id 
@@ -430,6 +362,7 @@ io.on('connection',(socket)=>{
     
     //Like Functionality
     socket.on('Like',(info)=>{
+        console.log("Like");
         Images.findOneAndUpdate({
             url: info.url
         }, {
@@ -494,13 +427,8 @@ io.on('connection',(socket)=>{
     
     //Fetching all the images from DB
     socket.on('pageLoad',(info)=>{
-        internetAvailable({
-            timeout: 1000
-        }).then(function(){
-            console.log("Internet available");
-        }).catch(function(){
-            console.log("No internet");
-        });
+        
+        //Sending 8 images per request
         var skip = info.county*8;
         Images.find({}).lean().sort({
             _id: -1
@@ -522,6 +450,7 @@ io.on('connection',(socket)=>{
             }
         });
         
+        //Sending all users
         Users.find({}).lean(10).exec(function(err, docs) {
             if (!err){ 
                 socket.emit('allUsers', docs);
@@ -532,7 +461,9 @@ io.on('connection',(socket)=>{
         
     });
     
+    //Sending User Posts on User Account Page
     socket.on('userPosts',(info)=>{
+        //Sending 6 Posts oer request
         var skip = info.county*6;
         Images.find({
             email: info.email,
@@ -566,20 +497,21 @@ io.on('connection',(socket)=>{
         
     });
     
-    // Event received as soon as mainPage loads 
+    // Event received as soon as mainPage and UserAcc Page loads 
     socket.on('userInfo',(info)=>{
-        Users.findByEmail(info.id).then((user)=>{
+        Users.findByEmail(info.email).then((user)=>{
             socket.emit('UserInfo', user);
         });
     });
     
     // sending user info on profile page load
     socket.on('profileuserInfo',(info)=>{
-        Users.findByEmail(info.id).then((user)=>{
+        Users.findByEmail(socket.request.session.user.email).then((user)=>{
             socket.emit('profileUserInfo', user);
         });
     });
     
+    // Matching 2 Pa
     socket.on('passMatchProcess',(info)=>{
         Users.passMatch(info.pass,info.hashedPass).then((match)=>{
           if(match){

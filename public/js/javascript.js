@@ -2,21 +2,64 @@ var socket = io();
 
 socket.on('connect',function(){
    console.log('Connected to server');
-   $("#overlay12").css("display","none");
 });
 
 socket.on('disconnect',function(){
-   console.log('Disconnected from server'); 
-   $("#overlay12").css("display","block");
+   console.log('Disconnected from server');
 });
 
-socket.on('unauthorizedUser',function(dest){
-    console.log("called");
-   window.location.href = dest.destination;
-});
+// SERVICE WORKER
+//if ('serviceWorker' in navigator) {
+//    window.addEventListener('load', function() {
+//      navigator.serviceWorker.register('/sw.js').then(function(reg) {
+//        if (!navigator.serviceWorker.controller) {
+//          return;
+//        }
+//
+//        if (reg.waiting) {
+//          updateReady(reg.waiting);
+//          return;
+//        }
+//
+//        if (reg.installing) {
+//          trackInstalling(reg.installing);
+//          return;
+//        }
+//
+//        reg.addEventListener('updatefound', function() {
+//          trackInstalling(reg.installing);
+//        });
+//      });
+//        
+//        //Ensures refreshing is done only once..
+//        var refreshing;
+//        navigator.serviceWorker.addEventListener('controllerchange', function() {
+//            if (refreshing) return;
+//            window.location.reload();
+//            refreshing = true;
+//        });
+//    });
+//}
+
+// Tracking State Change in Service Worker
+//function trackInstalling(worker){
+//    worker.addEventListener('statechange', function() {
+//        console.log('Checking State Change');
+//        if (worker.state == 'installed') {
+//            console.log('Installed');
+//            updateReady(worker);
+//        }
+//    });
+//}
+//
+//// Updating Service Worker.
+//function updateReady(worker){
+//    worker.postMessage({action: 'skipWaiting'});
+//}
 
 //SignIn Page Js
 if($("body").data("title") === "signInPage"){
+    
     $(".fa").click(function(){
        if ($('.fa').hasClass('fa-pencil')){
            $(".fa").removeClass('fa-pencil').addClass('fa-times');    
@@ -32,10 +75,10 @@ if($("body").data("title") === "signInPage"){
         }
     });  
     
-    socket.on('loginErrors',function(){
-       console.log('CALLED');
-        alert("sdfsdf");
-    });
+//    socket.on('loginErrors',function(){
+//       console.log('CALLED');
+//        alert("sdfsdf");
+//    });
 
 }
 
@@ -45,6 +88,14 @@ var CLOUDINARY_UPLOAD_PRESET = 'umw6g5ma';
 
 if($("body").data("title") === "mainPage"){
     
+    var params = $.deparam(window.location.search);
+    
+    //Redirecting To login page if Unauth Users.
+    socket.on('unauthorized',function(eve){
+        alert("Unauth User");
+        window.location.href = 'index.html';
+    });
+    
     //Stoppping Back Button Functionality
     history.pushState(null, document.title, location.href);
     window.addEventListener('popstate', function (event)
@@ -52,20 +103,18 @@ if($("body").data("title") === "mainPage"){
       history.pushState(null, document.title, location.href);
     });
     
-    //fetching info from search url
-    var params = $.deparam(window.location.search);
-    
     var fileUpload = document.getElementById('fileUpload');
     var count=0;
     //Fetches user info and all posts as soon as page loads
     $(function(){
         socket.emit('userInfo',{
-            id: params.id
+            email: params.email
         });
+        
         socket.emit('pageLoad',{
-            id: params.id,
             county: count
         });
+        
      });
     
     var like,index,likeIcon;
@@ -88,7 +137,6 @@ if($("body").data("title") === "mainPage"){
                 }
 
                if(images.docs[i].postStatus){
-                   console.log(images.docs[i].time)
                    //appending text Posts
                    var template = document.getElementById("mainPostTemplate").innerHTML;
                    var html = Mustache.render(template,{
@@ -102,12 +150,11 @@ if($("body").data("title") === "mainPage"){
                        likeIcon: likeIcon,
                        date: images.docs[i].date
                    });
-                   $("#allPosts").append(html);
+                   $("#Container").append(html);
 
                }  
                else{            
                    //appending image Posts
-                   console.log(images.docs[i].time);
                    var template = document.getElementById("post-template").innerHTML;
                    var html = Mustache.render(template,{
                        email: images.docs[i].email,
@@ -121,13 +168,13 @@ if($("body").data("title") === "mainPage"){
                        likeIcon: likeIcon,
                        date: images.docs[i].date
                    });
-                   $("#allPosts").append(html);
+                   $("#Container").append(html);
 
                }
             }
-            
+             console.log(performance.now());
             if(images.docs.length > 6){
-                $("#allPosts").append("<img id='loader' class='load' src='images/loader1.gif' alt='loader'>");
+                $("#Container").append("<img id='loader' class='load' src='images/loader1.gif' alt='loader'>");
             }
             
         }
@@ -150,7 +197,6 @@ if($("body").data("title") === "mainPage"){
                    
                     //request for new posts.
                     socket.emit('pageLoad',{
-                        id: params.id,
                         county: count
                     });
                    
@@ -174,7 +220,7 @@ if($("body").data("title") === "mainPage"){
                        likeIcon: "fa-heart-o",
                        date: images.date
                    });
-                   $("#allPosts").prepend(html);
+                   $("#Container").prepend(html);
 
                }  
                else{            
@@ -191,14 +237,14 @@ if($("body").data("title") === "mainPage"){
                        likeIcon: "fa-heart-o",
                        date: images.date
                    });
-                   $("#allPosts").prepend(html);
+                   $("#Container").prepend(html);
 
                }
     });
     
     //current user info received
     socket.on('UserInfo',function(user){
-        currentUser = Object.assign({}, user); 
+        currentUser = Object.assign({}, user);
         
         //Like and Dislike Button Functionality
         var c;
@@ -279,7 +325,7 @@ if($("body").data("title") === "mainPage"){
             });
             $("#backPicLoad").css('display','none');
             $(".fa-camera").css('display','inline');
-            $("#allPosts").prepend(html);
+            $("#Container").prepend(html);
             
             $( ".inputUserstatus" ).val("");
             
@@ -389,7 +435,7 @@ if($("body").data("title") === "mainPage"){
            });
            $("#backPicLoad").css('display','none');
            $(".fa-camera").css('display','inline');
-           $("#allPosts").prepend(html);
+           $("#Container").prepend(html);
 // 
 // Handlebars Templating
             
@@ -462,7 +508,7 @@ if($("body").data("title") === "mainPage"){
             for (var i = (Object.keys(searchArray).length)-1 ; i >= 0 ;i--){
                 if (searchArray[i].username.toLowerCase().indexOf(input.toLowerCase()) > -1 && searchArray[i].username !== currentUser.username) {
                     if($('#myUL').find("."+allUsers[i].username).length == 0){
-                        $("#myUL").append("<li class='myLi'><a class='myA "+searchArray[i].username+"' href='http://localhost:3000/userAcc.html?email="+searchArray[i].email+"&id="+btoa(searchArray[i]._id)+"&user=no'>"+searchArray[i].username+"</a></li>");
+                        $("#myUL").append("<li class='myLi'><a class='myA "+searchArray[i].username+"' href='http://localhost:3000/userAcc.html?email="+searchArray[i].email+"&user=no'>"+searchArray[i].username+"</a></li>");
                     }
                     delete searchArray[i];
                 }
@@ -476,13 +522,10 @@ if($("body").data("title") === "mainPage"){
 }
 
 if($("body").data("title") === "profilePage"){
-    var params = $.deparam(window.location.search);
     
     //Fetches all user info as soon as page loads
     $(function(){
-        socket.emit('profileuserInfo',{
-            id: params.id
-        });
+        socket.emit('profileuserInfo',{});
     });
     
     function validateForm(){
@@ -682,7 +725,7 @@ if($("body").data("title") === "userAcc"){
     var params = $.deparam(window.location.search);
     $(function(){
         socket.emit('userInfo',{
-            id: atob(params.id)
+            email: params.email
         });
         socket.emit('userPosts',{
             email: params.email,
@@ -850,6 +893,7 @@ if($("body").data("title") === "userAcc"){
                     $(".morePosts").remove();
                     $("#morePostsLoad").css('display','inline');
                     county++;
+                    console.log(params.email);
                     socket.emit('userPosts',{
                         email: params.email,
                         county: county
