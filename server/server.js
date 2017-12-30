@@ -71,7 +71,7 @@ io.use(function(socket, next) {
 
 //Auth Check.
 app.use(function (req, res, next){
-    if(req.session.user || req.url == '/login'){
+    if(req.session.user || req.url == '/login' || req.url == '/register'){
         next();
     }
 });
@@ -83,7 +83,7 @@ io.on('connection',(socket)=>{
     
     // Prevent Unauth Dialog Box To appear on Login Page..
     var referer = socket.request.headers.referer;
-    if(!socket.request.session.user && referer !== "http://localhost:3000/" && referer !== "http://localhost:3000/index.html"){
+    if(!socket.request.session.user && referer !== "http://localhost:3000/" && referer !== "http://localhost:3000/index.html" &&referer !== "http://localhost:3000/register"){
         socket.emit('unauthorized',{});
     }   
     
@@ -109,9 +109,11 @@ io.on('connection',(socket)=>{
         user.url = 'images/anony.jpg';
         user.backgroundPic = 'https://res.cloudinary.com/https-blog-5946b-firebaseapp-com/image/upload/v1513716645/tujs9qumbcxuq0gv8qb0.jpg';
         id = id.toString();
+        console.log('Worked');
         user.save().then(()=>{
             
             //Generate Tokens For authentication
+            console.log(user);
             return user.generateAuthToken();
             
         }).then((token)=>{
