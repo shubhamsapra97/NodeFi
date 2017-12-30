@@ -107,7 +107,7 @@ io.on('connection',(socket)=>{
         user._id = id;
         user.mainStatus = "Hello there!";
         user.url = 'images/anony.jpg';
-        user.backgroundPic = 'https://res.cloudinary.com/https-blog-5946b-firebaseapp-com/image/upload/v1513716645/tujs9qumbcxuq0gv8qb0.jpg';
+        user.backgroundPic = 'https://res.cloudinary.com/https-blog-5946b-firebaseapp-com/image/upload/q_70/v1514661075/uclwawfhsgpi8na37gy8.jpg';
         id = id.toString();
         console.log('Worked');
         user.save().then(()=>{

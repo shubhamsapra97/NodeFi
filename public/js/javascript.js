@@ -7,6 +7,23 @@ socket.on('connect',function(){
 socket.on('disconnect',function(){
    console.log('Disconnected from server');
 });
+//
+//function openDatabase() {
+//  // If the browser doesn't support service worker,
+//  // we don't care about having a database
+//  if (!navigator.serviceWorker) {
+//    return Promise.resolve();
+//  }
+//
+//  return idb.open('NodeFi', 1, function(upgradeDb) {
+//    var store = upgradeDb.createObjectStore('nodeFi', {
+//      keyPath: 'date'
+//    });
+//    store.createIndex('by-date', 'time');
+//  });
+//}
+//
+//var dbPromise = openDatabase();
 
 // SERVICE WORKER
 if ('serviceWorker' in navigator) {
@@ -355,7 +372,7 @@ if($("body").data("title") === "mainPage"){
             },
             data: formData
         }).then(function(res){
-           var url = res.data.secure_url.slice(0, 72) + '/w_615,h_350,q_50/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
+           var url = res.data.secure_url.slice(0, 72) + '/q_50/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
            //moment to fetch the time-date     
            var time = moment(moment().valueOf()).format('H:mm');
            var date = moment(moment().valueOf()).format('MM-DD-YYYY');
@@ -594,7 +611,7 @@ if($("body").data("title") === "profilePage"){
             },
             data: formData
         }).then(function(res){
-            var url = res.data.secure_url.slice(0, 72) + '/q_30/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
+            var url = res.data.secure_url.slice(0, 72) + '/w_200,h_200,q_30/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
            $("#backPicLoad").css('display','none');    
            $("#submitText").css('display','inline');
            document.getElementById("profilePic").src = url;
@@ -694,7 +711,7 @@ if($("body").data("title") === "userAcc"){
                 },
                 data: formData
             }).then(function(res){
-                var url = res.data.secure_url.slice(0, 72) + '/q_70/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
+               var url = res.data.secure_url.slice(0, 72) + '/q_70/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
                $(".backImage").attr('src' , url); 
                $("#backPicLoad").css('display','none');
                 
