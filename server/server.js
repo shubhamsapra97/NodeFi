@@ -85,7 +85,14 @@ io.on('connection',(socket)=>{
     var referer = socket.request.headers.referer;
     if(!socket.request.session.user && referer !== "http://localhost:3000/" && referer !== "http://localhost:3000/index.html" &&referer !== "http://localhost:3000/register"){
         socket.emit('unauthorized',{});
-    }   
+    }
+    
+    // No login Page if user already Authenticated..
+    if(referer == "http://localhost:3000/" && socket.request.session.user){
+        socket.emit('alreadyUser',{
+            email: socket.request.session.user.email
+        });
+    }
     
     //User  Disconnected
     socket.on('disconnect',()=>{

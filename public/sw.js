@@ -1,4 +1,4 @@
-var staticCacheName = 'NodeFi-static-v1';
+var staticCacheName = 'NodeFi-static-v3';
 
 //While Service Worker is getting Installed
 self.addEventListener('install', function(event) {
@@ -17,14 +17,28 @@ self.addEventListener('install', function(event) {
                 '/socket.io/socket.io.js',
                 '/js/javascript.js',
                 '/js/libs/mustache.js',
+                '/js/libs/deparam.js',
                 'https://unpkg.com/axios/dist/axios.min.js',
-                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
                 'https://fonts.googleapis.com/css?family=PT+Serif|Roboto+Mono',
                 '/js/libs/moment.js',
                 '/images/anony.jpg',
+                'images/compass.png',
+                'images/edit.png',
+                'images/edit2.png',
+                'images/heart.png',
+                'images/redheart.png',
+                'images/insta.png',
+                'images/user.png',
+                'images/camera.png',
                 '/images/match.png',
                 '/images/wrong.png',
-                '/images/loader1.gif',
+                '/images/loader2.gif',
+                'images/close.png',
+                'images/calendar.png',
+                'images/bday.png',
+                'images/briefcase.jpg',
+                'images/phone.png',
+                'images/user.png'
             ]).catch(function(err) {
                 console.log("Cache Error " + err);
             });

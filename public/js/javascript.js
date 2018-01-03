@@ -75,20 +75,25 @@ function updateReady(worker){
 //SignIn Page Js
 if($("body").data("title") === "signInPage"){
     
-    $(".fa").click(function(){
-       if ($('.fa').hasClass('fa-pencil')){
-           $(".fa").removeClass('fa-pencil').addClass('fa-times');    
+    $("#loginEdit").click(function(){
+       if ($('.loginOption').hasClass('pencil')){
+           $(".loginOption").attr('src','images/edit2.png').removeClass('pencil').addClass('cross');
            $('.signInContent').addClass('fadeOut');
            setTimeout(function(){ 
                $(".signUpContent").css('display','block').removeClass('fadeOut').addClass('fadeInUp'); 
            }, 500);    
        }
        else{
-           $(".fa").removeClass('fa-times').addClass('fa-pencil');    
+           $(".loginOption").attr('src','images/edit.png').removeClass('cross').addClass('pencil');    
            $('.signUpContent').removeClass('fadeInUp').css('display','none');   
            $(".signInContent").removeClass('fadeOut').addClass('fadeInUp'); 
         }
     });  
+    
+    //if website open in 2 diff tabs with use logged in alredy
+    socket.on('alreadyUser',function(info){
+        window.location.href = 'mainPage.html?email=' + info.email;
+    });
 
 }
 
@@ -140,10 +145,10 @@ if($("body").data("title") === "mainPage"){
                likesArray = images.docs[i].userLiked;            
                index = likesArray.indexOf(currentUser.username);
                if(index>-1){
-                   likeIcon = 'fa-heart';
+                   likeIcon = 'images/redheart.png';
                }
                 else{
-                    likeIcon = 'fa-heart-o';
+                    likeIcon = 'images/heart.png';
                 }
 
                if(images.docs[i].postStatus){
@@ -184,7 +189,7 @@ if($("body").data("title") === "mainPage"){
             }
             
             if(images.docs.length > 6){
-                $("#Container").append("<img id='loader' class='load' src='images/loader1.gif' alt='loader'>");
+                $("#Container").append("<img id='loader' class='load' src='images/loader2.gif' alt='loader'>");
             }
             
         }
@@ -227,7 +232,7 @@ if($("body").data("title") === "mainPage"){
                        postStatus: images.postStatus,
                        location: images.location,
                        dp: images.userDp,
-                       likeIcon: "fa-heart-o",
+                       likeIcon: "images/heart.png",
                        date: images.date
                    });
                    $("#Container").prepend(html);
@@ -244,7 +249,7 @@ if($("body").data("title") === "mainPage"){
                        status: images.status,
                        location: images.location,
                        dp: images.userDp,
-                       likeIcon: "fa-heart-o",
+                       likeIcon: "images/heart.png",
                        date: images.date
                    });
                    $("#Container").prepend(html);
@@ -265,8 +270,8 @@ if($("body").data("title") === "mainPage"){
         document.addEventListener('click', function (e) {
             if (hasClass(e.target, 'postLike')) {
                 c = $(e.target).parent().next().text();
-                if($(e.target).hasClass('fa-heart')) {  
-                    $(e.target).removeClass('fa-heart').addClass('fa-heart-o');
+                if($(e.target).attr('src') == 'images/redheart.png') {  
+                    $(e.target).removeAttr('src').attr('src','images/heart.png');
                     $(e.target).parent().next().text(parseInt(c) - 1 + " Likes");
                     var index = likesArray.indexOf(currentUser.username);
                     likesArray.splice(index, 1);
@@ -286,7 +291,7 @@ if($("body").data("title") === "mainPage"){
                     }
                 }
                 else{
-                    $(e.target).removeClass('fa-heart-o').addClass('fa-heart');
+                    $(e.target).removeAttr('src').attr('src','images/redheart.png');
                     $(e.target).parent().next().text(parseInt(c) + 1 + " Likes");
                     likesArray.push(currentUser.username);
                     if($(e.target).parent().prev().children().hasClass('textPost')){
@@ -315,7 +320,7 @@ if($("body").data("title") === "mainPage"){
         var status,time,likes,date;
         status = $('.inputUserstatus').val();
         if(event.key === 'Enter' && status.length !==0){
-            $(".fa-camera").css('display','none');
+            $("camera").css('display','none');
             $("#backPicLoad").css('display','inline');
             time = moment(moment().valueOf()).format('H:mm');
             date = moment(moment().valueOf()).format('MM-DD-YYYY');
@@ -330,11 +335,11 @@ if($("body").data("title") === "mainPage"){
                postStatus: status,
                location: currentUser.location,
                dp: currentUser.url,
-               likeIcon: 'fa-heart-o',
+               likeIcon: 'images/heart.png',
                date: date    
             });
             $("#backPicLoad").css('display','none');
-            $(".fa-camera").css('display','inline');
+            $("camera").css('display','inline');
             $("#Container").prepend(html);
             
             $( ".inputUserstatus" ).val("");
@@ -355,7 +360,7 @@ if($("body").data("title") === "mainPage"){
     var status;
     //Post Upload button click 
     fileUpload.addEventListener('change',function(e){
-        $(".fa-camera").css('display','none');
+        $(".camera").css('display','none');
         $("#backPicLoad").css('display','inline');
         status = $(".inputUserstatus").val(); 
         var file = event.target.files[0];
@@ -389,10 +394,10 @@ if($("body").data("title") === "mainPage"){
                status: status,
                location: currentUser.location,
                dp: currentUser.url,
-               likeIcon: 'fa-heart-o'
+               likeIcon: 'images/heart.png'
            });
            $("#backPicLoad").css('display','none');
-           $(".fa-camera").css('display','inline');
+           $(".camera").css('display','inline');
            $("#Container").prepend(html);
 // 
 // Handlebars Templating
@@ -576,6 +581,9 @@ if($("body").data("title") === "profilePage"){
         });
         
         $("#confirmPass").keyup(function(){
+            if($("#newPassword").val().length == 0){
+                $("#updateBtn").removeAttr('disabled');
+            }
             if($("#confirmPass").val() === $("#newPassword").val() ){
                 if($("#confirmPass").val().length!=0){
                     $(".match2").css('display','inline');

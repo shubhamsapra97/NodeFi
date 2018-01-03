@@ -6,8 +6,7 @@
     <title>NodeFi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=PT+Serif|Roboto+Mono" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=PT+Serif|Roboto+Mono" rel="stylesheet prefetch">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 
@@ -23,8 +22,8 @@
                     <span class="icon-bar"></span>
                 </button>
                 <div id="nav-left">
-                    <i class="navbar-brand fa fa-instagram" aria-hidden="true"></i>
-                    <a tabindex="-1" class="navbar-brand" href="#">| NodeFi</a>
+                    <img class="navbar-brand" src="images/insta.png">
+                    <a class="navbar-brand" href="#">| NodeFi</a>
                 </div>
             </div>
 
@@ -38,13 +37,9 @@
                         </div>
                     </form>
                     <ul class="nav navbar-nav navbar-right" id="nav-right">
-                        <li data-toggle="modal" data-target="#exampleModal">
-                            <i id='PostInput' class="fa fa-compass user-nav" aria-hidden="true"></i>
-                        </li>
-                        <li><i class="fa fa-heart-o user-nav profile" aria-hidden="true"></i>
-                        </li>
-                        <li><i class="personalAcc fa fa-user-o user-nav" aria-hidden="true"></i>
-                        </li>
+                        <li data-toggle="modal" data-target="#exampleModal"><img id="PostInput" class="user-nav" src="images/compass.png"></li>
+                        <li><img class="user-nav" src="images/heart.png"></li>
+                        <li><img class="personalAcc user-nav" src="images/user.png"></li>
                     </ul>
                 </div>
             </div>
@@ -54,8 +49,8 @@
     <div class="UserStatusPost">
         <input type="text" class="inputUserstatus form-control" placeholder="Whats going on in your Mind ....">
         <label for="fileUpload" class="custom-file-upload">
-            <i class="fa fa-camera"></i>
-            <img src="images/loader1.gif" id="backPicLoad" />
+            <img class="camera" src="images/camera.png">
+            <img src="images/loader2.gif" id="backPicLoad" />
         </label>
         <input id="fileUpload" type="file" />
     </div>
@@ -78,7 +73,7 @@
                 <img src="{{url}}" class="img-responsive postImage">
             </div>
             <div class="postOptions">
-                <i class="fa {{likeIcon}} postLike" aria-hidden="true" id="{{url}}" title="{{user}}"></i>
+                <img src="{{likeIcon}}" class="likeicon postLike" id="{{url}}" title="{{user}}">
                 <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
             </div>
             <div class="postLikesNum">
@@ -107,7 +102,7 @@
                 <span class="textPost">{{postStatus}}</span>
             </div>
             <div class="postOptions">
-                <i class="fa {{likeIcon}} postLike" aria-hidden="true" id="{{postStatus}}" name="hello" title="{{user}}"></i>
+                <img src="{{likeIcon}}" class="likeicon postLike" id="{{postStatus}}" title="{{user}}">
                 <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
             </div>
             <div class="postLikesNum">
@@ -123,11 +118,11 @@
 
     <script src="/js/libs/jquery-3.1.1.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="/js/libs/mustache.js"></script>
     <script src="/js/libs/deparam.js"></script>
-    <script src="/js/libs/moment.js"></script>
-    <script src='/js/libs/bootstrap.min.js' type="text/javascript"></script>
+    <script async src='/js/libs/bootstrap.min.js' type="text/javascript"></script>
+    <script async src="/js/libs/mustache.js"></script>
+    <script defer src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script defer src="/js/libs/moment.js"></script>
     <script src="/js/javascript.js" type="text/javascript"></script>
 </body>
 
