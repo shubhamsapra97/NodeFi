@@ -7,23 +7,6 @@ socket.on('connect',function(){
 socket.on('disconnect',function(){
    console.log('Disconnected from server');
 });
-//
-//function openDatabase() {
-//  // If the browser doesn't support service worker,
-//  // we don't care about having a database
-//  if (!navigator.serviceWorker) {
-//    return Promise.resolve();
-//  }
-//
-//  return idb.open('NodeFi', 1, function(upgradeDb) {
-//    var store = upgradeDb.createObjectStore('nodeFi', {
-//      keyPath: 'date'
-//    });
-//    store.createIndex('by-date', 'time');
-//  });
-//}
-//
-//var dbPromise = openDatabase();
 
 // SERVICE WORKER
 if ('serviceWorker' in navigator) {
@@ -105,6 +88,8 @@ if($("body").data("title") === "mainPage"){
     
     var params = $.deparam(window.location.search);
     
+    var container = $('#Container');
+    
     //Redirecting To login page if Unauth Users.
     socket.on('unauthorized',function(eve){
         alert("Unauth User");
@@ -132,19 +117,22 @@ if($("body").data("title") === "mainPage"){
         
      });
     
-    var like,index,likeIcon;
+    var like,index,likeIcon,div,html,template;
     var currentUser = {};
     var likesArray = new Array();
+    
+    //Use of document fragments to prevent page reflow..
+    var fragment = document.createDocumentFragment();
+    
     socket.on('allImages',function(images){
         $("#loader1").remove();
+        $("#userView").remove();
         var postStatus = document.getElementsByClassName('.postStatus');
         if(!images.empty){
             
             for(var i=0;i<images.docs.length;i++){
-               like = images.docs[i].like + " Likes";
-               likesArray = images.docs[i].userLiked;            
-               index = likesArray.indexOf(currentUser.username);
-               if(index>-1){
+               likesArray = images.docs[i].userLiked;
+               if(likesArray.indexOf(currentUser.username)>-1){
                    likeIcon = 'images/redheart.png';
                }
                 else{
@@ -153,43 +141,53 @@ if($("body").data("title") === "mainPage"){
 
                if(images.docs[i].postStatus){
                    //appending text Posts
-                   var template = document.getElementById("mainPostTemplate").innerHTML;
-                   var html = Mustache.render(template,{
+                   template = document.getElementById("mainPostTemplate").innerHTML;
+                   html = Mustache.render(template,{
                        email: images.docs[i].email,
                        user: images.docs[i].username,
                        time: images.docs[i].time,
-                       like: like,
+                       like: images.docs[i].like,
                        postStatus: images.docs[i].postStatus,
                        location: images.docs[i].location,
                        dp: images.docs[i].userDp,
                        likeIcon: likeIcon,
                        date: images.docs[i].date
                    });
-                   $("#Container").append(html);
+                   
+                   div = document.createElement('div');
+                   div.setAttribute('class','posty');
+                   div.innerHTML = html;
+                   fragment.appendChild(div);
 
                }  
                else{            
                    //appending image Posts
-                   var template = document.getElementById("post-template").innerHTML;
-                   var html = Mustache.render(template,{
+                   template = document.getElementById("post-template").innerHTML;
+                   html = Mustache.render(template,{
                        email: images.docs[i].email,
                        user: images.docs[i].username,
                        url: images.docs[i].url,
                        time: images.docs[i].time,
-                       like: like,
+                       like: images.docs[i].like,
                        status: images.docs[i].status,
                        location: images.docs[i].location,
                        dp: images.docs[i].userDp,
                        likeIcon: likeIcon,
                        date: images.docs[i].date
                    });
-                   $("#Container").append(html);
+                   
+                   div = document.createElement('div');
+                   div.setAttribute('class','posty');
+                   div.innerHTML = html;
+                   fragment.appendChild(div);
 
                }
             }
+    
+            container.append(fragment);
             
             if(images.docs.length > 6){
-                $("#Container").append("<img id='loader' class='load' src='images/loader2.gif' alt='loader'>");
+                container.append("<img id='loader' class='load' src='images/loader2.gif' alt='loader'>");
             }
             
         }
@@ -222,39 +220,42 @@ if($("body").data("title") === "mainPage"){
     
     socket.on('newPost',function(images){
         var postStatus = document.getElementsByClassName('.postStatus');
+        
                if(images.postStatus){
-                   var template = document.getElementById("mainPostTemplate").innerHTML;
-                   var html = Mustache.render(template,{
+                   template = document.getElementById("mainPostTemplate").innerHTML;
+                   html = Mustache.render(template,{
                        email: images.email,
                        user: images.username,
                        time: images.time,
-                       like: (0+" Likes"),
+                       like: 0,
                        postStatus: images.postStatus,
                        location: images.location,
                        dp: images.userDp,
                        likeIcon: "images/heart.png",
                        date: images.date
                    });
-                   $("#Container").prepend(html);
-
                }  
                else{            
-                   var template = document.getElementById("post-template").innerHTML;
-                   var html = Mustache.render(template,{
+                   template = document.getElementById("post-template").innerHTML;
+                   html = Mustache.render(template,{
                        email: images.email,
                        user: images.username,
                        url: images.url,
                        time: images.time,
-                       like: (0+" Likes"),
+                       like: 0,
                        status: images.status,
                        location: images.location,
                        dp: images.userDp,
                        likeIcon: "images/heart.png",
                        date: images.date
                    });
-                   $("#Container").prepend(html);
 
                }
+        div = document.createElement('div');
+        div.setAttribute('class','posty');
+        div.innerHTML = html;
+        fragment.appendChild(div);
+        container.prepend(fragment);
     });
     
     //current user info received
@@ -266,23 +267,24 @@ if($("body").data("title") === "mainPage"){
         function hasClass(elem, className) {
             return elem.className.split(' ').indexOf(className) > -1;
         }
-        
+        var target;
         document.addEventListener('click', function (e) {
             if (hasClass(e.target, 'postLike')) {
-                c = $(e.target).parent().next().text();
-                if($(e.target).attr('src') == 'images/redheart.png') {  
-                    $(e.target).removeAttr('src').attr('src','images/heart.png');
-                    $(e.target).parent().next().text(parseInt(c) - 1 + " Likes");
+                target = $(e.target);
+                c = target.parent().next().text();
+                if(target.attr('src') == 'images/redheart.png') {  
+                    target.attr('src','images/heart.png');
+                    target.parent().next().text(parseInt(c) - 1 + ' like');
                     var index = likesArray.indexOf(currentUser.username);
                     likesArray.splice(index, 1);
-                    if($(e.target).parent().prev().children().hasClass('textPost')){
+                    if(target.parent().prev().children().hasClass('textPost')){
                         socket.emit('Dislike1',{
                             name: e.target.title,
                             postStatus: e.target.id,
                             user: currentUser.username
                         });
                     }
-                    else if($(e.target).parent().prev().children().hasClass('postImage')){
+                    else if(target.parent().prev().children().hasClass('postImage')){
                         socket.emit('Dislike',{
                             name: e.target.title,
                             url: e.target.id,
@@ -291,17 +293,17 @@ if($("body").data("title") === "mainPage"){
                     }
                 }
                 else{
-                    $(e.target).removeAttr('src').attr('src','images/redheart.png');
-                    $(e.target).parent().next().text(parseInt(c) + 1 + " Likes");
+                    target.attr('src','images/redheart.png');
+                    target.parent().next().text(parseInt(c) + 1 + ' like');
                     likesArray.push(currentUser.username);
-                    if($(e.target).parent().prev().children().hasClass('textPost')){
+                    if(target.parent().prev().children().hasClass('textPost')){
                         socket.emit('Like1',{
                             name: e.target.title,
                             postStatus: e.target.id,
                             user: currentUser.username
                         });
                     }
-                    else if($(e.target).parent().prev().children().hasClass('postImage')){
+                    else if(target.parent().prev().children().hasClass('postImage')){
                         socket.emit('Like',{
                             name: e.target.title,
                             url: e.target.id,
@@ -309,10 +311,7 @@ if($("body").data("title") === "mainPage"){
                         });
                     }
                 }
-            } else if (hasClass(e.target, 'postComment')) {
-                alert('test');
             }
-
         }, false);
     });
 
@@ -324,14 +323,13 @@ if($("body").data("title") === "mainPage"){
             $("#backPicLoad").css('display','inline');
             time = moment(moment().valueOf()).format('H:mm');
             date = moment(moment().valueOf()).format('MM-DD-YYYY');
-            likes = 0+" Likes";
             
-            var template = document.getElementById("mainPostTemplate").innerHTML;
-            var html = Mustache.render(template,{
+            template = document.getElementById("mainPostTemplate").innerHTML;
+            html = Mustache.render(template,{
                email: currentUser.email,
                user: currentUser.username,
                time: time,
-               like: likes,
+               like: 0,
                postStatus: status,
                location: currentUser.location,
                dp: currentUser.url,
@@ -340,7 +338,11 @@ if($("body").data("title") === "mainPage"){
             });
             $("#backPicLoad").css('display','none');
             $("camera").css('display','inline');
-            $("#Container").prepend(html);
+            div = document.createElement('div');
+            div.setAttribute('class','posty');
+            div.innerHTML = html;
+            fragment.appendChild(div);
+            container.prepend(fragment);
             
             $( ".inputUserstatus" ).val("");
             
@@ -381,7 +383,6 @@ if($("body").data("title") === "mainPage"){
            //moment to fetch the time-date     
            var time = moment(moment().valueOf()).format('H:mm');
            var date = moment(moment().valueOf()).format('MM-DD-YYYY');
-           var likes = 0+" Likes";
 //           //Mustache Templating    
            var template = document.getElementById("post-template").innerHTML;
            var html = Mustache.render(template,{
@@ -389,7 +390,7 @@ if($("body").data("title") === "mainPage"){
                user: currentUser.username,
                url: url,
                time: time,
-               like: likes,
+               like: 0,
                date: date,
                status: status,
                location: currentUser.location,
@@ -398,18 +399,11 @@ if($("body").data("title") === "mainPage"){
            });
            $("#backPicLoad").css('display','none');
            $(".camera").css('display','inline');
-           $("#Container").prepend(html);
-// 
-// Handlebars Templating
-            
-//            var source = $("#post-template").html();
-//            var template = Handlebars.compile(source);
-//            var context = {
-//                post: "Shubham",
-//                u: res.data.secure_url
-//            };
-//            var el_html = ;
-//            $("#allPosts").append(template(context));
+           div = document.createElement('div');
+           div.setAttribute('class','posty');
+           div.innerHTML = html;
+           fragment.appendChild(div);
+           container.prepend(fragment);
            
            // Sending data to server on image upload   
            socket.emit('onPost',{
@@ -458,7 +452,7 @@ if($("body").data("title") === "mainPage"){
     
     var input='';
     $( ".userSearch" ).keyup(function() {
-        input = $(".userSearch").val();
+        input = $(".userSearch").val();        
         if(input.length === 0){
             searchArray = jQuery.extend({}, allUsers);
             $("#myUL").empty();
@@ -467,10 +461,14 @@ if($("body").data("title") === "mainPage"){
             if(Object.keys(searchArray).length == 0){
                 searchArray = jQuery.extend({}, allUsers);
             }
+            //Search Algo
             for (var i = (Object.keys(searchArray).length)-1 ; i >= 0 ;i--){
                 if (searchArray[i].username.toLowerCase().indexOf(input.toLowerCase()) > -1 && searchArray[i].username !== currentUser.username) {
                     if($('#myUL').find("."+allUsers[i].username).length == 0){
-                        $("#myUL").append("<li class='myLi'><a class='myA "+searchArray[i].username+"' href='http://localhost:3000/userAcc.html?email="+searchArray[i].email+"&user=no'>"+searchArray[i].username+"</a></li>");
+                       div = document.createElement('div');
+                       div.setAttribute('id','myUL');
+                       div.innerHTML = "<li class='myLi'><a class='myA "+searchArray[i].username+"' href='http://localhost:3000/userAcc.html?email="+searchArray[i].email+"&user=no'>"+searchArray[i].username+"</a></li>";
+                       fragment.appendChild(div);
                     }
                     delete searchArray[i];
                 }
@@ -479,6 +477,7 @@ if($("body").data("title") === "mainPage"){
                     delete searchArray[i];
                 }
             }
+            $(".ulAppend").append(fragment);
         }
     });
 }
@@ -569,25 +568,33 @@ if($("body").data("title") === "profilePage"){
             if($("#newPassword").val().length == 0){
                 $("#updateBtn").removeAttr('disabled');
             }
-            if($("#newPassword").val().length > 5 ){
-                $(".match1").css('display','inline');
-                $("#confirmPass").removeAttr('readonly');
-            }
             else{
-                $(".match1").css('display','none');
-                $("#confirmPass").attr('readonly','readonly');
-//                $("#updateBtn").attr('disabled','disbaled');
+                if($("#newPassword").val().length > 5 ){
+                    $(".match1").css('display','inline');
+                    $("#confirmPass").removeAttr('readonly');
+                }
+                else{
+                    $(".match1").css('display','none');
+                    $("#confirmPass").attr('readonly','readonly');
+    //                $("#updateBtn").attr('disabled','disbaled');
+                }
+            }
+            if($("#confirmPass").val().length !== 0){
+                $("#confirmPass").val("");
+                $("#updateBtn").attr('disabled','disbaled');
+                $('.match2').css('display','none');
             }
         });
         
         $("#confirmPass").keyup(function(){
             if($("#newPassword").val().length == 0){
+                $(".match2").css('display','none');
                 $("#updateBtn").removeAttr('disabled');
             }
             if($("#confirmPass").val() === $("#newPassword").val() ){
                 if($("#confirmPass").val().length!=0){
                     $(".match2").css('display','inline');
-                    $("#updateBtn").removeAttr('disabled'); 
+                    $("#updateBtn").removeAttr('disabled');
                 }
                 else{
                     $(".match2").css('display','none'); 
@@ -595,6 +602,7 @@ if($("body").data("title") === "profilePage"){
             }
             else{
                     $("#updateBtn").attr('disabled','disabled');
+                    $(".match2").css('display','none');
             }
         });
         
@@ -619,7 +627,7 @@ if($("body").data("title") === "profilePage"){
             },
             data: formData
         }).then(function(res){
-            var url = res.data.secure_url.slice(0, 72) + '/w_200,h_200,q_30/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
+           var url = res.data.secure_url.slice(0, 72) + '/w_200,h_200,q_30/' + res.data.secure_url.slice(73,res.data.secure_url.length); 
            $("#backPicLoad").css('display','none');    
            $("#submitText").css('display','inline');
            document.getElementById("profilePic").src = url;
@@ -631,7 +639,7 @@ if($("body").data("title") === "profilePage"){
 }
 
 if($("body").data("title") === "userAcc"){
-    var county = 0;
+    var county = 0,template,html;
     var params = $.deparam(window.location.search);
     $(function(){
         socket.emit('userInfo',{
@@ -657,8 +665,8 @@ if($("body").data("title") === "userAcc"){
             url = currentUser.url;
         }
         
-        var template = document.getElementById("user-template").innerHTML;
-        var html = Mustache.render(template,{
+        template = document.getElementById("user-template").innerHTML;
+        html = Mustache.render(template,{
            user: currentUser.username,
            fullname: currentUser.fullname,    
            location: currentUser.location,
@@ -779,9 +787,10 @@ if($("body").data("title") === "userAcc"){
     socket.on('userImages',function(images){
             if(!images.empty){
                 $("#morePostsLoad").css('display','none');
+                var fragment = document.createDocumentFragment();
                 for(var i=0;i<images.docs.length;i++){
-                       var template = document.getElementById("post-template").innerHTML;
-                       var html = Mustache.render(template,{
+                       template = document.getElementById("post-template").innerHTML;
+                       html = Mustache.render(template,{
                            user: images.docs[i].username,
                            url: images.docs[i].url,
                            time: images.docs[i].time,
@@ -790,9 +799,13 @@ if($("body").data("title") === "userAcc"){
                            location: images.docs[i].location,
                            dp: images.docs[i].userDp
                        });
-                       $("#postify").append(html);
+                       div = document.createElement('div');
+                       div.setAttribute('id','postify');
+                       div.innerHTML = html;
+                       fragment.appendChild(div);
                        k=1;
                 }
+                $("#Posts").append(fragment);
                 if((images.skip+6)<currentUser.posts && currentUser.posts>6){
                     $("#morePostDiv").append("<div class='morePosts'>More Posts</div>");
                 }
@@ -853,28 +866,4 @@ if($("body").data("title") === "userAcc"){
           }
        });
     });
- 
-//OVERLAY ON USER POSTS    
-//    function hasClass(elem, className) {
-//        return elem.className.split(' ').indexOf(className) > -1;
-//    }
-//    document.addEventListener('mouseover', function (e) {
-//        if (hasClass(e.target, 'OnePost')) {
-//               var top = document.getElementsByClassName(e.target.classList[1]);
-//                alert(top);
-//               document.getElementById("overlay").style.display = "block";
-//        } else{
-//            
-//        }
-//
-//    }, false);
-//    document.addEventListener('mouseout', function (e) {
-//        if (hasClass(e.target, 'OnePost')) {
-//               document.getElementById("overlay").style.display = "none";
-//        } else{
-//            
-//        }
-//
-//    }, false);
-    
 }

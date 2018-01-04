@@ -31,9 +31,8 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <div class="collapsy">
                     <form class="navbar-form navbar-nav submitForm">
-                        <div class="form-group">
+                        <div class="form-group ulAppend">
                             <input type="text" class="form-control userSearch" placeholder="Search" name="search">
-                            <ul id="myUL"></ul>
                         </div>
                     </form>
                     <ul class="nav navbar-nav navbar-right" id="nav-right">
@@ -56,10 +55,10 @@
     </div>
 
     <div id="Container">
+        <img src="images/loader2.gif" id="userView" />
     </div>
 
     <script id="post-template" type="text/x-handlebars-template">
-        <div class="posty">
             <div class="posts-header">
                 <img src="{{dp}}" class="profilePic img-circle">
                 <ul class="postHeading">
@@ -77,18 +76,16 @@
                 <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
             </div>
             <div class="postLikesNum">
-                <span>{{like}} </span>
+                <span>{{like}} like </span>
             </div>
             <div class="postTime">
                 <span>{{time}} {{date}}</span>
             </div>
             <hr>
             <textarea placeholder="Add a Comment.." name={{email}} class="comment"></textarea>
-        </div>
     </script>
 
     <script id="mainPostTemplate" type="text/x-handlebars-template">
-        <div class="posty">
             <div class="posts-header">
                 <img src="{{dp}}" class="profilePic img-circle">
                 <ul class="postHeading">
@@ -106,18 +103,17 @@
                 <i class="fa fa-comment-o postComment" aria-hidden="true"></i>
             </div>
             <div class="postLikesNum">
-                <span>{{like}} </span>
+                <span>{{like}} like </span>
             </div>
             <div class="postTime">
                 <span>{{time}} {{date}}</span>
             </div>
             <hr>
             <textarea placeholder="Add a Comment.." name={{email}} class="comment"></textarea>
-        </div>
     </script>
 
     <script src="/js/libs/jquery-3.1.1.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/libs/socket.js"></script>
     <script src="/js/libs/deparam.js"></script>
     <script async src='/js/libs/bootstrap.min.js' type="text/javascript"></script>
     <script async src="/js/libs/mustache.js"></script>

@@ -1,4 +1,4 @@
-var staticCacheName = 'NodeFi-static-v3';
+var staticCacheName = 'NodeFi-static-v1';
 
 //While Service Worker is getting Installed
 self.addEventListener('install', function(event) {
@@ -14,7 +14,7 @@ self.addEventListener('install', function(event) {
                 '/css/bootstrap.min.css',
                 '/css/styles.css',
                 '/css/animate.css',
-                '/socket.io/socket.io.js',
+                '/js/libs/socket.js',
                 '/js/javascript.js',
                 '/js/libs/mustache.js',
                 '/js/libs/deparam.js',
@@ -38,7 +38,7 @@ self.addEventListener('install', function(event) {
                 'images/bday.png',
                 'images/briefcase.jpg',
                 'images/phone.png',
-                'images/user.png'
+                'images/user1.png'
             ]).catch(function(err) {
                 console.log("Cache Error " + err);
             });
@@ -70,17 +70,17 @@ self.addEventListener('fetch', function(event) {
     if (requestUrl.origin === location.origin) {
 //        console.log(requestUrl.pathname);
         if (requestUrl.pathname === '/mainPage.html') {
-          console.log('Main Page...');
+//          console.log('Main Page...');
           event.respondWith(caches.match('/mainPage.html'));
           return;
         }
         else if (requestUrl.pathname === '/userAcc.html') {
-          console.log('UserAcc Page...');
+//          console.log('UserAcc Page...');
           event.respondWith(caches.match('/userAcc.html'));
           return;
         }
         else if (requestUrl.pathname === '/profile.html') {
-          console.log('Profile Page...');
+//          console.log('Profile Page...');
           event.respondWith(caches.match('/profile.html'));
           return;
         }
@@ -89,36 +89,14 @@ self.addEventListener('fetch', function(event) {
     event.respondWith(
         caches.match(event.request).then(function(response) {
             if (response) {
-                console.log("CACHED " + response.url);
+//                console.log("CACHED " + response.url);
                 return response;
             }
-            console.log("FETCHED " + event.request.url);
+//            console.log("FETCHED " + event.request.url);
             return fetch(event.request);
         })
     );
 });
-
-//self.addEventListener('fetch', function(event) {
-//  var requestUrl = new URL(event.request.url);
-//
-//  if (requestUrl.origin === location.origin) {
-//      console.log("YEA");
-//    if (requestUrl.pathname === '/mainPage.html') {
-//      console.log('Response For MainPage Complete');
-//      event.respondWith(caches.match('mainPage.html'));
-//      return;
-//    }
-//  }
-//
-//  caches.match(event.request).then(function(response) {
-//    if (response) {
-//      console.log("CACHED " + response.url);
-//      return response;
-//    }
-//    console.log("FETCHED " + event.request.url);
-//    return fetch(event.request);
-//  })
-//});
 
 //Message Received To activate New Installed Waiting Service Worker..
 self.addEventListener('message', function(event) {
